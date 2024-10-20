@@ -1,13 +1,13 @@
 let tileSRC = [
-    {src: "Tiles_None", collision: false},
-    {src: "Tiles_Generic_Wall", collision: true},
-    {src: "Tiles_Generic_Floor", collision: false},
-    {src: "Tiles_Orange_Floor_1", collision: false},
-    {src: "Tiles_Orange_Floor_2", collision: false},
-    {src: "Tiles_Orange_Floor_3", collision: false},    
-    {src: "Tiles_Orange_Wall_1", collision: true},
-    {src: "Tiles_Orange_Wall_2", collision: true},
-    {src: "Tiles_Orange_Wall_3", collision: true},
+    {src: "Tiles_None", collision: false, mapColor: 0},
+    {src: "Tiles_Generic_Wall", collision: true, mapColor: 1},
+    {src: "Tiles_Generic_Floor", collision: false, mapColor: 2},
+    {src: "Tiles_Orange_Floor_1", collision: false, mapColor: 2},
+    {src: "Tiles_Orange_Floor_2", collision: false, mapColor: 2},
+    {src: "Tiles_Orange_Floor_3", collision: false, mapColor: 2},    
+    {src: "Tiles_Orange_Wall_1", collision: true, mapColor: 1},
+    {src: "Tiles_Orange_Wall_2", collision: true, mapColor: 1},
+    {src: "Tiles_Orange_Wall_3", collision: true, mapColor: 1},
 ]
 const structures = {
     example:{

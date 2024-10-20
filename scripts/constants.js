@@ -35,3 +35,5 @@ const mapColors = {0:"#000000",1:"#000000",2:"#808080",3:"#ff0000",4: "#00ff00"}
 let entityAnimationStage = 1
 let gameTicks = 0
 let level_color = "orange"
+let isTyping = false
+let gameConsole =[]

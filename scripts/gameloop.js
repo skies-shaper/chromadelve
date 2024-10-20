@@ -20,6 +20,7 @@ window.addEventListener("keydown",(event)=>{
     //key events that can occur on the pause menu below this
     if(event.key == "Escape")
     {
+        event.preventDefault()
         isPaused = !isPaused;
     }
     if(isPaused)
@@ -30,9 +31,12 @@ window.addEventListener("keydown",(event)=>{
     userKeys[event.key] = true;
     if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","w","a","s","d"].indexOf(event.key)>-1)
     {
-        event.preventDefault()
 
         player.isMoving = true;
+    }
+    if(["ArrowUp","ArrowDown"].indexOf(event.key)>-1)
+    {
+        event.preventDefault()
     }
     if("ArrowLeft"==event.key||"a"==event.key)
     {
@@ -47,9 +51,23 @@ window.addEventListener("keyup",(event)=>{
     if(event.key == "Shift"){
         isShiftPressed = false
     }
-    if(isPaused)
+    if(isPaused || isTyping)
     {
         return
+    }
+    if(event.key == "m"){
+        showMap = !showMap
+    }
+    if(event.key == "r"){
+        generateLevel()
+    }
+    if(event.key.toLowerCase() == "t"){
+        document.getElementById("gameConsole").style.visibility = "visible"
+        document.getElementById("console-text").style.visibility = "visible"
+        document.getElementById("gameConsole").focus()
+        document.getElementById("gameConsole").value = ""
+        isTyping = true
+        
     }
     userKeys[event.key] = false;
     handlePlayerMovement(event.key)
@@ -67,7 +85,7 @@ function drawMap(){
         for(let j = 0; j<level[i].length; j++){ //x
 
             if(level[i][j] != 0){
-                screen.fillStyle = mapColors[level[i][j]]
+                screen.fillStyle = mapColors[tileSRC[level[i][j]].mapColor]
                 screen.fillRect(123+(3*j),63+(i*3),3,3);
             }
             if(i==player.yPos && j == player.xPos){
@@ -88,12 +106,18 @@ function drawMap(){
     }
 }
 window.addEventListener("keyup",(e)=>{
-    if(e.key == "m"){
-        showMap = !showMap
+    
+})
+document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
+    if(e.key != "Enter"){
+        return
     }
-    if(e.key == "r"){
-        generateLevel()
-    }
+    gameConsole.push(document.getElementById("gameConsole").value)
+    document.getElementById("gameConsole").blur()
+    document.getElementById("gameConsole").style.visibility = "hidden"
+    document.getElementById("console-text").style.visibility = "hidden"
+    document.getElementById("console-text").textContent +=document.getElementById("gameConsole").value + "\n\r"
+    isTyping = false
 })
 function gameloop(){
     gameTicks++
@@ -119,8 +143,9 @@ function gameloop(){
         {
             drawMap()
         }
+
         if(isPaused){ //draw pause menu
-            
+            screen.fillText("paused!", 400, 10)
         }
     }
     handleDebugScreen()
