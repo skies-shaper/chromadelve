@@ -1,3 +1,14 @@
+let tileSRC = [
+    {src: "Tiles_None", collision: false},
+    {src: "Tiles_Generic_Wall", collision: true},
+    {src: "Tiles_Generic_Floor", collision: false},
+    {src: "Tiles_Orange_Floor_1", collision: false},
+    {src: "Tiles_Orange_Floor_2", collision: false},
+    {src: "Tiles_Orange_Floor_3", collision: false},    
+    {src: "Tiles_Orange_Wall_1", collision: true},
+    {src: "Tiles_Orange_Wall_2", collision: true},
+    {src: "Tiles_Orange_Wall_3", collision: true},
+]
 const structures = {
     example:{
         data: [],
@@ -12,18 +23,22 @@ let numPaths = 0
 let tiles = {
     none:  0, 
     generic_wall:  1,
-    generic_floor: 2
+    generic_floor: 2,
+    orange: {
+        floor_1: 3,
+        floor_2: 4,
+        floor_3: 5,
+        wall_1: 6,
+        wall_2: 7,
+        wall_3: 8
+    },
+
 }
-let directions = {
-    up:0,
-    down:1,
-    left:2,
-    right:3
-}
+
 let bossRoomPossibilities = [
 
 ]
-
+let spawnX, spawnY
 let rooms = {
     essential: {
         start: {
@@ -152,6 +167,13 @@ function generateLevel(){
 
     for(let i  = 0; i< 78; i++){
         for(let j = 0; j<78; j++){
+            if(!level[i][j]){
+                level[i][j] = 0
+            }
+        }
+    }
+    for(let i  = 0; i< 78; i++){
+        for(let j = 0; j<78; j++){
             if(level[i][j] == 2){
                 if(level[i-1][j] == 0){
                     level[i-1][j] = 1
@@ -168,12 +190,44 @@ function generateLevel(){
             }
         }
     }
+
     //places down room tile data
     for(let i = 0; i<7; i++){
         for(let j=0;j<7;j++){
             displayRoom(j,i)
         }
     }
+
+    for(let i = 0; i<78; i++){
+        for(let j = 0; j<78; j++){
+            let c = rand(1,10)
+            if(level[i][j] == tiles.generic_floor){
+                switch(c){
+                    case 1:
+                        level[i][j] = tiles[level_color].floor_2
+                        break;
+                    case 2:
+                        level[i][j] = tiles[level_color].floor_3
+                        break;
+                    default: 
+                        level[i][j] = tiles[level_color].floor_1
+                }
+            }
+            if(level[i][j] == tiles.generic_wall){
+                switch(c){
+                    case 1:
+                        level[i][j] = tiles[level_color].wall_2
+                        break;
+                    case 2:
+                        level[i][j] = tiles[level_color].wall_3
+                        break;
+                    default: 
+                        level[i][j] = tiles[level_color].wall_1
+                }
+            }
+        }
+    }
+
     
 
     console.log("Level Generation Done!")
@@ -438,6 +492,10 @@ function placeRoom(gridX,gridY){
         for(let j = 0; j<room.width; j++){
             level[i+initialY][j+initialX] = 2
         }
+    }
+    if(gridX == 3 && gridY == 3){
+        player.xPos= initialX
+        player.yPos= initialY
     }
     saveRoom(gridX, gridY,initialX, initialY, room.width, room.height, room.data)
 }

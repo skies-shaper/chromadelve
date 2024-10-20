@@ -1,9 +1,10 @@
 <!doctype HTML>
 <html>
 <head>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chromadelve</title>
     <style>
+
         body{ 
             background-color: lightgray;
             font-family: verdana;
@@ -50,13 +51,37 @@
             <h3>-October 9, 2024</h3>
             <p>Level room and path-placing algorithm is complete. <br>-Skies</p>
         </div>
+        <div>
+            <h3>-October 19, 2024</h3>
+            <p>Tile display system complete, as is an entity display system.<br>
+                Essentially, an entity will switch between (currently two) idle animation frames. When attacks, etc are added, those will presumably get animations too. Currently 10 game ticks/animation frame :/. 
+                The map now has a player location indicator - flashing colors.
+                The player can now move around, either with collision or without (this is a debug option) 
+                There is a plan for turn order and things!
+                <br>-Skies</p>
+        </div>
     </div>
     </div>
+    <script src="scripts/constants.js"></script>
     <script src="scripts/levelGen.js"></script>
     <script src="scripts/gameloop.js"></script>
     <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
     <div style="display:none;">
         <img src="imgs/GUI/mapBG.png" id="GUI_mapBG"/>
+        <!--Tiles-->
+        <img src="imgs/tiles/null.png" id="Tiles_None"/>
+        <img src="imgs/tiles/purple-floor-1.png" id="Tiles_Generic_Floor"/>
+        <img src="imgs/tiles/purple-wall-1.png" id="Tiles_Generic_Wall"/>
+        <img src="imgs/tiles/orange-floor-1.png" id="Tiles_Orange_Floor_1"/>
+        <img src="imgs/tiles/orange-floor-2.png" id="Tiles_Orange_Floor_2"/>
+        <img src="imgs/tiles/orange-floor-3.png" id="Tiles_Orange_Floor_3"/>
+        <img src="imgs/tiles/orange-wall-1.png" id="Tiles_Orange_Wall_1"/>
+        <img src="imgs/tiles/orange-wall-2.png" id="Tiles_Orange_Wall_2"/>
+        <img src="imgs/tiles/orange-wall-3.png" id="Tiles_Orange_Wall_3"/>
+        <!--Characters-->
+        <img src="imgs/characters/debug-ghost-1.png" id="Characters_Player_DebugGhost_1"/>
+        <img src="imgs/characters/debug-ghost-2.png" id="Characters_Player_DebugGhost_2"/>
+
     </div>
 </body>
 </html>

@@ -1,0 +1,30 @@
+-if it's a mobile device, tell them the game won't work, but maybe like give some screenshots and encourage them to get it from ein computer
+
+-Make a room editor
+-Make a tileset for each element
+Fire: 
+Red, volcanic rocks.
+
+Poison:
+Darker stone bricks, dripping with oozes
+
+Water:
+A lighter-grey stone brick, with some ice and stuff
+
+Air: 
+brighter colors - more white / yellow versions of the bricks in 
+
+Life: 
+very mossy stones
+
+Lightning: 
+spaceshippppp
+
+
+Gameplay turn loop: 
+-Make attacks
+    -All attacks have a cooldown of x moves. if x<1, then you can use the attack multiple times per turn. If x>1, once used you have to wait.
+    
+-Move
+-Enemies attack
+-Enemies move
