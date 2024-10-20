@@ -21,6 +21,13 @@ window.addEventListener("keydown",(event)=>{
     if(event.key == "Escape")
     {
         event.preventDefault()
+        if(isTyping){
+            document.getElementById("gameConsole").blur()
+            document.getElementById("gameConsole").style.visibility = "hidden"
+            document.getElementById("console-text").style.visibility = "hidden"
+            isTyping = false
+            return
+        }
         isPaused = !isPaused;
     }
     if(isPaused)
@@ -57,9 +64,6 @@ window.addEventListener("keyup",(event)=>{
     }
     if(event.key == "m"){
         showMap = !showMap
-    }
-    if(event.key == "r"){
-        generateLevel()
     }
     if(event.key.toLowerCase() == "t"){
         document.getElementById("gameConsole").style.visibility = "visible"
@@ -105,18 +109,23 @@ function drawMap(){
         }
     }
 }
-window.addEventListener("keyup",(e)=>{
-    
-})
+
 document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
     if(e.key != "Enter"){
         return
     }
-    gameConsole.push(document.getElementById("gameConsole").value)
+    if(document.getElementById("gameConsole").value.charAt(0) == "@"){
+        handleCommand(document.getElementById("gameConsole").value.substring(1))
+        document.getElementById("gameConsole").value = ""
+
+        return
+    }
     document.getElementById("gameConsole").blur()
     document.getElementById("gameConsole").style.visibility = "hidden"
     document.getElementById("console-text").style.visibility = "hidden"
-    document.getElementById("console-text").textContent +=document.getElementById("gameConsole").value + "\n\r"
+    if(document.getElementById("gameConsole").value != "")
+        document.getElementById("console-text").textContent +=document.getElementById("gameConsole").value + "\n\r"
+    
     isTyping = false
 })
 function gameloop(){
@@ -145,7 +154,11 @@ function gameloop(){
         }
 
         if(isPaused){ //draw pause menu
-            screen.fillText("paused!", 400, 10)
+            screen.fillStyle = "black";
+            screen.fillText("Paused", 445, 10)
+            screen.fillStyle = "white";
+            screen.strokeStyle = "white";
+            screen.fillText("Paused", 445, 11)
         }
     }
     handleDebugScreen()
@@ -259,4 +272,13 @@ function randColor(){
     }
     
     return c
+}
+function handleCommand(cmd){
+    console.log(cmd)
+    if(cmd == "regenerate-map"){
+        generateLevel()
+    }
+    if(cmd=="help"){
+        document.getElementById("console-text").textContent += "--Help Screen--\nCommands: \n-@help: pulls up this screen\n-@regenerate-map: generates a new level"
+    }
 }
