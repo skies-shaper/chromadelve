@@ -44,3 +44,5 @@ let mouseY = 0
 
 let mouseGridX = 5
 let mouseGridY = 4 
+
+let showMouseIndicator = false

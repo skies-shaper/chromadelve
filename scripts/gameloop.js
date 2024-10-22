@@ -9,6 +9,7 @@ let mouseDown
 let isPaused, isShiftPressed
 let userKeys = []
 document.getElementById("gamewindow").addEventListener("mousemove",(event)=>{
+    showMouseIndicator = true
     mouseX = event.offsetX
     mouseY = event.offsetY
 })
@@ -19,6 +20,8 @@ window.addEventListener("mouseup",()=>{
     mouseDown = false
 })
 window.addEventListener("keydown",(event)=>{
+    showMouseIndicator = false
+
     if(event.key == "Shift"){
         isShiftPressed = true
     }
@@ -158,11 +161,12 @@ function gameloop(){
             drawMap()
         }
         drawHUD()
+        handleDebugScreen()
+
         if(isPaused){ //draw pause menu
             drawPauseMenu()
         }
     }
-    handleDebugScreen()
 
 }
 function drawPauseMenu(){
@@ -219,15 +223,11 @@ function drawTiles(){
                 mouseGridX = j
                 mouseGridY = i
             }
-            if(level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] == 0){
-                mouseGridX= 5
-                mouseGridY = 4
-            }
             if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>0 && (i+player.yPos-4)>0){
                 screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
             }
         }
-        if(!isPaused){
+        if(!isPaused && showMouseIndicator && (level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] != 0)){
             screen.strokeStyle = "yellow"
             screen.lineWidth = 3
             screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
@@ -251,7 +251,6 @@ function drawEntities(){
     }
 }
 function handlePlayerMovement(key){
-    
     if(Debug.unfetteredMovement){
         switch(key){
             case "ArrowLeft":
