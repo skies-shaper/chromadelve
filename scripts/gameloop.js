@@ -194,7 +194,6 @@ function drawHUD(){
         if(player.inventory.equipped[i].type == itemTypes.spell){
             if(mouseInArea(387,87+(i*51),477,(48+87+(i*51)))){
                 screen.drawImage(document.getElementById("GUI_SpellScroll"),381,87+(i*51),90,48)
-                console.log(1)
             }
             else
             screen.drawImage(document.getElementById("GUI_SpellScroll"),387,87+(i*51),90,48)
