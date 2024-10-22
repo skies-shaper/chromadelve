@@ -15,9 +15,10 @@ let elements  = {
 }
 let Debug = {
     mapGrid:false,
-    showCoordinates:true,
-    showCameraXY: true,
-    unfetteredMovement: false
+    showCoordinates:false,
+    showCameraXY: false,
+    unfetteredMovement: false,
+    showMouseXY: false
 }
 let player = {
     name: "",
@@ -37,3 +38,9 @@ let gameTicks = 0
 let level_color = "orange"
 let isTyping = false
 let gameConsole =[]
+
+let mouseX = 0
+let mouseY = 0
+
+let mouseGridX = 5
+let mouseGridY = 4 

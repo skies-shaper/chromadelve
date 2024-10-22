@@ -2,12 +2,15 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap" rel="stylesheet">
     <title>Chromadelve</title>
     <style>
 
         body{ 
             background-color: lightgray;
-            font-family: verdana;
+            font-family: "Kode Mono";
             margin: none;
         }
         #gamebox {
@@ -27,6 +30,7 @@
             width: 100%;
         }
         #gameConsole{
+            font-family: "Kode Mono";
             color: white;
             outline: none;
             caret-color: white;
@@ -56,7 +60,7 @@
             white-space: pre-line;
             margin: none;
             position: absolute;
-            top: 200px;
+            top: 215px;
         }
         #game{
             position: static;
@@ -115,6 +119,11 @@
     <script src="scripts/gameloop.js"></script>
     <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
     <div style="display:none;">
+        <!--GUI :D-->
+        <img src="imgs/GUI/pause.png" id="GUI_Pause">
+        <img src="imgs/GUI/unpause.png" id="GUI_Unpause">
+
+        <img src="imgs/GUI/gamePaused.png" id="GUI_Text_GamePaused">
         <img src="imgs/GUI/mapBG.png" id="GUI_mapBG"/>
         <!--Tiles-->
         <img src="imgs/tiles/null.png" id="Tiles_None"/>

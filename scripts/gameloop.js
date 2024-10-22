@@ -4,13 +4,20 @@
     2: display
 */
 
-
-let cameraX = 0
-let cameraY = 0
-
+let buttonEvents = []
+let mouseDown
 let isPaused, isShiftPressed
 let userKeys = []
-
+document.getElementById("gamewindow").addEventListener("mousemove",(event)=>{
+    mouseX = event.offsetX
+    mouseY = event.offsetY
+})
+window.addEventListener("mousedown",()=>{
+    mouseDown = true
+})
+window.addEventListener("mouseup",()=>{
+    mouseDown = false
+})
 window.addEventListener("keydown",(event)=>{
     if(event.key == "Shift"){
         isShiftPressed = true
@@ -36,11 +43,6 @@ window.addEventListener("keydown",(event)=>{
     }
     //Key events that modify the game below this
     userKeys[event.key] = true;
-    if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","w","a","s","d"].indexOf(event.key)>-1)
-    {
-
-        player.isMoving = true;
-    }
     if(["ArrowUp","ArrowDown"].indexOf(event.key)>-1)
     {
         event.preventDefault()
@@ -132,7 +134,9 @@ function gameloop(){
     gameTicks++
     screen.imageSmoothingEnabled= false
     screen.fillStyle ="black";
+    screen.font = "12px Kode Mono"
     screen.fillRect(0,0,480,360)
+
     
     if(Global_State == 0){
 
@@ -144,6 +148,7 @@ function gameloop(){
         //scripts that update if the game is running
         if(!isPaused){
             handlePlayerMovement()
+            handleEntityLogic()
         }
         //scripts that update always
         drawTiles()
@@ -152,26 +157,80 @@ function gameloop(){
         {
             drawMap()
         }
-
+        drawHUD()
         if(isPaused){ //draw pause menu
-            screen.fillStyle = "black";
-            screen.fillText("Paused", 445, 10)
-            screen.fillStyle = "white";
-            screen.strokeStyle = "white";
-            screen.fillText("Paused", 445, 11)
+            drawPauseMenu()
         }
     }
     handleDebugScreen()
 
 }
+function drawPauseMenu(){
+    screen.fillStyle =  "rgba(0,0,0,0.3)"
+    screen.fillRect(0,0,480,360)
+    addButton("#GUI_Buttons_Unpause","GUI_Unpause",9,9,21,21,()=>{
+        isPaused = false
+    })
+    screen.fillStyle = "white"
+    screen.font = "20px Kode Mono"
+    screen.fillText("Game Paused", 39,27)
+    screen.fillText("-Quit", 39,50)
+    screen.fillText("-Options", 39,73)
+    screen.font = "12px Kode Mono"
+
+
+}
+function drawHUD(){
+    if(!isPaused){
+        addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
+            isPaused = true
+        })
+    } 
+}
+
+function handleEntityLogic(){
+
+}
+
+function addButton(id,src, x, y, w, h, callback){
+    if(buttonEvents.indexOf(id) == -1){
+        buttonEvents.push(id)
+        document.getElementById("gamewindow").addEventListener("mouseup",()=>{
+            if(mouseInArea(x,y,x+w, y+h))
+                callback()
+            buttonEvents.splice(buttonEvents.indexOf(id),1)
+        },{once: true})
+    }
+    
+    if(mouseInArea(x,y,x+w,y+h))
+    {
+        screen.filter = "brightness(140%)"
+    }
+    screen.drawImage(document.getElementById(src), x, y, w, h)
+    screen.filter = "none"
+}
+
 
 function drawTiles(){
     for(let i = 0; i<9;i++){
         for(let j = 0; j<11; j++){
             // console.log(level[i][j])
+            if((j*48)-24 < mouseX && (j+1)*48-24 > mouseX && (i*48)-36 < mouseY && (i+1)*48-36 > mouseY && (level[i+player.yPos-4][player.xPos+j-5] != 0)){
+                mouseGridX = j
+                mouseGridY = i
+            }
+            if(level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] == 0){
+                mouseGridX= 5
+                mouseGridY = 4
+            }
             if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>0 && (i+player.yPos-4)>0){
                 screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
             }
+        }
+        if(!isPaused){
+            screen.strokeStyle = "yellow"
+            screen.lineWidth = 3
+            screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
         }
     }
 }
@@ -192,6 +251,7 @@ function drawEntities(){
     }
 }
 function handlePlayerMovement(key){
+    
     if(Debug.unfetteredMovement){
         switch(key){
             case "ArrowLeft":
@@ -248,18 +308,24 @@ function handleDebugScreen(){
             if(key == "showCoordinates"){
                 screen.fillStyle = "black";
                 screen.strokeStyle = "black";
-                screen.fillText("Player X: "+player.xPos+", Player Y: "+player.yPos,10,30)
+                screen.fillText("Player X: "+player.xPos+", Player Y: "+player.yPos,10,40)
                 screen.strokeStyle = "white";
                 screen.fillStyle = "white";
-                screen.fillText("Player X: "+player.xPos+", Player Y: "+player.yPos,11,31)
+                screen.fillText("Player X: "+player.xPos+", Player Y: "+player.yPos,11,41)
 
             }
             if(key == "unfetteredMovement"){
                 screen.fillStyle = "black";
-                screen.fillText("Unfettered movement: on", 10, 40)
+                screen.fillText("Unfettered movement: on", 10, 52)
                 screen.fillStyle = "white";
                 screen.strokeStyle = "white";
-                screen.fillText("Unfettered movement: on", 11, 41)
+                screen.fillText("Unfettered movement: on", 11, 53)
+            }
+            if(key == "showMouseXY"){
+                screen.fillStyle = "black";
+                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY,10,64)
+                screen.fillStyle = "lightblue";
+                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY,11,65)
             }
         }
     })
@@ -274,11 +340,17 @@ function randColor(){
     return c
 }
 function handleCommand(cmd){
-    console.log(cmd)
     if(cmd == "regenerate-map"){
         generateLevel()
     }
     if(cmd=="help"){
-        document.getElementById("console-text").textContent += "--Help Screen--\nCommands: \n-@help: pulls up this screen\n-@regenerate-map: generates a new level"
+        document.getElementById("console-text").textContent += "--Help Screen--\nCommands: \n-@help: pulls up this screen\n-@regenerate-map: generates a new level\n-@toggleDebugMode: turns debug mode on and off"
     }
+    if(cmd =="toggleDebugMode")
+    {
+        Debug.unfetteredMovement = !Debug.unfetteredMovement
+    }
+}
+function mouseInArea(sX, sY, eX, eY){
+    return(mouseX > sX && mouseX <eX && mouseY > sY && mouseY < eY)
 }
