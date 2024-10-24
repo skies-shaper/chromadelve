@@ -255,6 +255,7 @@ function drawEntities(){
     }
     //character
     if(Debug.unfetteredMovement){
+        screen.filter = "opacity(75%)"
         screen.drawImage(document.getElementById("Characters_Player_DebugGhost_"+entityAnimationStage),216,156,48,48)
     }
     else{
