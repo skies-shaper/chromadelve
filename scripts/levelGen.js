@@ -17,7 +17,7 @@ const structures = {
     }
 }
 let bossRoomExists
-let level, grid, paths, numRooms
+let  grid, paths, numRooms
 let Global_State = 0
 let numPaths = 0
 let tiles = {

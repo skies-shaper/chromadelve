@@ -84,7 +84,7 @@ window.addEventListener("keyup",(event)=>{
 
 
 setInterval(gameloop,(1000/60))
-
+setInterval(autoSave, 30000)
 let showMap = false
 
 function drawMap(){
@@ -191,12 +191,16 @@ function drawHUD(){
         })
     }
     for(let i = 0; i<4;i++){
+        let btnOffset = 0
+        if(mouseInArea(387,87+(i*51),477,(48+87+(i*51)))){
+            btnOffset = -6
+        }
         if(player.inventory.equipped[i].type == itemTypes.spell){
-            if(mouseInArea(387,87+(i*51),477,(48+87+(i*51)))){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),381,87+(i*51),90,48)
-            }
-            else
-            screen.drawImage(document.getElementById("GUI_SpellScroll"),387,87+(i*51),90,48)
+            addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                useItem(i)
+            },false)
+            screen.font = "10px Kode Mono"
+            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
         }
         if(player.inventory.equipped[i].itemType == "consumable"){
 
@@ -204,11 +208,15 @@ function drawHUD(){
     }
 }
 
+function useItem(itemIdx){
+    alert(player.inventory.equipped[itemIdx].name)
+}
+
 function handleEntityLogic(){
 
 }
 
-function addButton(id,src, x, y, w, h, callback){
+function addButton(id,src, x, y, w, h, callback,highlight){
     if(buttonEvents.indexOf(id) == -1){
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup",()=>{
@@ -220,7 +228,8 @@ function addButton(id,src, x, y, w, h, callback){
     
     if(mouseInArea(x,y,x+w,y+h))
     {
-        screen.filter = "brightness(140%)"
+        if(highlight != false)
+            screen.filter = "brightness(140%)"
     }
     screen.drawImage(document.getElementById(src), x, y, w, h)
     screen.filter = "none"
@@ -231,6 +240,9 @@ function drawTiles(){
     for(let i = 0; i<9;i++){
         for(let j = 0; j<11; j++){
             // console.log(level[i][j])
+            if(Math.min(i+player.yPos-4,player.xPos+j-5) < 0){
+                continue;
+            }
             if((j*48)-24 < mouseX && (j+1)*48-24 > mouseX && (i*48)-36 < mouseY && (i+1)*48-36 > mouseY && (level[i+player.yPos-4][player.xPos+j-5] != 0)){
                 mouseGridX = j
                 mouseGridY = i
@@ -264,17 +276,29 @@ function drawEntities(){
     }
 }
 function handlePlayerMovement(key){
+    if(typeof key === "undefined"){
+        return
+    }
+
     if(Debug.unfetteredMovement){
         switch(key){
+            case "a":
+            case "A":
             case "ArrowLeft":
                 player.xPos--
                 break;
+            case "d":
+            case "D":
             case "ArrowRight":
                 player.xPos++
-                break;                
+                break; 
+            case "w":
+            case "W":               
             case "ArrowUp":
                 player.yPos--
                 break;
+            case "s":
+            case "S":
             case "ArrowDown":
                 player.yPos++
                 break;        
@@ -282,6 +306,8 @@ function handlePlayerMovement(key){
         return
     }
     switch(key){
+        case "a":
+        case "A":
         case "ArrowLeft":
             
             player.xPos--
@@ -289,13 +315,17 @@ function handlePlayerMovement(key){
                 player.xPos++
             }
             break;
+        case "d":
+        case "D":
         case "ArrowRight":
             player.xPos++
             if(tileSRC[level[player.yPos][player.xPos]].collision){
                 player.xPos--
             }
 
-            break;                
+            break;   
+        case "w":
+        case "W":             
         case "ArrowUp":
             player.yPos--
             if(tileSRC[level[player.yPos][player.xPos]].collision){
@@ -303,6 +333,8 @@ function handlePlayerMovement(key){
             }
 
             break;
+        case "s":
+        case "S":
         case "ArrowDown":
             player.yPos++
             if(tileSRC[level[player.yPos][player.xPos]].collision){
