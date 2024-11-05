@@ -177,9 +177,9 @@ function drawPauseMenu(){
     })
     screen.fillStyle = "white"
     screen.font = "20px Kode Mono"
-    screen.fillText("Game Paused", 39,27)
-    screen.fillText("-Quit", 39,50)
-    screen.fillText("-Options", 39,73)
+    screen.fillText(messages.popups.pauseMenu.gamePaused, 39,27)
+    screen.fillText(messages.popups.pauseMenu.gameQuit, 39,50)
+    screen.fillText(messages.popups.pauseMenu.gameOptionsButton, 39,73)
     screen.font = "12px Kode Mono"
 
 
@@ -247,7 +247,7 @@ function drawTiles(){
                 mouseGridX = j
                 mouseGridY = i
             }
-            if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>0 && (i+player.yPos-4)>0){
+            if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>-1 && (i+player.yPos-4)>-1){
                 screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
             }
         }
@@ -388,7 +388,7 @@ function handleCommand(cmd){
         generateLevel()
     }
     if(cmd=="help"){
-        document.getElementById("console-text").textContent += "--Help Screen--\nCommands: \n-@help: pulls up this screen\n-@regenerate-map: generates a new level\n-@toggleDebugMode: turns debug mode on and off"
+        document.getElementById("console-text").textContent += messages.console.helpScreen
     }
     if(cmd =="toggleDebugMode")
     {

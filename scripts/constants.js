@@ -1,3 +1,26 @@
+let messages = {
+    console: {
+        helpScreen: ""
+    },
+    popups: {
+        pauseMenu: {
+            gamePaused: "",
+            gameQuit: "", 
+            gameOptionsButton: ""
+        },
+        debugNotifications: {
+            playerCoordinates: {
+                playerX: "",
+                playerY: ""
+            },
+            unfetteredMovement: "",
+            mouseCoordinates: {
+                mouseX: "",
+                mouseY: ""
+            }
+        }
+    }
+}
 let directions = {
     up:0,
     down:1,
