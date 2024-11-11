@@ -4,6 +4,9 @@
     2: display
 */
 
+gameInit()
+
+
 let buttonEvents = []
 let mouseDown
 let isPaused, isShiftPressed
@@ -89,6 +92,7 @@ let showMap = false
 
 function drawMap(){
     screen.fillStyle = "tan";
+
     screen.drawImage(document.getElementById("GUI_mapBG"),108,48,264,264)
     for(let i = 0; i<level.length; i++){ //y
         for(let j = 0; j<level[i].length; j++){ //x
@@ -151,6 +155,7 @@ function gameloop(){
         //scripts that update if the game is running
         if(!isPaused){
             handlePlayerMovement()
+            handleTurnLogic()
             handleEntityLogic()
         }
         //scripts that update always
@@ -181,14 +186,26 @@ function drawPauseMenu(){
     screen.fillText(messages.popups.pauseMenu.gameQuit, 39,50)
     screen.fillText(messages.popups.pauseMenu.gameOptionsButton, 39,73)
     screen.font = "12px Kode Mono"
-
-
 }
 function drawHUD(){
     if(!isPaused){
         addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
             isPaused = true
         })
+        if(!isPaused && showMouseIndicator && (level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] != 0)){
+            if(mouse.mode == mouseModes.select){
+                screen.strokeStyle = "yellow"
+                screen.lineWidth = 3
+                screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
+            }
+            if(mouse.mode == mouseModes.target){
+                screen.drawImage(document.getElementById("GUI_mouse_target"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+            }
+            if(mouse.mode == mouseModes.target_invalid){
+                screen.drawImage(document.getElementById("GUI_mouse_noTarget"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+
+            }
+        }
     }
     for(let i = 0; i<4;i++){
         let btnOffset = 0
@@ -196,21 +213,79 @@ function drawHUD(){
             btnOffset = -6
         }
         if(player.inventory.equipped[i].type == itemTypes.spell){
-            addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
-                useItem(i)
-            },false)
+            if(isPaused){
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+            }
+            else{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                    focusItem(i)
+                },false)
+            }
             screen.font = "10px Kode Mono"
             screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
         }
-        if(player.inventory.equipped[i].itemType == "consumable"){
+        if(player.inventory.equipped[i].type == itemTypes.weapon){
+            if(isPaused){
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+            }
+            else{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                    focusItem(i)
+                },false)
+            }
+            screen.font = "10px Kode Mono"
+            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
+        }
 
+        if(GUI.focusedItem == i){
+            screen.fillStyle = "green"
+            screen.fillRect(381+btnOffset,87+(i*51),3,48)
+            screen.fillStyle = "black"
         }
     }
 }
 
-function useItem(itemIdx){
-    alert(player.inventory.equipped[itemIdx].name)
+function focusItem(itemIdx){
+    round.progression = round.progressionStates.useItem
+    GUI.focusedItem = itemIdx
 }
+function useItem(itemIdx){
+    //various checks
+
+    mouse.mode = mouseModes.select
+    GUI.focusedItem = -1
+    round.progression = round.progressionStates.notUsingItem
+}
+function handleTurnLogic(){
+    if(round.progression == round.progressionStates.useItem){
+        let item = player.inventory.equipped[GUI.focusedItem]
+        mouse.mode  = mouseModes.target_invalid
+        let rangeDist = item.data.range.distance
+
+        switch(item.data.range.rangeType){
+            case range.self: 
+                if(mouseGridX == 5 && mouseGridY == 4){
+                    mouse.mode= mouseModes.target
+                    
+                }
+                
+                break;
+            case range.adjacent:
+                if(mouseGridX > (4-rangeDist) && mouseGridX < (6+rangeDist) && mouseGridY > (3-rangeDist) && mouseGridY < (5+rangeDist) && !(mouseGridX == 5 && mouseGridY == 4)){
+                    mouse.mode = mouseModes.target
+                }
+                break;
+            case range.ray: 
+                if(((mouseGridX == 5 && (mouseGridY > (3-rangeDist) && mouseGridY <(5+rangeDist))) || (mouseGridX > (4-rangeDist) && mouseGridX < (6+rangeDist) && mouseGridY == 4)) && !(mouseGridX == 5 && mouseGridY == 4)){
+                    mouse.mode = mouseModes.target
+                }                
+        }
+        if(mouse.mode == mouseModes.target && mouseDown){
+            useItem(GUI.focusedItem)
+        }
+    }
+}
+
 
 function handleEntityLogic(){
 
@@ -251,11 +326,7 @@ function drawTiles(){
                 screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
             }
         }
-        if(!isPaused && showMouseIndicator && (level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] != 0)){
-            screen.strokeStyle = "yellow"
-            screen.lineWidth = 3
-            screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
-        }
+        
     }
 }
 function drawEntities(){
@@ -274,6 +345,7 @@ function drawEntities(){
         screen.drawImage(document.getElementById("Characters_Player_DebugGhost_"+entityAnimationStage),216,156,48,48)
 
     }
+    screen.filter = "none"
 }
 function handlePlayerMovement(key){
     if(typeof key === "undefined"){
@@ -367,9 +439,9 @@ function handleDebugScreen(){
             }
             if(key == "showMouseXY"){
                 screen.fillStyle = "black";
-                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY,10,64)
+                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY+". Mouse Tile X: "+mouseGridX+", Mouse Tile Y: "+mouseGridY,10,64)
                 screen.fillStyle = "lightblue";
-                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY,11,65)
+                screen.fillText("Mouse X: "+mouseX+", Mouse Y: "+mouseY+". Mouse Tile X: "+mouseGridX+", Mouse Tile Y: "+mouseGridY,11,65)
             }
         }
     })
@@ -397,4 +469,38 @@ function handleCommand(cmd){
 }
 function mouseInArea(sX, sY, eX, eY){
     return(mouseX > sX && mouseX <eX && mouseY > sY && mouseY < eY)
+}
+
+
+function gameInit(){
+    //player initialization. Once the player chooses an element,
+    //base dodge and health are set.
+    switch(player.element){
+        case elements.water: 
+            player.stats.health = 41
+            player.stats.dodge = 1
+            break;
+        case elements.air: 
+            player.stats.health = 35
+            player.stats.dodge = 6
+            break;
+        case elements.fire: 
+            player.stats.health = 32
+            player.stats.dodge = 2
+            break;
+        case elements.poison: 
+            player.stats.health = 38
+            player.stats.dodge = 2
+            break;
+        case elements.life: 
+            player.stats.health = 44
+            player.stats.dodge = 3
+            break;
+        case elements.lightning: 
+            player.stats.health = 29
+            player.stats.dodge = 5
+            break;
+
+
+    }
 }

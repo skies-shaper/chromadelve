@@ -18,6 +18,7 @@ function englishLocalization(){ //this is the base translation function. It puts
     items.shortSword.name = "Short Sword"
     items.minorHealthPotion.name = "Minor Health Potion"
     items.spell1.name = "Example Spell"
+    items.spell2.name = "Zappy zap zap"
 }
 function germanLocalization() {
     alert(0)
