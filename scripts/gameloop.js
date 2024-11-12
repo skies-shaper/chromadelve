@@ -21,6 +21,12 @@ window.addEventListener("mousedown",()=>{
 })
 window.addEventListener("mouseup",()=>{
     mouseDown = false
+    for(let i = 0; i<mouseUpEvents.length; i++){
+        if(mouseUpEvents[i]=="mkAttack"){
+            useItem(GUI.focusedItem)
+        }
+    }
+    mouseUpEvents = []
 })
 window.addEventListener("keydown",(event)=>{
     showMouseIndicator = false
@@ -207,6 +213,20 @@ function drawHUD(){
             }
         }
     }
+    screen.drawImage(document.getElementById("GUI_statsBack"),357,3,120,120)
+    //health rectangle
+    screen.fillStyle = "red"
+    if(player.stats.health/player.stats.maxHealth < 0.2 && entityAnimationStage == 1){
+        screen.fillStyle = "darkred"
+    }
+    let healthHeighConversion = Math.round(((player.stats.health/player.stats.maxHealth)*33)/3)*3
+    screen.fillRect(363,45-healthHeighConversion,39,healthHeighConversion)
+    screen.drawImage(document.getElementById("GUI_statsFront"),357,3,120,120)
+    screen.font = "14px Kode Mono"
+    screen.fillText(player.stats.health+" "+messages.GUI.HP,410,29)
+    screen.fillStyle = "slategrey"
+    screen.fillText(((player.stats.dodge / gameConstants.maxDodge)*100+"%").padStart(3,"0").padStart(4," "),405,71)
+    screen.fillStyle = "black"
     for(let i = 0; i<4;i++){
         let btnOffset = 0
         if(mouseInArea(387,87+(i*51),477,(48+87+(i*51)))){
@@ -236,6 +256,18 @@ function drawHUD(){
             screen.font = "10px Kode Mono"
             screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
         }
+        if(player.inventory.equipped[i].type == itemTypes.consumable){
+            if(isPaused){
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+            }
+            else{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                    focusItem(i)
+                },false)
+            }
+            screen.font = "10px Kode Mono"
+            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
+        }
 
         if(GUI.focusedItem == i){
             screen.fillStyle = "green"
@@ -244,6 +276,9 @@ function drawHUD(){
         }
     }
 }
+function healthRect(){
+    screen.fillRect((363-((player.stats.health/player.stats.maxHealth)*33)),45,36,((player.stats.health/player.stats.maxHealth)*33))
+}
 
 function focusItem(itemIdx){
     round.progression = round.progressionStates.useItem
@@ -251,6 +286,31 @@ function focusItem(itemIdx){
 }
 function useItem(itemIdx){
     //various checks
+    let item = player.inventory.equipped[itemIdx]
+    let affectedEntity = ()=>{
+        entities.forEach((entity)=>{
+            if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridX+player.yPos-4){
+                return entity
+            }
+        })
+    }
+    switch(item.type){
+        case itemTypes.weapon:
+            //deals damage
+            break;
+        case itemTypes.spell:
+            //does magic things
+            break;
+        case itemTypes.consumable: //Handles the running of potion effects
+            switch(item.data.effect){
+                case effects.healthIncrease:
+                    player.stats.health = player.stats.health+item.data.power
+                    if(player.stats.health>player.stats.maxHealth){
+                        player.stats.health = player.stats.maxHealth
+                    }
+            }
+            break;
+    }
 
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
@@ -265,7 +325,7 @@ function handleTurnLogic(){
         switch(item.data.range.rangeType){
             case range.self: 
                 if(mouseGridX == 5 && mouseGridY == 4){
-                    mouse.mode= mouseModes.target
+                    mouse.mode = mouseModes.target
                     
                 }
                 
@@ -280,7 +340,9 @@ function handleTurnLogic(){
                     mouse.mode = mouseModes.target
                 }                
         }
-        if(mouse.mode == mouseModes.target && mouseDown){
+        if(mouse.mode == mouseModes.target && mouseDown && !mouseUpEvents.includes("mkAttack")){
+            // mouseUpEvents.push("mkAttack")
+            // console.log("attack")
             useItem(GUI.focusedItem)
         }
     }
@@ -503,4 +565,16 @@ function gameInit(){
 
 
     }
+    player.stats.maxHealth = player.stats.health
+}
+
+function spawnEntity(tName){
+    let entityData = entityTemplates.entries().forEach((e)=>{
+        if(e.name == tName){
+            return(e)
+        }
+    })
+    entityData.UID = numEntities
+    numEntities++
+    entities.push(entityData)
 }

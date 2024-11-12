@@ -21,7 +21,7 @@ function englishLocalization(){ //this is the base translation function. It puts
     items.spell2.name = "Zappy zap zap"
 }
 function germanLocalization() {
-    alert(0)
+    
 }
 function spanishLocalization(){
 

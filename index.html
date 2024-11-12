@@ -71,13 +71,20 @@
         a{
             color: darkturquoise;
         }
-        
+        #menu h2{
+            float: left;
+            margin: 5px;
+            margin-top: 9px;
+        }
+        #menu img{
+            float: left;
+        }
     </style>
 
 </head>
 <body>
-    <div id="menu">I'm sticking a menu up here for the future.  
-       <span property="dct:title">This work</span> is licensed under a CC BY-NC-SA 4.0 license. <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Here's what that means.<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a>
+    <div id="menu"><img src="imgs/GUI/chromadelve-beta logo.png" style="margin:2px;"/><h2>"One day, this shall be a menu" -Unkown</h2>  
+       
     </div>
     <div id="gamebox">
     <h1>Chromadelve</h1>
@@ -96,8 +103,16 @@
         <li>'t': opens the chat box</li>
         <li>'esc': pauses the game.</li>
     </ul>
+    <span property="dct:title">This work</span> is licensed under a CC BY-NC-SA 4.0 license. (2024) <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Here's what that means.<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a>
     <div id="changelog">
         <h2>Changelog: </h2>
+        <div>
+            <h3>-November 11, 2024 (v0.0.1)</h3>
+            <p>
+                Quite a bit of progress! First off, attacks now fire as soon as you click - this is to simplify the code, but could be changed in the future. A health and dodge bar has been added to the top right of the screen, and a logo has been created! the 'minor health potion' is now implemented, heals 10 damage, and is auto-equipped. Next are more spells and attacks, once an enemy or two has been added. ALSO added a way to create enemy entities and so forth (basic objects, no AI or anything. ...yet)
+                -Skies :D
+            </p>
+        </div>
         <div>
             <h3>-November 10, 2024</h3>
             <p>
@@ -141,6 +156,9 @@
     <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
     <div style="display:none;">
         <!--GUI :D-->
+        <img src="imgs/GUI/stats-back.png" id="GUI_statsBack">
+        <img src="imgs/GUI/stats-front.png" id="GUI_statsFront">
+
         <img src="imgs/GUI/pause.png" id="GUI_Pause">
         <img src="imgs/GUI/unpause.png" id="GUI_Unpause">
         <img src="imgs/GUI/spellscroll.png" id="GUI_SpellScroll">

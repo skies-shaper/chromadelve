@@ -1,3 +1,4 @@
+let numEntities = 0
 let messages = {
     console: {
         helpScreen: ""
@@ -19,6 +20,9 @@ let messages = {
                 mouseY: ""
             }
         }
+    },
+    GUI: {
+        HP: "HP"
     }
 }
 
@@ -39,7 +43,7 @@ let animations = []
 const itemTypes = {
     null: 0,
     weapon: 1, //something that just deals damage
-    consumable: 2, //potions, etc that have limited uses ever until collected
+    consumable: 2, //potions, etc that have limited uses ever until more are collected, but that you can have multiple of. Will have an effect, range, and power.
     consumer: 3, //like, a bow that requires ammunition or it won't work. (1x per turn)
     spell: 4 //a spell is something that can only be cast a certain number of times / turn (has a recharge), and so forth.
 }
@@ -67,7 +71,7 @@ const items = {
     shortSword: {
         name: "Short Sword", type: itemTypes.weapon, data: {
             damage: damageObj(0, 6),
-            range: rangeObj(range.adjacent,2),
+            range: rangeObj(range.adjacent,1),
             splash: 0,
             critThreshold: 20, //Assuming a 1d20 damage system, Accuracy is based off of opponent's dodge (which is 1-20). If the accuracy roll is >= critThreshold, then we have a crit! yay!
             accuracyBonus: 0
@@ -116,11 +120,12 @@ let player = {
     yPos: 37,
     stats: {
         dodge: 0, //D&D based 1-10, initialized based on character type
-        health: 0
+        health: 0,
+        maxHealth: 0
     },
 
     inventory: {
-        equipped: [items.spell1, items.shortSword, items.spell2, items.spell1],
+        equipped: [items.spell1, items.shortSword, items.spell2, items.minorHealthPotion],
         backpack: []
     }
 }
@@ -136,6 +141,7 @@ const itemTemplates = {
     }
 };
 const entityTemplate = {
+    UID: 0,
     name: "",
     src: "",
     xPos: 0,
@@ -143,6 +149,11 @@ const entityTemplate = {
     attacks: [],
     drops: []
 }
+
+let potentialEntities = {
+
+}
+
 
 const screen = document.getElementById("gamewindow").getContext("2d");
 const mapColors = { 0: "#000000", 1: "#000000", 2: "#808080", 3: "#ff0000", 4: "#00ff00" }
@@ -183,4 +194,10 @@ let round = {
         enemyTime: 3
     },
     progression: 1
+}
+
+let mouseUpEvents = []
+
+let gameConstants = {
+    maxDodge: 10
 }
