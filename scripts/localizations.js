@@ -16,12 +16,12 @@ function englishLocalization(){ //this is the base translation function. It puts
     //item names, etc
     items.null.name = "Null Item"
     items.shortSword.name = "Short Sword"
-    items.minorHealthPotion.name = "Minor Health Potion"
+    items.minorHealthPotion.name = "Health Pot. I"
     items.spell1.name = "Example Spell"
     items.spell2.name = "Zappy zap zap"
 }
 function germanLocalization() {
-    
+
 }
 function spanishLocalization(){
 

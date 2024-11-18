@@ -99,7 +99,7 @@ let showMap = false
 function drawMap(){
     screen.fillStyle = "tan";
 
-    screen.drawImage(document.getElementById("GUI_mapBG"),108,48,264,264)
+    screen.drawImage(document.getElementById("GUI_mapBG"),90,48,264,264)
     for(let i = 0; i<level.length; i++){ //y
         for(let j = 0; j<level[i].length; j++){ //x
 
@@ -194,9 +194,17 @@ function drawPauseMenu(){
     screen.font = "12px Kode Mono"
 }
 function drawHUD(){
+    screen.drawImage(document.getElementById("GUI_chat"),9,315,39,27)
     if(!isPaused){
         addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
             isPaused = true
+        })
+        addButton("#GUI_Buttons_Chat","GUI_chat",9,315,39,27,()=>{
+            document.getElementById("gameConsole").style.visibility = "visible"
+            document.getElementById("console-text").style.visibility = "visible"
+            document.getElementById("gameConsole").focus()
+            document.getElementById("gameConsole").value = ""
+            isTyping = true
         })
         if(!isPaused && showMouseIndicator && (level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] != 0)){
             if(mouse.mode == mouseModes.select){
@@ -242,7 +250,7 @@ function drawHUD(){
                 },false)
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
         }
         if(player.inventory.equipped[i].type == itemTypes.weapon){
             if(isPaused){
@@ -254,7 +262,7 @@ function drawHUD(){
                 },false)
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
         }
         if(player.inventory.equipped[i].type == itemTypes.consumable){
             if(isPaused){
@@ -266,7 +274,7 @@ function drawHUD(){
                 },false)
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name,391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
         }
 
         if(GUI.focusedItem == i){
@@ -289,7 +297,7 @@ function useItem(itemIdx){
     let item = player.inventory.equipped[itemIdx]
     let affectedEntity = ()=>{
         entities.forEach((entity)=>{
-            if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridX+player.yPos-4){
+            if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridY+player.yPos-4){
                 return entity
             }
         })
@@ -339,6 +347,9 @@ function handleTurnLogic(){
                 if(((mouseGridX == 5 && (mouseGridY > (3-rangeDist) && mouseGridY <(5+rangeDist))) || (mouseGridX > (4-rangeDist) && mouseGridX < (6+rangeDist) && mouseGridY == 4)) && !(mouseGridX == 5 && mouseGridY == 4)){
                     mouse.mode = mouseModes.target
                 }                
+        }
+        if(tileSRC[level[mouseGridY+player.yPos-4][mouseGridX+player.xPos-5]].collision){
+            mouse.mode = mouseModes.target_invalid
         }
         if(mouse.mode == mouseModes.target && mouseDown && !mouseUpEvents.includes("mkAttack")){
             // mouseUpEvents.push("mkAttack")

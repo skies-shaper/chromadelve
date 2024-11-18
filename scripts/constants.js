@@ -163,6 +163,7 @@ let level_color = "orange"
 let isTyping = false
 let gameConsole = []
 let level = []
+let collisionMask = []
 let mouseX = 0
 let mouseY = 0
 

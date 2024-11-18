@@ -121,12 +121,14 @@ function generateLevel(){
         paths = []
         level = []
         grid = []
+        collisionMask= []
         for(let i = 0; i<78;i++){
             let temp = []
             for(let j = 0; j<78;j++){
                 temp.push(false)
             }
             level.push(temp)
+            collisionMask.push(temp)
         }
         for(let i = 0; i<7; i++){
             let temp = []
@@ -228,7 +230,6 @@ function generateLevel(){
         }
     }
 
-    
 
     console.log("Level Generation Done!")
     Global_State = 2
