@@ -143,7 +143,11 @@ document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
     
     isTyping = false
 })
+
 function gameloop(){
+    if(typeof animations.player === 'undefined'){
+        loadInAnimations()
+    }
     gameTicks++
     screen.imageSmoothingEnabled= false
     screen.fillStyle ="black";
@@ -403,22 +407,23 @@ function drawTiles(){
     }
 }
 function drawEntities(){
-    if(gameTicks%20 == 0){
-        entityAnimationStage = 1
+    if(gameTicks%10 == 0){
+        entityAnimationStage++
+        if(entityAnimationStage % gameConstants.maxAnimationLoopIndex ==0){
+            entityAnimationStage = 0
+        }
     }
-    if(gameTicks%20 == 10){
-        entityAnimationStage = 2
-    }
-    //character
+    
+    //player character
     if(Debug.unfetteredMovement){
         screen.filter = "opacity(75%)"
         screen.drawImage(document.getElementById("Characters_Player_DebugGhost_"+entityAnimationStage),216,156,48,48)
     }
     else{
-        screen.drawImage(document.getElementById("Characters_Player_DebugGhost_"+entityAnimationStage),216,156,48,48)
-
+        screen.drawImage(animations.player.nextFrame(),216,156,48,48)
     }
     screen.filter = "none"
+    
 }
 function handlePlayerMovement(key){
     if(typeof key === "undefined"){
@@ -577,7 +582,11 @@ function gameInit(){
 
     }
     player.stats.maxHealth = player.stats.health
+    
 }
+
+
+
 
 function spawnEntity(tName){
     let entityData = entityTemplates.entries().forEach((e)=>{

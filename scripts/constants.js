@@ -40,6 +40,29 @@ let directions = {
 }
 let entities = []
 let animations = []
+function loadInAnimations(){
+    animations = {
+        player: {
+            maxFrames: 2,
+            currentFrame: 0,
+            frames: [
+                document.getElementById("Characters_Player_DebugGhost_1"),
+                document.getElementById("Characters_Player_DebugGhost_2")
+            ],
+            nextFrame: nF
+        }
+    }
+}
+
+function nF(){
+    if(gameTicks%10 == 0)
+    {
+        this.currentFrame ++
+        this.currentFrame %= this.maxFrames    
+    }
+    return this.frames[this.currentFrame]
+}
+
 const itemTypes = {
     null: 0,
     weapon: 1, //something that just deals damage
@@ -149,6 +172,14 @@ const entityTemplate = {
     attacks: [],
     drops: []
 }
+const animationTemplate = {
+    maxFrames: 1,
+    frames: [
+        document.getElementById("animationTemplate_frame1"),
+        document.getElementById("animationTemplate_frame2"),
+        document.getElementById("animationTemplate_frame3")
+    ]
+}
 
 let potentialEntities = {
 
@@ -200,5 +231,6 @@ let round = {
 let mouseUpEvents = []
 
 let gameConstants = {
-    maxDodge: 10
+    maxDodge: 10,
+    maxAnimationLoopIndex: 30
 }
