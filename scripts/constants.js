@@ -39,26 +39,66 @@ let directions = {
     right: 3
 }
 let entities = []
-let animations = []
+let animations = {}
 function loadInAnimations(){
     animations = {
         player: {
+            tileX: -1,
+            tileY: -1,
+            rotation: -1,
             maxFrames: 2,
             currentFrame: 0,
+            repeat: true,
             frames: [
                 document.getElementById("Characters_Player_DebugGhost_1"),
                 document.getElementById("Characters_Player_DebugGhost_2")
+            ],
+            nextFrame: nF
+        },
+        testAnimation: {
+            tileX: 10,
+            tileY: 10,
+            rotation: 0,
+            maxFrames: 2,
+            currentFrame: 0,
+            repeat: true,
+            frames: [
+                document.getElementById("Characters_Player_DebugGhost_1"),
+                document.getElementById("Characters_Player_DebugGhost_2")
+            ],
+            nextFrame: nF
+        },
+        fade: {
+            tileX: 10,
+            tileY: 10,
+            rotation: 0,
+            maxFrames: 2,
+            currentFrame: 0,
+            repeat: false,
+            frames: [
+                document.getElementById("GUI_chat"),
+                document.getElementById("GUI_mouse_target"),
+                document.getElementById("GUI_chat"),
+                document.getElementById("GUI_Pause")
             ],
             nextFrame: nF
         }
     }
 }
 
+let activeAnimations = []
+
 function nF(){
     if(gameTicks%10 == 0)
     {
         this.currentFrame ++
-        this.currentFrame %= this.maxFrames    
+        if(this.repeat){
+            this.currentFrame %= this.maxFrames    
+        }
+
+    }
+    if(!this.repeat && this.currentFrame>this.maxFrames){
+        return document.getElementById("Blank")
     }
     return this.frames[this.currentFrame]
 }

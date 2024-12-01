@@ -417,14 +417,63 @@ function drawEntities(){
     //player character
     if(Debug.unfetteredMovement){
         screen.filter = "opacity(75%)"
-        screen.drawImage(document.getElementById("Characters_Player_DebugGhost_"+entityAnimationStage),216,156,48,48)
+        screen.drawImage(document.getElementById("Characters_Player_DebugGhost_1"),216,156,48,48)
     }
     else{
         screen.drawImage(animations.player.nextFrame(),216,156,48,48)
     }
     screen.filter = "none"
+    for(let i = 0; i<activeAnimations.length;i++){
+        let a = activeAnimations[i]
+        let rR = a.rotation
+        if(rR%90 != 0){
+            rR = 0
+        }
+        let offsetX = 0
+        let offsetY  =0
+        switch(rR%360){
+            case 0: 
+                break;
+            case 90: 
+                offsetX = -48
+                break;
+            case 180: 
+                offsetX = -48
+                offsetY = -48
+                break;
+            case 270: 
+                offsetY  = -48
+                break;
+        }
+        let drawX = 216+(a.tileX - player.xPos) * 48 - offsetX
+        let drawY = 156+(a.tileY - player.yPos) * 48 - offsetY
+        screen.translate(drawX,drawY);
+        screen.rotate(a.rotation * (Math.PI/180))
+        screen.drawImage(a.nextFrame(),0,0,48,48)
+        screen.rotate(-a.rotation * (Math.PI/180))
+        screen.translate(-drawX, -drawY)
+
+    }
+    let tempArray = []
+    for(let i = 0; i<activeAnimations.length;i++){
+        if(activeAnimations[i].currentFrame  <= activeAnimations[i].maxFrames)
+        {
+            tempArray.push(activeAnimations[i])
+        }
+    }
+    activeAnimations = tempArray
+
+}
+
+function addAnimation(id,x,y,r){
+    activeAnimations.push({})
+    Object.assign(activeAnimations[activeAnimations.length-1], animations[id])
+    activeAnimations[activeAnimations.length-1].tileX = x
+    activeAnimations[activeAnimations.length-1].tileY = y
+    activeAnimations[activeAnimations.length-1].rotation = r
     
 }
+
 function handlePlayerMovement(key){
     if(typeof key === "undefined"){
         return
