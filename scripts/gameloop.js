@@ -92,7 +92,7 @@ window.addEventListener("keyup",(event)=>{
 })
 
 
-setInterval(gameloop,(1000/60))
+const killID = setInterval(gameloop,(1000/60))
 setInterval(autoSave, 30000)
 let showMap = false
 
@@ -241,59 +241,99 @@ function drawHUD(){
     screen.fillStyle = "black"
     for(let i = 0; i<4;i++){
         let btnOffset = 0
-        if(mouseInArea(387,87+(i*51),477,(48+87+(i*51)))){
+        cItem = player.inventory.equipped[i]
+        if(mouseInArea(387,87+(i*57),477,(48+87+(i*57)))){
             btnOffset = -6
         }
-        if(player.inventory.equipped[i].type == itemTypes.spell){
+        if(cItem.type == itemTypes.spell){
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
+                cooldownBar()
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
+                cooldownBar(i,btnOffset)
+                
+
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
         }
         if(player.inventory.equipped[i].type == itemTypes.weapon){
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
         }
         if(player.inventory.equipped[i].type == itemTypes.consumable){
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*51),90,48)
+                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*51),90,48,()=>{
+                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
             }
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*51))
+            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
         }
 
         if(GUI.focusedItem == i){
             screen.fillStyle = "green"
-            screen.fillRect(381+btnOffset,87+(i*51),3,48)
+            screen.fillRect(381+btnOffset,87+(i*57),3,48)
             screen.fillStyle = "black"
         }
     }
+}
+function cooldownBar(i,btnOffset){
+    let cItem = player.inventory.equipped[i]
+    let maxCooldown = cItem.data.cooldown
+    let currentCooldown = cItem.data.cooldownTime
+    screen.fillStyle = "grey"  
+    screen.fillRect(396+btnOffset,102+(i*57),72,3)
+    if(maxCooldown < 1){
+        screen.fillStyle = "mediumSeaGreen"
+        
+        
+        screen.fillRect(396+btnOffset, 102+(i*57), (currentCooldown*72), 3)
+        
+        screen.fillStyle="black"
+
+        for(let j = 0; j < 1/maxCooldown - 1; j++){
+            screen.fillRect(396+btnOffset+((j+1)*maxCooldown*72), 102+(i*57), 3, 3)
+        }
+        return
+    }
+    if(maxCooldown == currentCooldown){
+        screen.fillStyle = "MediumSeaGreen"
+    }
+    else{
+        screen.fillStyle = "green"
+    }
+    screen.fillRect(396+btnOffset,102+(i*57),(72*(currentCooldown/maxCooldown)),3)
+
+
+
+    screen.fillStyle = "black"  
 }
 function healthRect(){
     screen.fillRect((363-((player.stats.health/player.stats.maxHealth)*33)),45,36,((player.stats.health/player.stats.maxHealth)*33))
 }
 
 function focusItem(itemIdx){
+    if(player.inventory.equipped[itemIdx].data.cooldownTime <=0){
+        return
+    }
     round.progression = round.progressionStates.useItem
+
     GUI.focusedItem = itemIdx
 }
 function useItem(itemIdx){
@@ -327,6 +367,7 @@ function useItem(itemIdx){
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
     round.progression = round.progressionStates.notUsingItem
+    item.data.cooldownTime -= item.data.cooldown
 }
 function handleTurnLogic(){
     if(round.progression == round.progressionStates.useItem){
@@ -465,6 +506,19 @@ function drawEntities(){
 
 }
 
+function inventoryPush(itemID){
+    player.inventory.backpack.push({})
+    Object.assign(player.inventory.backpack[player.inventory.backpack.length-1],items[itemID])
+}
+
+function hotbarSwap(backpackIndex, equippedIndex){
+    let temp1 = player.inventory.equipped[indexE]
+    let temp2 = player.inventory.backpack[indexB]
+    player.inventory.backpack = temp1
+    player.inventory.equipped = temp2
+
+}
+
 function addAnimation(id,x,y,r){
     activeAnimations.push({})
     Object.assign(activeAnimations[activeAnimations.length-1], animations[id])
@@ -542,6 +596,15 @@ function handlePlayerMovement(key){
 
             break;        
             
+    }
+    nextTurn()
+}
+
+function nextTurn(){
+    for(let i = 0; i<4; i++){
+        if(player.inventory.equipped[i].data.cooldownTime < Math.max(player.inventory.equipped[i].data.cooldown,1))
+            player.inventory.equipped[i].data.cooldownTime++
+        player.inventory.equipped[i].data.cooldownTime = Math.floor(player.inventory.equipped[i].data.cooldownTime)
     }
 }
 
@@ -627,8 +690,6 @@ function gameInit(){
             player.stats.health = 29
             player.stats.dodge = 5
             break;
-
-
     }
     player.stats.maxHealth = player.stats.health
     

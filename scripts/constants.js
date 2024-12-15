@@ -23,6 +23,11 @@ let messages = {
     },
     GUI: {
         HP: "HP"
+    },
+    cutscenes: {
+        intro_1: "",
+        intro_2: "",
+        intro_3: ""
     }
 }
 
@@ -133,6 +138,8 @@ const items = {
     null: { name: "Null Item", type: itemTypes.null, data: {} },
     shortSword: {
         name: "Short Sword", type: itemTypes.weapon, data: {
+            cooldown: 1,
+            cooldownTime: 1,
             damage: damageObj(0, 6),
             range: rangeObj(range.adjacent,1),
             splash: 0,
@@ -142,6 +149,7 @@ const items = {
     },
     minorHealthPotion: {
         name: "Minor Health Potion", type: itemTypes.consumable, data: {
+            uses: 1,
             effect: effects.healthIncrease,
             range: rangeObj(range.self,1),
             power: 10
@@ -150,7 +158,8 @@ const items = {
     spell1: {
         name: "example spell", type: itemTypes.spell, data: {
             element: elements.fire,
-            cooldown: 1,
+            cooldown: 1/3,
+            cooldownTime: 1,
             damage: damageObj(0, 6),
             splash: 0,
             range: rangeObj(range.self,1)
@@ -159,7 +168,8 @@ const items = {
     spell2: {
         name: "zappy spell", type: itemTypes.spell, data: {
             element: elements.lightning,
-            cooldown: 1,
+            cooldown: 2,
+            cooldownTime: 2,
             damage: damageObj(0, 6),
             splash: 0,
             range: rangeObj(range.ray,3)
@@ -213,11 +223,13 @@ const entityTemplate = {
     drops: []
 }
 const animationTemplate = {
-    maxFrames: 1,
+    tileX: -1,
+    tileY: -1,
+    rotation: 0,
+    maxFrames: 0,
+    currentFrame: 0,
+    repeat: true,
     frames: [
-        document.getElementById("animationTemplate_frame1"),
-        document.getElementById("animationTemplate_frame2"),
-        document.getElementById("animationTemplate_frame3")
     ]
 }
 
