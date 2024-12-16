@@ -200,6 +200,34 @@ function drawPauseMenu(){
 function drawHUD(){
     screen.drawImage(document.getElementById("GUI_chat"),9,315,39,27)
     if(!isPaused){
+        let mouseNoTouchZones = []
+        if(round.progression == round.progressionStates.notUsingItem){
+            let src = "GUI_mvArrow" + ((gameTicks % 30 > 20) ? "" : "_up")
+            if(!tileSRC[level[player.yPos+1][player.xPos]].collision){
+                addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
+                    movePlayer(directions.down, 1)
+                },true,180)
+                mouseNoTouchZones.push(player.xPos+","+(player.yPos+1))
+            }
+            if(!tileSRC[level[player.yPos-1][player.xPos]].collision){
+                addButton("#move_up",src,216, 156-48, 48, 48, ()=>{
+                    movePlayer(directions.up, 1)
+                },true,0)
+                mouseNoTouchZones.push(player.xPos+","+(player.yPos-1))
+            }
+            if(!tileSRC[level[player.yPos][player.xPos+1]].collision){
+                addButton("#move_right",src,216+48, 156, 48, 48, ()=>{
+                    movePlayer(directions.right, 1)
+                },true,90)
+                mouseNoTouchZones.push((player.xPos+1)+","+player.yPos)
+            }
+            if(!tileSRC[level[player.yPos][player.xPos-1]].collision){
+                addButton("#move_left",src,216-48, 156, 48, 48, ()=>{
+                    movePlayer(directions.left, 1)
+                },true,270)
+                mouseNoTouchZones.push((player.xPos-1)+","+player.yPos)
+            }
+        }
         addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
             isPaused = true
         })
@@ -211,17 +239,20 @@ function drawHUD(){
             isTyping = true
         })
         if(!isPaused && showMouseIndicator && (level[mouseGridY+player.yPos-4][player.xPos+mouseGridX-5] != 0)){
-            if(mouse.mode == mouseModes.select){
-                screen.strokeStyle = "yellow"
-                screen.lineWidth = 3
-                screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
-            }
-            if(mouse.mode == mouseModes.target){
-                screen.drawImage(document.getElementById("GUI_mouse_target"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
-            }
-            if(mouse.mode == mouseModes.target_invalid){
-                screen.drawImage(document.getElementById("GUI_mouse_noTarget"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+            
+            if(!mouseNoTouchZones.includes((mouseGridX+player.xPos-5)+","+(mouseGridY+player.yPos-4))){
+                if(mouse.mode == mouseModes.select){
+                    screen.strokeStyle = "yellow"
+                    screen.lineWidth = 3
+                    screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
+                }
+                if(mouse.mode == mouseModes.target){
+                    screen.drawImage(document.getElementById("GUI_mouse_target"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+                }
+                if(mouse.mode == mouseModes.target_invalid){
+                    screen.drawImage(document.getElementById("GUI_mouse_noTarget"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
 
+                }
             }
         }
     }
@@ -248,7 +279,7 @@ function drawHUD(){
         if(cItem.type == itemTypes.spell){
             if(isPaused){
                 screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
-                cooldownBar()
+                cooldownBar(i,btnOffset)
             }
             else{
                 addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
@@ -409,7 +440,7 @@ function handleEntityLogic(){
 
 }
 
-function addButton(id,src, x, y, w, h, callback,highlight){
+function addButton(id,src, x, y, w, h, callback,highlight, rotation){
     if(buttonEvents.indexOf(id) == -1){
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup",()=>{
@@ -424,7 +455,7 @@ function addButton(id,src, x, y, w, h, callback,highlight){
         if(highlight != false)
             screen.filter = "brightness(140%)"
     }
-    screen.drawImage(document.getElementById(src), x, y, w, h)
+    drawImageRotated(x, y, w, h, rotation, src)
     screen.filter = "none"
 }
 
@@ -707,4 +738,52 @@ function spawnEntity(tName){
     entityData.UID = numEntities
     numEntities++
     entities.push(entityData)
+}
+
+function drawImageRotated(x,y,w,h,r,src){
+    if(r%90 != 0){
+        r = 0
+    }
+    let offsetX = 0
+    let offsetY  =0
+    switch(r%360){
+        case 0: 
+            break;
+        case 90: 
+            offsetX = -48
+            break;
+        case 180: 
+            offsetX = -48
+            offsetY = -48
+            break;
+        case 270: 
+            offsetY  = -48
+            break;
+    }
+    let drawX = x - offsetX
+    let drawY = y - offsetY
+    screen.translate(drawX,drawY);
+    screen.rotate(r * (Math.PI/180))
+    screen.drawImage(document.getElementById(src),0,0,w,h)
+    screen.rotate(-r * (Math.PI/180))
+    screen.translate(-drawX, -drawY)
+}
+
+function movePlayer(direction, amount){
+    switch(direction){
+        case directions.left: 
+            player.xPos-= amount
+            break;
+        case directions.right: 
+            player.xPos+= amount
+            break;
+        case directions.up: 
+            player.yPos-=amount
+            break;
+        case directions.down: 
+            player.yPos+=amount
+            break;
+    }
+
+    nextTurn()
 }
