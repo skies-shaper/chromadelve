@@ -328,7 +328,7 @@ function drawHUD(){
 
         if(GUI.focusedItem == i){
             screen.fillStyle = "green"
-            screen.fillRect(381+btnOffset,87+(i*57),3,48)
+            screen.fillRect(381+btnOffset,87+(i*57),3,54)
             screen.fillStyle = "black"
         }
     }
@@ -372,7 +372,14 @@ function focusItem(itemIdx){
     if(player.inventory.equipped[itemIdx].data.cooldownTime <=0){
         return
     }
+    if(itemIdx == GUI.focusedItem){
+        round.progression = round.progressionStates.notUsingItem
+        GUI.focusedItem = -1
+        return
+    }
     round.progression = round.progressionStates.useItem
+
+
 
     GUI.focusedItem = itemIdx
 }
