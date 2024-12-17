@@ -27,6 +27,7 @@ window.addEventListener("mouseup",()=>{
         }
     }
     mouseUpEvents = []
+    canUseMovementButtons = true
 })
 window.addEventListener("keydown",(event)=>{
     showMouseIndicator = false
@@ -105,20 +106,20 @@ function drawMap(){
 
             if(level[i][j] != 0){
                 screen.fillStyle = mapColors[tileSRC[level[i][j]].mapColor]
-                screen.fillRect(123+(3*j),63+(i*3),3,3);
+                screen.fillRect(99+(3*j),63+(i*3),3,3);
             }
             if(i==player.yPos && j == player.xPos){
                 screen.fillStyle = ["red","orange","yellow","blue","green","purple"][rand(0,5)]
-                screen.fillRect(123+(3*j),63+(i*3),3,3);
+                screen.fillRect(99+(3*j),63+(i*3),3,3);
             }
             if(Debug.mapGrid){
                 if(j%11 == 0){
                     screen.fillStyle= "orange"
-                    screen.fillRect(123+(3*j),63+(i*3),3,3);
+                    screen.fillRect(99+(3*j),63+(i*3),3,3);
                 }
                 if(i%11 == 0){
                     screen.fillStyle= "orange"
-                    screen.fillRect(123+(3*j),63+(i*3),3,3);
+                    screen.fillRect(99+(3*j),63+(i*3),3,3);
                 }
             }
         }
@@ -171,11 +172,12 @@ function gameloop(){
         //scripts that update always
         drawTiles()
         drawEntities()
+        drawHUD()
+
         if(showMap)
         {
             drawMap()
         }
-        drawHUD()
         handleDebugScreen()
 
         if(isPaused){ //draw pause menu
@@ -201,7 +203,7 @@ function drawHUD(){
     screen.drawImage(document.getElementById("GUI_chat"),9,315,39,27)
     if(!isPaused){
         let mouseNoTouchZones = []
-        if(round.progression == round.progressionStates.notUsingItem){
+        if(round.progression == round.progressionStates.notUsingItem && canUseMovementButtons){
             let src = "GUI_mvArrow" + ((gameTicks % 30 > 20) ? "" : "_up")
             if(!tileSRC[level[player.yPos+1][player.xPos]].collision){
                 addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
@@ -227,6 +229,13 @@ function drawHUD(){
                 },true,270)
                 mouseNoTouchZones.push((player.xPos-1)+","+player.yPos)
             }
+        }
+        else{
+            removeButton("#move_up")
+            removeButton("#move_down")
+            removeButton("#move_left")
+            removeButton("#move_right")
+            canUseMovementButtons = false;
         }
         addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
             isPaused = true
@@ -438,6 +447,12 @@ function handleTurnLogic(){
 
 function handleEntityLogic(){
 
+}
+
+function removeButton(id){
+    if(buttonEvents.indexOf(id) > -1){
+        buttonEvents.splice(id,1)
+    }
 }
 
 function addButton(id,src, x, y, w, h, callback,highlight, rotation){

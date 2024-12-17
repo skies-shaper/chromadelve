@@ -1,3 +1,4 @@
+let canUseMovementButtons = true
 let numEntities = 0
 let messages = {
     console: {
