@@ -5,7 +5,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com"> 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap" rel="stylesheet">
-    <title>Chromadelve - Terms of Use</title>
+    <title>Chromadelve</title>
     <style>
 
         body{ 
@@ -82,31 +82,57 @@
         #menu img{
             float: left;
         }
+        .release {
+            min-width: 100%;
+            border: 1 px solid black;
+            border-radius: 5px;
+            background-color: gray;
+        }
+        .releaseContainer {
+            padding: 10px;
+            border: 1px solid black;
+            background-color: gainsboro;
+            margin-bottom: 5px;
+            padding-bottom: 10px;
+        }
+        .releaseContainer h2, p, h4 {
+            margin: 0px;
+        }
+        .releaseContainer a {
+            margin-bottom:5px;
+        }
+        .releaseContainer:first-child {
+            border-radius: 5px 5px 0px 0px;
+        }
+        .releaseContainer:last-child {
+            border-radius: 0 0 5px 5px;
+        }
+        .releaseContainer:only-child {
+            border-radius: 5px;
+        }
     </style>
 
 </head>
 <body>
     <div id="menu"><a href="index.html"><img src="imgs/GUI/chromadelve-beta logo.png" style="margin:2px;"/></a>
-        <a href=""><h2>Contact</h2></a>
-        <a href="terms.html"><h2>Terms</h2></a>
-        <a href="releases.html"><h2>Releases</h2></a>
-     </div>
-   
+       <a href=""><h2>Contact</h2></a>
+       <a href="terms.html"><h2>Terms</h2></a>
+       <a href="releases.html"><h2>Releases</h2></a>
+    </div>
+
     <div id="gamebox">
-        <h2>Chromadelve Terms of Use (as of December 15, 2024)</h2>
-        <p>
-        
-        Ok. So. Never written one of these before, that's fun
-        -We do not store any of your data, either on the cloud or on your computer. We may do one or both of these things in the future. 
-        -Unless noted as otherwise, all of our game assets are licensed under a Creative Commons BY-NC-SA 4.0 license. So, you can share and adapt things based on this game or using some of our art! <br><br>
-        However! <br><br>
-        You can't sell stuff based on our game without our permission! <br><br>
-        You can contact us once we set up a contact page to do that thing if you want
-        <br><br>Also, if you build something based on our creative works, you have to distribute that thing also under a CC BY-NC-SA 4.0 license
-        <br><br>Also also, you have to give us credit! Whether in a description, comments, etc. Just say "chromadelve" and people will hopefully find us. Give a link to this site, spread the game!
-        <br><br>Chromadelve is gluten free, however, it is produced in a facility that may contain trace amounts of peanuts (however certain people who work on chromadelve live with people with peanut allergies, so you should be safe)
-        <br><br>Chromadelve contains no physical insects
-        
-    </p>
-</div>
+    <h1>Chromadelve Releases</h1>
+    <p>Please refer to the <a href="terms.html">terms</a> before downloading a Chromadelve version. They're pretty short! don't worry!</p>
+    
+    <div id="releases">
+        <div class="releaseContainer">
+            <h2>Beta version 0.0.3</h2>
+            <h4>December 16, 2024</h4>
+            <a href="changelogs/0.0.3.html">Changelog</a><br>
+            <a class="release" download href="releases/HTML/Chromadelve - beta 0.0.3.zip">Download as a .zip file</a>
+        </div>
+    
+    </div>
+    
 </body>
+</html>

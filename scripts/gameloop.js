@@ -296,7 +296,6 @@ function drawHUD(){
                 },false)
                 cooldownBar(i,btnOffset)
                 
-
             }
             screen.font = "10px Kode Mono"
             screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
@@ -369,7 +368,7 @@ function healthRect(){
 }
 
 function focusItem(itemIdx){
-    if(player.inventory.equipped[itemIdx].data.cooldownTime <=0){
+    if(player.inventory.equipped[itemIdx].data.cooldownTime <=0.05){
         return
     }
     if(itemIdx == GUI.focusedItem){
