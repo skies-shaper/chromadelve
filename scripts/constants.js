@@ -36,7 +36,8 @@ const range = {
     self: 0,
     AOECircle: 1,
     ray: 2,
-    adjacent: 3
+    adjacent: 3,
+    null: 4
 };
 let directions = {
     up: 0,
@@ -151,9 +152,11 @@ const items = {
     minorHealthPotion: {
         name: "Minor Health Potion", type: itemTypes.consumable, data: {
             uses: 1,
+            src: "Items_health_potion_I",
             effect: effects.healthIncrease,
             range: rangeObj(range.self,1),
-            power: 10
+            power: 10,
+          
         }
     },
     spell1: {
@@ -287,3 +290,5 @@ let gameConstants = {
     maxDodge: 10,
     maxAnimationLoopIndex: 30
 }
+
+let creditScrollState = 0

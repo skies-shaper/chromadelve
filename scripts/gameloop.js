@@ -162,7 +162,7 @@ function gameloop(){
     if(Global_State == 1){
         screen.fillText("generating map...",10,10)
     }
-    if(Global_State == 2){
+    if(Global_State == 2){ //the game
         //scripts that update if the game is running
         if(!isPaused){
             handlePlayerMovement()
@@ -183,6 +183,10 @@ function gameloop(){
         if(isPaused){ //draw pause menu
             drawPauseMenu()
         }
+    }
+    if(Global_State == 3){ //credits!
+        drawCredits()
+        creditScrollState++
     }
 
 }
@@ -311,18 +315,27 @@ function drawHUD(){
             }
             screen.font = "10px Kode Mono"
             screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
+            
         }
         if(player.inventory.equipped[i].type == itemTypes.consumable){
+            
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
+                
+                
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
+                addButton("#Use_Item_"+i,"Blank",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
             }
+            screen.drawImage(document.getElementById("GUI_itemFrame"),423+btnOffset,87+(i*57),54,54)
+            screen.drawImage(document.getElementById(player.inventory.equipped[i].data.src),426+btnOffset,90+(i*57),48,48)
             screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
+            screen.fillStyle = "white"
+            screen.fillText(player.inventory.equipped[i].data.uses,392+btnOffset,137 +(i*57))
+            screen.fillStyle = "black"
+            screen.fillText(player.inventory.equipped[i].data.uses,391+btnOffset,136 +(i*57))
+            
         }
 
         if(GUI.focusedItem == i){
@@ -406,6 +419,10 @@ function useItem(itemIdx){
                     if(player.stats.health>player.stats.maxHealth){
                         player.stats.health = player.stats.maxHealth
                     }
+            }
+            player.inventory.equipped[itemIdx].data.uses--
+            if(player.inventory.equipped[itemIdx].data.uses < 1){
+                player.inventory.equipped[itemIdx] = items.null
             }
             break;
     }
@@ -563,11 +580,13 @@ function inventoryPush(itemID){
     Object.assign(player.inventory.backpack[player.inventory.backpack.length-1],items[itemID])
 }
 
-function hotbarSwap(backpackIndex, equippedIndex){
+function hotbarSwap(indexB, indexE){
     let temp1 = player.inventory.equipped[indexE]
     let temp2 = player.inventory.backpack[indexB]
-    player.inventory.backpack = temp1
-    player.inventory.equipped = temp2
+    console.log(temp1)
+    console.log(temp2)
+    player.inventory.backpack[indexB] = temp1
+    player.inventory.equipped[indexE] = temp2
 
 }
 
@@ -807,4 +826,23 @@ function movePlayer(direction, amount){
     }
 
     nextTurn()
+}
+let textSpacing = 10
+function drawCredits(){
+    textSpacing = 10
+    screen.fillStyle = "white"
+    screen.font = "30px Kode Mono"
+    centerText("Chromadelve")
+    textSpacing += 20
+    screen.font = "20px Kode Mono"
+    centerText("Lead Developer")
+    screen.font = "15px Kode Mono"
+    centerText("Skies_Shaper")
+    //now we just need more people lol
+
+
+}
+function centerText(text){
+    textSpacing += Number(screen.font.substring(0,screen.font.indexOf("p")))
+    screen.fillText(text,(480-screen.measureText(text).width)/2,textSpacing-(creditScrollState)/2)
 }

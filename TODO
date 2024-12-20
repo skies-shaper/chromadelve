@@ -2,6 +2,13 @@
 
 -Make a room editor
 -Make a tileset for each element
+
+
+TO DO:
+Add enemies
+Add basic enemy AI
+Essentially, a lil fighty dungeon crawler (infinite I suppose) - randomized end goals, just rack up a score. THEN, (since combat sytem will be worked out), do the chroma bit :)
+
 Fire: 
 Red, volcanic rocks.
 
@@ -22,12 +29,14 @@ spaceshippppp
 
 
 Gameplay turn loop: 
--Make attacks
-    -All attacks have a cooldown of x moves. if x<1, then you can use the attack multiple times per turn. If x>1, once used you have to wait.
-    
+
 -Move
+-Attack    
+
 -Enemies attack
 -Enemies move
+
+
 
 
 Multiplayer (LAN):
