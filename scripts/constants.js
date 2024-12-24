@@ -46,9 +46,15 @@ let directions = {
     right: 3
 }
 let entities = []
-let animations = {}
-function loadInAnimations(){
-    animations = {
+let tileAnimations = []
+let animations = {
+        consts: {
+            hidden: 0, 
+            passiveAnimation: 1,
+            attackAnimation: 2,
+            hurtAnimation: 3, 
+            specialAnimation: 4
+        },
         player: {
             tileX: -1,
             tileY: -1,
@@ -57,8 +63,8 @@ function loadInAnimations(){
             currentFrame: 0,
             repeat: true,
             frames: [
-                document.getElementById("Characters_Player_DebugGhost_1"),
-                document.getElementById("Characters_Player_DebugGhost_2")
+                "Characters_Player_DebugGhost_1",
+                "Characters_Player_DebugGhost_2"
             ],
             nextFrame: nF
         },
@@ -70,8 +76,8 @@ function loadInAnimations(){
             currentFrame: 0,
             repeat: true,
             frames: [
-                document.getElementById("Characters_Player_DebugGhost_1"),
-                document.getElementById("Characters_Player_DebugGhost_2")
+                "Characters_Player_DebugGhost_1",
+                "Characters_Player_DebugGhost_2"
             ],
             nextFrame: nF
         },
@@ -83,15 +89,44 @@ function loadInAnimations(){
             currentFrame: 0,
             repeat: false,
             frames: [
-                document.getElementById("GUI_chat"),
-                document.getElementById("GUI_mouse_target"),
-                document.getElementById("GUI_chat"),
-                document.getElementById("GUI_Pause")
+                "GUI_chat",
+                "GUI_mouse_target",
+                "GUI_chat",
+                "GUI_Pause"
             ],
             nextFrame: nF
+        },
+        goblin: {
+            tileX: -1,
+            tileY: -1,
+            rotation: -1,
+            maxFrames: 2,
+            currentFrame: 0,
+            repeat: true,
+            frames: [
+                "Entities_testgoblin",
+                "Entities_testgoblin2"
+            ],
+            nextFrame: nF
+        },
+        goblin_hurt: {
+            tileX: -1,
+            tileY: -1,
+            rotation: -1,
+            maxFrames: 5,
+            currentFrame: 0,
+            repeat: false,
+            frames: [
+                "Entities_testgoblin_hurt1",
+                "Entities_testgoblin_hurt2",
+                "Entities_testgoblin_hurt3",
+                "Entities_testgoblin_hurt3",
+                "Entities_testgoblin_hurt2",
+                "Entities_testgoblin_hurt1"
+            ],
+            nextFrame: nF        
         }
     }
-}
 
 let activeAnimations = []
 
@@ -105,7 +140,7 @@ function nF(){
 
     }
     if(!this.repeat && this.currentFrame>this.maxFrames){
-        return document.getElementById("Blank")
+        return "Blank"
     }
     return this.frames[this.currentFrame]
 }
@@ -142,8 +177,14 @@ const items = {
         name: "Short Sword", type: itemTypes.weapon, data: {
             cooldown: 1,
             cooldownTime: 1,
-            damage: damageObj(0, 6),
-            range: rangeObj(range.adjacent,1),
+            damage: {
+                min: 1,
+                max: 6
+            },
+            range: {
+                rangeType: range.adjacent, 
+                distance: 1
+            },
             splash: 0,
             critThreshold: 20, //Assuming a 1d20 damage system, Accuracy is based off of opponent's dodge (which is 1-20). If the accuracy roll is >= critThreshold, then we have a crit! yay!
             accuracyBonus: 0
@@ -154,7 +195,7 @@ const items = {
             uses: 1,
             src: "Items_health_potion_I",
             effect: effects.healthIncrease,
-            range: rangeObj(range.self,1),
+            range: {rangeType: range.self, distance: 1},
             power: 10,
           
         }
@@ -164,9 +205,9 @@ const items = {
             element: elements.fire,
             cooldown: 1/3,
             cooldownTime: 1,
-            damage: damageObj(0, 6),
+            damage: {min: 0, max:  6},
             splash: 0,
-            range: rangeObj(range.self,1)
+            range: {rangeType: range.self, distance: 1}
         }
     },
     spell2: {
@@ -174,19 +215,11 @@ const items = {
             element: elements.lightning,
             cooldown: 2,
             cooldownTime: 2,
-            damage: damageObj(0, 6),
+            damage: {min: 0, max:  6},
             splash: 0,
-            range: rangeObj(range.ray,3)
+            range: {rangeType: range.ray, distance: 3}
         }
     }
-}
-
-function rangeObj(type, d){ //returns an object containing the object's type of range and how far it goes.
-    return {rangeType: type, distance: d}
-}
-
-function damageObj(minDamage, maxDamage) {
-    return { min: minDamage, max: maxDamage }
 }
 
 let player = {
@@ -236,9 +269,39 @@ const animationTemplate = {
     frames: [
     ]
 }
+let entityData = {
+    testGoblin:  {
+        UID: 0,
+        name: "test goblin",
+        xPos: 0,
+        yPos: 0,
+        stats: {
+            dodge: 0, 
+            health: 10,
+            maxHealth: 10
+        },
+        attacks: [],
+        drops: [],
+        display: {
+            currentAnimation: animations.consts.passiveAnimation,
+            passiveAnimation: "goblin",
+            attackAnimations: [
+                //one animation / attack
+            ],
+            // specialAnimations: {}, 
+            hurtAnimation: "goblin_hurt"
+        }
+    }
+}
 
-let potentialEntities = {
 
+function getAnimationClone(src){
+    if(typeof animations[src] == undefined){
+        return animations.null
+    }
+    let temp = Object.assign({},animations[src])
+    
+    return temp
 }
 
 
@@ -292,3 +355,7 @@ let gameConstants = {
 }
 
 let creditScrollState = 0
+
+function randomInclusive(start, end){
+    return start + Math.floor(Math.random() * end);
+}

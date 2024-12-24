@@ -146,9 +146,7 @@ document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
 })
 
 function gameloop(){
-    if(typeof animations.player === 'undefined'){
-        loadInAnimations()
-    }
+   
     gameTicks++
     screen.imageSmoothingEnabled= false
     screen.fillStyle ="black";
@@ -188,7 +186,9 @@ function gameloop(){
         drawCredits()
         creditScrollState++
     }
-
+    if(entities.length == 0){
+        spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
+    }
 }
 function drawPauseMenu(){
     screen.fillStyle =  "rgba(0,0,0,0.3)"
@@ -206,28 +206,29 @@ function drawPauseMenu(){
 function drawHUD(){
     screen.drawImage(document.getElementById("GUI_chat"),9,315,39,27)
     if(!isPaused){
+        
         let mouseNoTouchZones = []
         if(round.progression == round.progressionStates.notUsingItem && canUseMovementButtons){
             let src = "GUI_mvArrow" + ((gameTicks % 30 > 20) ? "" : "_up")
-            if(!tileSRC[level[player.yPos+1][player.xPos]].collision){
+            if(!(tileSRC[level[player.yPos+1][player.xPos]].collision || detectEntity(player.xPos, player.yPos+1))){
                 addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
                     movePlayer(directions.down, 1)
                 },true,180)
                 mouseNoTouchZones.push(player.xPos+","+(player.yPos+1))
             }
-            if(!tileSRC[level[player.yPos-1][player.xPos]].collision){
+            if(!(tileSRC[level[player.yPos-1][player.xPos]].collision || detectEntity(player.xPos, player.yPos-1))){
                 addButton("#move_up",src,216, 156-48, 48, 48, ()=>{
                     movePlayer(directions.up, 1)
                 },true,0)
                 mouseNoTouchZones.push(player.xPos+","+(player.yPos-1))
             }
-            if(!tileSRC[level[player.yPos][player.xPos+1]].collision){
+            if(!(tileSRC[level[player.yPos][player.xPos+1]].collision|| detectEntity(player.xPos+1, player.yPos))){
                 addButton("#move_right",src,216+48, 156, 48, 48, ()=>{
                     movePlayer(directions.right, 1)
                 },true,90)
                 mouseNoTouchZones.push((player.xPos+1)+","+player.yPos)
             }
-            if(!tileSRC[level[player.yPos][player.xPos-1]].collision){
+            if(!(tileSRC[level[player.yPos][player.xPos-1]].collision|| detectEntity(player.xPos-1, player.yPos))){
                 addButton("#move_left",src,216-48, 156, 48, 48, ()=>{
                     movePlayer(directions.left, 1)
                 },true,270)
@@ -305,13 +306,17 @@ function drawHUD(){
             screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
         }
         if(player.inventory.equipped[i].type == itemTypes.weapon){
+            let tSrc = (player.inventory.equipped[i].data.cooldownTime < 0.05) ? "GUI_attackUnavailable" : "GUI_attackAvailable"
             if(isPaused){
                 screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
+                drawImageRotated(393+btnOffset, 102+(i*57), 15,15, 0, tSrc)
             }
             else{
                 addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
+                drawImageRotated(393+btnOffset, 99+(i*57), 15,15, 0, tSrc)
+
             }
             screen.font = "10px Kode Mono"
             screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
@@ -398,15 +403,28 @@ function focusItem(itemIdx){
 function useItem(itemIdx){
     //various checks
     let item = player.inventory.equipped[itemIdx]
-    let affectedEntity = ()=>{
-        entities.forEach((entity)=>{
-            if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridY+player.yPos-4){
-                return entity
-            }
-        })
-    }
+    
+
+    let affectedEntity = {}
+    let affectedEntityIndex = 0
+    let i = 0
+    entities.forEach((entity)=>{
+        if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridY+player.yPos-4){
+            affectedEntity = entity
+            affectedEntityIndex = i
+        }
+        i++
+    })
+    
     switch(item.type){
         case itemTypes.weapon:
+            if(randomInclusive(1,10) > affectedEntity.stats.dodge){
+                entities[affectedEntityIndex].stats.health -= randomInclusive(item.data.damage.min, item.data.damage.max)
+                entities[affectedEntityIndex].display.currentAnimation = animations.consts.hurtAnimation
+            }
+            else{
+                console.log("miss!")
+            }
             //deals damage
             break;
         case itemTypes.spell:
@@ -426,7 +444,12 @@ function useItem(itemIdx){
             }
             break;
     }
-
+    if(entities[affectedEntityIndex].stats.health < 1){
+        addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
+        console.log(affectedEntity.display.hurtAnimation.maxFrames)
+        setTimeout(()=>{entities.splice(affectedEntityIndex, 1)}, (1000/6)*(affectedEntity.display.hurtAnimation.maxFrames)+1)
+        
+    }
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
     round.progression = round.progressionStates.notUsingItem
@@ -530,39 +553,13 @@ function drawEntities(){
         screen.drawImage(document.getElementById("Characters_Player_DebugGhost_1"),216,156,48,48)
     }
     else{
-        screen.drawImage(animations.player.nextFrame(),216,156,48,48)
+        drawImageRotated(216,156,48,48,0,animations.player.nextFrame())
     }
     screen.filter = "none"
     for(let i = 0; i<activeAnimations.length;i++){
         let a = activeAnimations[i]
-        let rR = a.rotation
-        if(rR%90 != 0){
-            rR = 0
-        }
-        let offsetX = 0
-        let offsetY  =0
-        switch(rR%360){
-            case 0: 
-                break;
-            case 90: 
-                offsetX = -48
-                break;
-            case 180: 
-                offsetX = -48
-                offsetY = -48
-                break;
-            case 270: 
-                offsetY  = -48
-                break;
-        }
-        let drawX = 216+(a.tileX - player.xPos) * 48 - offsetX
-        let drawY = 156+(a.tileY - player.yPos) * 48 - offsetY
-        screen.translate(drawX,drawY);
-        screen.rotate(a.rotation * (Math.PI/180))
-        screen.drawImage(a.nextFrame(),0,0,48,48)
-        screen.rotate(-a.rotation * (Math.PI/180))
-        screen.translate(-drawX, -drawY)
-
+        
+        drawImageRotated(a.tileX, a.tileY, 48,48,a.rotation, a.nextFrame())
     }
     let tempArray = []
     for(let i = 0; i<activeAnimations.length;i++){
@@ -570,6 +567,26 @@ function drawEntities(){
         {
             tempArray.push(activeAnimations[i])
         }
+    }
+    //drawing entities
+    for(let i = 0; i<entities.length; i++){
+        let a = entities[i].display
+        switch(entities[i].display.currentAnimation){
+            case animations.consts.passiveAnimation: 
+                drawGridImage(entities[i].xPos, entities[i].yPos, 48, 48, a.passiveAnimation.rotation, a.passiveAnimation.nextFrame())
+            break;
+            case animations.consts.hurtAnimation:
+                drawGridImage(entities[i].xPos, entities[i].yPos, 48, 48, a.hurtAnimation.rotation, a.hurtAnimation.nextFrame())
+                if(a.hurtAnimation.currentFrame > a.hurtAnimation.maxFrames){
+                    a.currentAnimation = animations.consts.passiveAnimation
+                    a.hurtAnimation.currentFrame = 0
+                }
+                break;
+        }
+    }
+
+    for(let i = 0; i<tileAnimations.length; i++){
+        drawGridImage(tileAnimations[i].tileX, tileAnimations[i].tileY, 48,48, tileAnimations[i].rotation, tileAnimations[i].nextFrame())
     }
     activeAnimations = tempArray
 
@@ -583,8 +600,8 @@ function inventoryPush(itemID){
 function hotbarSwap(indexB, indexE){
     let temp1 = player.inventory.equipped[indexE]
     let temp2 = player.inventory.backpack[indexB]
-    console.log(temp1)
-    console.log(temp2)
+    // console.log(temp1)
+    // console.log(temp2)
     player.inventory.backpack[indexB] = temp1
     player.inventory.equipped[indexE] = temp2
 
@@ -596,7 +613,15 @@ function addAnimation(id,x,y,r){
     activeAnimations[activeAnimations.length-1].tileX = x
     activeAnimations[activeAnimations.length-1].tileY = y
     activeAnimations[activeAnimations.length-1].rotation = r
-    
+}
+function addTileAnimation(animationObj, x, y, r){
+    let temp = {}
+    Object.assign(temp, animationObj)
+    temp.tileX = x
+    temp.tileY = y
+    temp.rotation = r
+    console.log(temp)
+    tileAnimations.push(temp)
 }
 
 function handlePlayerMovement(key){
@@ -629,45 +654,7 @@ function handlePlayerMovement(key){
         }
         return
     }
-    switch(key){
-        case "a":
-        case "A":
-        case "ArrowLeft":
-            
-            player.xPos--
-            if(tileSRC[level[player.yPos][player.xPos]].collision){
-                player.xPos++
-            }
-            break;
-        case "d":
-        case "D":
-        case "ArrowRight":
-            player.xPos++
-            if(tileSRC[level[player.yPos][player.xPos]].collision){
-                player.xPos--
-            }
-
-            break;   
-        case "w":
-        case "W":             
-        case "ArrowUp":
-            player.yPos--
-            if(tileSRC[level[player.yPos][player.xPos]].collision){
-                player.yPos++
-            }
-
-            break;
-        case "s":
-        case "S":
-        case "ArrowDown":
-            player.yPos++
-            if(tileSRC[level[player.yPos][player.xPos]].collision){
-                player.yPos--
-            }
-
-            break;        
-            
-    }
+    
     nextTurn()
 }
 
@@ -677,6 +664,13 @@ function nextTurn(){
             player.inventory.equipped[i].data.cooldownTime++
         player.inventory.equipped[i].data.cooldownTime = Math.floor(player.inventory.equipped[i].data.cooldownTime)
     }
+    let temp = []
+    for(let i = 0; i<tileAnimations.length; i++){
+        if(tileAnimations[i].currentFrame <= tileAnimations[i].maxFrames){
+            temp.push(tileAnimations[i])
+        }
+    }
+    tileAnimations = temp
 }
 
 function handleDebugScreen(){
@@ -769,18 +763,32 @@ function gameInit(){
 
 
 
-function spawnEntity(tName){
-    let entityData = entityTemplates.entries().forEach((e)=>{
-        if(e.name == tName){
-            return(e)
-        }
-    })
-    entityData.UID = numEntities
-    numEntities++
-    entities.push(entityData)
+function spawnEntity(tName, x, y){
+    if(typeof entityData[tName] == 'undefined'){
+        return
+    }
+
+    let temp = structuredClone(entityData[tName])
+
+    temp.xPos = x
+    temp.yPos = y
+
+    temp.display.passiveAnimation = getAnimationClone(temp.display.passiveAnimation)
+    for(let i = 0; i<temp.display.attackAnimations.length; i++){
+        temp.display.attackAnimations[i] = getAnimationClone(temp.display.attackAnimations[i])
+    }
+    temp.display.hurtAnimation = getAnimationClone(temp.display.hurtAnimation)
+
+    entities.push(temp)
+}
+
+function drawGridImage(x,y,w,h,r,src){
+    
+    drawImageRotated(((x-player.xPos)*48)+216, ((y-player.yPos) * 48)+156, w, h, r, src)
 }
 
 function drawImageRotated(x,y,w,h,r,src){
+    
     if(r%90 != 0){
         r = 0
     }
@@ -804,7 +812,13 @@ function drawImageRotated(x,y,w,h,r,src){
     let drawY = y - offsetY
     screen.translate(drawX,drawY);
     screen.rotate(r * (Math.PI/180))
-    screen.drawImage(document.getElementById(src),0,0,w,h)
+    try{
+        screen.drawImage(document.getElementById(src),0,0,w,h)
+    }
+    catch{
+        screen.drawImage(document.getElementById("Blank"), 0, 0, 0, 0)
+        console.warn("image source not found: "+src)
+    }
     screen.rotate(-r * (Math.PI/180))
     screen.translate(-drawX, -drawY)
 }
@@ -845,4 +859,12 @@ function drawCredits(){
 function centerText(text){
     textSpacing += Number(screen.font.substring(0,screen.font.indexOf("p")))
     screen.fillText(text,(480-screen.measureText(text).width)/2,textSpacing-(creditScrollState)/2)
+}
+
+function detectEntity(x, y){
+    for(let i = 0; i<entities.length; i++){
+        if(entities[i].xPos == x & entities[i].yPos == y){
+            return true
+        }
+    }
 }
