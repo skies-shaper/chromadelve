@@ -136,13 +136,16 @@ document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
 
         return
     }
-    document.getElementById("gameConsole").blur()
-    document.getElementById("gameConsole").style.visibility = "hidden"
-    document.getElementById("console-text").style.visibility = "hidden"
-    if(document.getElementById("gameConsole").value != "")
-        document.getElementById("console-text").textContent +=document.getElementById("gameConsole").value + "\n\r"
+    setTimeout(function () {
+        document.getElementById("gameConsole").blur()
+        document.getElementById("gameConsole").style.visibility = "hidden"
+        document.getElementById("console-text").style.visibility = "hidden"
+        if(document.getElementById("gameConsole").value != "")
+            document.getElementById("console-text").textContent +=document.getElementById("gameConsole").value + "\n\r"
+        
+        isTyping = false
+    }, 700)
     
-    isTyping = false
 })
 
 function gameloop(){

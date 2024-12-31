@@ -1,0 +1,14 @@
+[
+    {
+        "version": "beta 0.0.5",
+        "src": "https://skies-shaper.github.io/chromadelve/releases/HTML/Chromadelve%20-%20beta%200.0.5.zip",
+        "online?": false, 
+        "openInLauncher?":false
+    },
+    {
+        "version": "beta 0.0.3",
+        "src": "https://skies-shaper.github.io/chromadelve/releases/HTML/Chromadelve%20-%20beta%200.0.3.zip",
+        "online?": false, 
+        "openInLauncher?":false
+    }
+]
