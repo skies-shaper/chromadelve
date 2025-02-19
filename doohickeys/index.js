@@ -20,7 +20,7 @@ function readFileDir(src,imgname){
             readFileDir(src+file+"/",imgname+file+"_")
         }
         else{
-            finalFile += `document.getElementById("imgstore").innerHTML += '<img src="${src+file}" id="${imgname+file.substring(0,file.indexOf("."))}"/>'\n\t`
+            finalFile += `document.getElementById("imgstore").innerHTML += '<img src="imgs/${src+file}" id="${imgname+file.substring(0,file.indexOf("."))}"/>'\n\t`
         }
     }
 }

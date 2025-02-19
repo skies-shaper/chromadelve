@@ -1,13 +1,13 @@
 let tileSRC = [
-    {src: "Tiles_None", collision: false, mapColor: 0},
-    {src: "Tiles_Generic_Wall", collision: true, mapColor: 1},
-    {src: "Tiles_Generic_Floor", collision: false, mapColor: 2},
-    {src: "Tiles_Orange_Floor_1", collision: false, mapColor: 2},
-    {src: "Tiles_Orange_Floor_2", collision: false, mapColor: 2},
-    {src: "Tiles_Orange_Floor_3", collision: false, mapColor: 2},    
-    {src: "Tiles_Orange_Wall_1", collision: true, mapColor: 1},
-    {src: "Tiles_Orange_Wall_2", collision: true, mapColor: 1},
-    {src: "Tiles_Orange_Wall_3", collision: true, mapColor: 1},
+    {src: "tiles_null", collision: false, mapColor: 0},
+    {src: "tiles_generic-wall", collision: true, mapColor: 1},
+    {src: "tiles_generic-floor", collision: false, mapColor: 2},
+    {src: "tiles_orange-floor-1", collision: false, mapColor: 2},
+    {src: "tiles_orange-floor-2", collision: false, mapColor: 2},
+    {src: "tiles_orange-floor-3", collision: false, mapColor: 2},    
+    {src: "tiles_orange-wall-1", collision: true, mapColor: 1},
+    {src: "tiles_orange-wall-2", collision: true, mapColor: 1},
+    {src: "tiles_orange-wall-3", collision: true, mapColor: 1},
 ]
 const structures = {
     example:{
@@ -18,7 +18,6 @@ const structures = {
 }
 let bossRoomExists
 let  grid, paths, numRooms
-let Global_State = 0
 let numPaths = 0
 let tiles = {
     none:  0, 
@@ -108,10 +107,8 @@ let rooms = {
         }
     ]
 }
-generateLevel()
 
 function generateLevel(){
-    Global_State = 1
     //initializing rooms
     while(true){
         numRooms = 0

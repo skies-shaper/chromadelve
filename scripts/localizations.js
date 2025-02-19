@@ -19,6 +19,9 @@ function englishLocalization(){ //this is the base translation function. It puts
     items.minorHealthPotion.name = "Potion"
     items.spell1.name = "Example Spell"
     items.spell2.name = "Zappy zap zap"
+    
+    //GUI stuff
+    messages.GUI.mainMenu.begin = "Begin"
 }
 function germanLocalization() {
 

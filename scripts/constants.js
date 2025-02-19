@@ -1,4 +1,14 @@
 let canUseMovementButtons = true
+let Global_State = 0
+
+let globalProgressionStates = {
+    menu: 0,
+    levelGen: 1,
+    gameplay: 2,
+    credits: 3,
+    gameSelect: 4
+}
+
 let numEntities = 0
 let messages = {
     console: {
@@ -23,7 +33,10 @@ let messages = {
         }
     },
     GUI: {
-        HP: "HP"
+        HP: "HP",
+        mainMenu: {
+            begin: ""
+        }
     },
     cutscenes: {
         intro_1: "",
@@ -63,8 +76,8 @@ let animations = {
             currentFrame: 0,
             repeat: true,
             frames: [
-                "Characters_Player_DebugGhost_1",
-                "Characters_Player_DebugGhost_2"
+                "characters_debug-ghost-1",
+                "characters_debug-ghost-2"
             ],
             nextFrame: nF
         },
@@ -76,8 +89,8 @@ let animations = {
             currentFrame: 0,
             repeat: true,
             frames: [
-                "Characters_Player_DebugGhost_1",
-                "Characters_Player_DebugGhost_2"
+                "characters_debug-ghost-1",
+                "characters_debug-ghost-2"
             ],
             nextFrame: nF
         },
@@ -104,8 +117,8 @@ let animations = {
             currentFrame: 0,
             repeat: true,
             frames: [
-                "Entities_testgoblin",
-                "Entities_testgoblin2"
+                "entities_testgoblin_testgoblin",
+                "entities_testgoblin_testgoblin-2"
             ],
             nextFrame: nF
         },
@@ -117,12 +130,12 @@ let animations = {
             currentFrame: 0,
             repeat: false,
             frames: [
-                "Entities_testgoblin_hurt1",
-                "Entities_testgoblin_hurt2",
-                "Entities_testgoblin_hurt3",
-                "Entities_testgoblin_hurt3",
-                "Entities_testgoblin_hurt2",
-                "Entities_testgoblin_hurt1"
+                "entities_testgoblin_testgoblin-hurt-1",
+                "entities_testgoblin_testgoblin-hurt-2",
+                "entities_testgoblin_testgoblin-hurt-3",
+                "entities_testgoblin_testgoblin-hurt-3",
+                "entities_testgoblin_testgoblin-hurt-2",
+                "entities_testgoblin_testgoblin-hurt-1"
             ],
             nextFrame: nF        
         }
@@ -140,7 +153,7 @@ function nF(){
 
     }
     if(!this.repeat && this.currentFrame>this.maxFrames){
-        return "Blank"
+        return "blank"
     }
     return this.frames[this.currentFrame]
 }
@@ -175,6 +188,7 @@ const items = {
     null: { name: "Null Item", type: itemTypes.null, data: {} },
     shortSword: {
         name: "Short Sword", type: itemTypes.weapon, data: {
+            src: "",
             cooldown: 1,
             cooldownTime: 1,
             damage: {
@@ -193,7 +207,7 @@ const items = {
     minorHealthPotion: {
         name: "Minor Health Potion", type: itemTypes.consumable, data: {
             uses: 1,
-            src: "Items_health_potion_I",
+            src: "items_health-potion-i",
             effect: effects.healthIncrease,
             range: {rangeType: range.self, distance: 1},
             power: 10,
@@ -224,7 +238,7 @@ const items = {
 
 let player = {
     name: "",
-    src: "Characters_Player_Default",
+    src: "characters_debug-ghost-2",
     element: elements.water,
     xPos: 37,
     yPos: 37,

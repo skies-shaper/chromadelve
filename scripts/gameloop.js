@@ -1,8 +1,3 @@
-/*  the Global_State variable: 
-    0: menu
-    1: generating map
-    2: display
-*/
 
 gameInit()
 
@@ -156,14 +151,23 @@ function gameloop(){
     screen.font = "12px Kode Mono"
     screen.fillRect(0,0,480,360)
 
-    
-    if(Global_State == 0){
+    if(Global_State == globalProgressionStates.menu){ 
 
+        drawImageRotated(0,0,480,360,0,"GUI_title_titlescreen")
+        addButton("#mainmenustart","GUI_title_begin",27,270,180,63,()=>{
+            Global_State = globalProgressionStates.gameSelect
+            removeButton("#mainmenustart")
+        })
+        screen.font = "30px Kode Mono"
+        screen.fillText(messages.GUI.mainMenu.begin,70,310)
+        
     }
-    if(Global_State == 1){
-        screen.fillText("generating map...",10,10)
+    if(Global_State == globalProgressionStates.levelGen){
+        generateLevel()
+
+        // screen.fillText("generating map...",10,10)
     }
-    if(Global_State == 2){ //the game
+    if(Global_State == globalProgressionStates.gameplay){ //the game
         //scripts that update if the game is running
         if(!isPaused){
             handlePlayerMovement()
@@ -185,13 +189,16 @@ function gameloop(){
             drawPauseMenu()
         }
     }
-    if(Global_State == 3){ //credits!
+    if(Global_State == globalProgressionStates.credits){ //credits!
         drawCredits()
         creditScrollState++
     }
-    if(entities.length == 0){
-        spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
+    if(Global_State == globalProgressionStates.gameSelect){
+            gameSelectScreen()
     }
+    // if(entities.length == 0){
+    //     spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
+    // }
 }
 function drawPauseMenu(){
     screen.fillStyle =  "rgba(0,0,0,0.3)"
@@ -212,7 +219,7 @@ function drawHUD(){
         
         let mouseNoTouchZones = []
         if(round.progression == round.progressionStates.notUsingItem && canUseMovementButtons){
-            let src = "GUI_mvArrow" + ((gameTicks % 30 > 20) ? "" : "_up")
+            let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
             if(!(tileSRC[level[player.yPos+1][player.xPos]].collision || detectEntity(player.xPos, player.yPos+1))){
                 addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
                     movePlayer(directions.down, 1)
@@ -245,7 +252,7 @@ function drawHUD(){
             removeButton("#move_right")
             canUseMovementButtons = false;
         }
-        addButton("#GUI_Buttons_Pause","GUI_Pause",9,9,21,21,()=>{
+        addButton("#GUI_Buttons_Pause","GUI_pause",9,9,21,21,()=>{
             isPaused = true
         })
         addButton("#GUI_Buttons_Chat","GUI_chat",9,315,39,27,()=>{
@@ -264,16 +271,16 @@ function drawHUD(){
                     screen.strokeRect(((mouseGridX)*48)-24,((mouseGridY)*48)-36,48,48)
                 }
                 if(mouse.mode == mouseModes.target){
-                    screen.drawImage(document.getElementById("GUI_mouse_target"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+                    screen.drawImage(document.getElementById("GUI_target-active"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
                 }
                 if(mouse.mode == mouseModes.target_invalid){
-                    screen.drawImage(document.getElementById("GUI_mouse_noTarget"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+                    screen.drawImage(document.getElementById("GUI_target-inactive"),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
 
                 }
             }
         }
     }
-    screen.drawImage(document.getElementById("GUI_statsBack"),357,3,120,120)
+    screen.drawImage(document.getElementById("GUI_stats-back"),357,3,120,120)
     //health rectangle
     screen.fillStyle = "red"
     if(player.stats.health/player.stats.maxHealth < 0.2 && entityAnimationStage == 1){
@@ -281,7 +288,7 @@ function drawHUD(){
     }
     let healthHeighConversion = Math.round(((player.stats.health/player.stats.maxHealth)*33)/3)*3
     screen.fillRect(363,45-healthHeighConversion,39,healthHeighConversion)
-    screen.drawImage(document.getElementById("GUI_statsFront"),357,3,120,120)
+    screen.drawImage(document.getElementById("GUI_stats-front"),357,3,120,120)
     screen.font = "14px Kode Mono"
     screen.fillText(player.stats.health+" "+messages.GUI.HP,410,29)
     screen.fillStyle = "slategrey"
@@ -295,11 +302,11 @@ function drawHUD(){
         }
         if(cItem.type == itemTypes.spell){
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
+                screen.drawImage(document.getElementById("GUI_spellscroll"),387+btnOffset,87+(i*57),90,54)
                 cooldownBar(i,btnOffset)
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
+                addButton("#Use_Item_"+i,"GUI_spellscroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
                 cooldownBar(i,btnOffset)
@@ -309,13 +316,13 @@ function drawHUD(){
             screen.fillText(player.inventory.equipped[i].name.substring(0,13),391+btnOffset,97 +(i*57))
         }
         if(player.inventory.equipped[i].type == itemTypes.weapon){
-            let tSrc = (player.inventory.equipped[i].data.cooldownTime < 0.05) ? "GUI_attackUnavailable" : "GUI_attackAvailable"
+            let tSrc = (player.inventory.equipped[i].data.cooldownTime < 0.05) ? "GUI_attack-unavailable" : "GUI_attack-available"
             if(isPaused){
-                screen.drawImage(document.getElementById("GUI_SpellScroll"),387+btnOffset,87+(i*57),90,54)
+                screen.drawImage(document.getElementById("GUI_spellscroll"),387+btnOffset,87+(i*57),90,54)
                 drawImageRotated(393+btnOffset, 102+(i*57), 15,15, 0, tSrc)
             }
             else{
-                addButton("#Use_Item_"+i,"GUI_SpellScroll",387+btnOffset,87+(i*57),90,54,()=>{
+                addButton("#Use_Item_"+i,"GUI_spellscroll",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
                 drawImageRotated(393+btnOffset, 99+(i*57), 15,15, 0, tSrc)
@@ -332,12 +339,17 @@ function drawHUD(){
                 
             }
             else{
-                addButton("#Use_Item_"+i,"Blank",387+btnOffset,87+(i*57),90,54,()=>{
+                addButton("#Use_Item_"+i,"GUI_blank",387+btnOffset,87+(i*57),90,54,()=>{
                     focusItem(i)
                 },false)
             }
-            screen.drawImage(document.getElementById("GUI_itemFrame"),423+btnOffset,87+(i*57),54,54)
-            screen.drawImage(document.getElementById(player.inventory.equipped[i].data.src),426+btnOffset,90+(i*57),48,48)
+            screen.drawImage(document.getElementById("GUI_item frame"),423+btnOffset,87+(i*57),54,54)
+            try{
+                screen.drawImage(document.getElementById(player.inventory.equipped[i].data.src),426+btnOffset,90+(i*57),48,48)
+            }
+            catch(e){
+
+            }
             screen.font = "10px Kode Mono"
             screen.fillStyle = "white"
             screen.fillText(player.inventory.equipped[i].data.uses,392+btnOffset,137 +(i*57))
@@ -536,7 +548,12 @@ function drawTiles(){
                 mouseGridY = i
             }
             if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>-1 && (i+player.yPos-4)>-1){
+                try{
                 screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
+                }
+                catch(e){
+                    console.log(e+", "+tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"])
+                }
             }
         }
         
@@ -792,7 +809,6 @@ function drawGridImage(x,y,w,h,r,src){
 }
 
 function drawImageRotated(x,y,w,h,r,src){
-    
     if(r%90 != 0){
         r = 0
     }
@@ -820,7 +836,7 @@ function drawImageRotated(x,y,w,h,r,src){
         screen.drawImage(document.getElementById(src),0,0,w,h)
     }
     catch{
-        screen.drawImage(document.getElementById("Blank"), 0, 0, 0, 0)
+        screen.drawImage(document.getElementById("GUI_blank"), 0, 0, 0, 0)
         console.warn("image source not found: "+src)
     }
     screen.rotate(-r * (Math.PI/180))
@@ -871,4 +887,11 @@ function detectEntity(x, y){
             return true
         }
     }
+}
+
+
+
+function gameSelectScreen(){
+    screen.fillStyle = "white"
+    screen.fillText("menuuu",100,100)
 }
