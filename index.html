@@ -187,58 +187,10 @@
     </div>
     
     <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
-    <div style="display:none;">
-        <!--GUI :D-->
-        <img src="imgs/GUI/stats-back.png" id="GUI_statsBack">
-        <img src="imgs/GUI/stats-front.png" id="GUI_statsFront">
-        <img src="imgs/GUI/chat.png" id="GUI_chat">
-        <img src="imgs/GUI/pause.png" id="GUI_Pause">
-        <img src="imgs/GUI/unpause.png" id="GUI_Unpause">
-        <img src="imgs/GUI/spellscroll.png" id="GUI_SpellScroll">
-        <img src="imgs/GUI/target-active.png" id="GUI_mouse_target">
-        <img src="imgs/GUI/target-inactive.png" id="GUI_mouse_noTarget">
-        <img src="imgs/GUI/gamePaused.png" id="GUI_Text_GamePaused">
-        <img src="imgs/GUI/mapBG.png" id="GUI_mapBG"/>
-        <img src="imgs/GUI/mvmntarrow-highlight-up.png" id = "GUI_mvArrow_highlighted_up"/>
-        <img src="imgs/GUI/mvmntarrow-highlight.png" id = "GUI_mvArrow_highlighted"/>
-        <img src="imgs/GUI/mvmntarrow.png" id = "GUI_mvArrow"/>
-        <img src="imgs/GUI/mvmntarrow-up.png" id = "GUI_mvArrow_up"/>
-        <img src="imgs/GUI/item frame.png" id="GUI_itemFrame"/>
-        <img src="imgs/GUI/attack-available.png" id="GUI_attackAvailable"/>
-        <img src="imgs/GUI/attack-unavailable.png" id="GUI_attackUnavailable"/>
-
-
-
-
-        <!--Tiles-->
-        <img src="imgs/tiles/null.png" id="Tiles_None"/>
-        <img src="imgs/tiles/purple-floor-1.png" id="Tiles_Generic_Floor"/>
-        <img src="imgs/tiles/purple-wall-1.png" id="Tiles_Generic_Wall"/>
-        <img src="imgs/tiles/orange-floor-1.png" id="Tiles_Orange_Floor_1"/>
-        <img src="imgs/tiles/orange-floor-2.png" id="Tiles_Orange_Floor_2"/>
-        <img src="imgs/tiles/orange-floor-3.png" id="Tiles_Orange_Floor_3"/>
-        <img src="imgs/tiles/orange-wall-1.png" id="Tiles_Orange_Wall_1"/>
-        <img src="imgs/tiles/orange-wall-2.png" id="Tiles_Orange_Wall_2"/>
-        <img src="imgs/tiles/orange-wall-3.png" id="Tiles_Orange_Wall_3"/>
-        <!--Characters-->
-        <img src="imgs/characters/debug-ghost-1.png" id="Characters_Player_DebugGhost_1"/>
-        <img src="imgs/characters/debug-ghost-2.png" id="Characters_Player_DebugGhost_2"/>
-
-        <!--Items-->
-
-        <img src="imgs/items/health-potion-i.png" id="Items_health_potion_I"/>
-        <img src="imgs/items/test.png" id="Items_test"/>
-        <!--Entities(monsters)-->
-        <img src="imgs/entities/testgoblin/testgoblin.png" id="Entities_testgoblin"/>
-        <img src="imgs/entities/testgoblin/testgoblin-2.png" id="Entities_testgoblin2"/>
-        <img src="imgs/entities/testgoblin/testgoblin-hurt-1.png" id="Entities_testgoblin_hurt1"/>
-        <img src="imgs/entities/testgoblin/testgoblin-hurt-2.png" id="Entities_testgoblin_hurt2"/>
-        <img src="imgs/entities/testgoblin/testgoblin-hurt-3.png" id="Entities_testgoblin_hurt3"/>
-        <!-- this image is always loaded last I hope-->
-        <img src="imgs/characters/debug-ghost-2.png" id="lastImage"/>
-        <img src="imgs/GUI/blank.png" id="Blank"/>
+    <div id = "imgstore"style="display:none;">
 
     </div>
+    <script src="scripts/dynamicImageLoader.js"></script>
     <script src="scripts/constants.js"></script>
     <script src="scripts/localizations.js"></script>
     <script src="scripts/levelGen.js"></script>

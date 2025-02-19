@@ -731,6 +731,7 @@ function mouseInArea(sX, sY, eX, eY){
 
 
 function gameInit(){
+    imageLoader_importImages()
     //player initialization. Once the player chooses an element,
     //base dodge and health are set.
     switch(player.element){
