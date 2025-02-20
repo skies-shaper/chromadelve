@@ -19,6 +19,7 @@ function imageLoader_importImages(){
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/target-active.png" id="GUI_target-active"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/target-inactive.png" id="GUI_target-inactive"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/title/begin.png" id="GUI_title_begin"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/title/gamemenuscreen.png" id="GUI_title_gamemenuscreen"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/title/titlescreen.png" id="GUI_title_titlescreen"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/title/triple P logo.png" id="GUI_title_triple P logo"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/unpause.png" id="GUI_unpause"/>'

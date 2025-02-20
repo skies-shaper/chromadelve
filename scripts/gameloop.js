@@ -893,5 +893,51 @@ function detectEntity(x, y){
 
 function gameSelectScreen(){
     screen.fillStyle = "white"
-    screen.fillText("menuuu",100,100)
+    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
+    screen.font = "30px Kode Mono"
+    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
+    addMainMenuButton("New game",52, "#menu-newgame",()=>{})
+    addMainMenuButton("Load game",79, "#menu-loadgame",()=>{})
+    addMainMenuButton("Settings",106, "#menu-settings",()=>{})
+    addMainMenuButton("Exit",345, "#menu-exit",()=>{
+        document.getElementById("gamewindow").style.visibility = "hidden"
+    })
+
+}
+function addMainMenuButton(text, y, id, callback){
+    addGUIButton(text, 78, y, id, callback, true)
+}
+function addGUIButton(text, x, y, id, callback, highlight){
+    // console.log(highlight)
+    let w = 0
+    let h = 0
+    screen.font = "15px Kode Mono"
+
+    w = screen.measureText(text).width + 9
+    h=Number(screen.font.substring(0,screen.font.indexOf("p")))
+
+    if(buttonEvents.indexOf(id) == -1){
+        buttonEvents.push(id)
+        document.getElementById("gamewindow").addEventListener("mouseup",()=>{
+            if(mouseInArea(x,y-h,x+w,y+6))
+                callback()
+            buttonEvents.splice(buttonEvents.indexOf(id),1)
+        },{once: true})
+    }
+    console.log(highlight)
+    screen.fillStyle = "#264272"
+
+    if(mouseInArea(x,y-h,x+w,y+6))
+    {
+        screen.fillStyle="#5D8AD7"
+    }
+    screen.filter = "none"
+    screen.font = "15px Kode Mono"
+    screen.fillRect(x    ,y-h,w, h+6)
+    screen.fillStyle = "white"
+    screen.fillRect(x+w-3,y-h,3, h+6)
+
+    screen.fillText(text, x + 3, y)
+
+
 }
