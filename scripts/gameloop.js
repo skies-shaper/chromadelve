@@ -194,7 +194,10 @@ function gameloop(){
         creditScrollState++
     }
     if(Global_State == globalProgressionStates.gameSelect){
-            gameSelectScreen()
+        gameSelectScreen()
+    }
+    if(Global_State == globalProgressionStates.loadGame){
+        loadGameScreen()
     }
     // if(entities.length == 0){
     //     spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
@@ -889,16 +892,47 @@ function detectEntity(x, y){
     }
 }
 
+function loadGameScreen(){
+    screen.fillStyle = "white"
+    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
+    screen.font = "30px Kode Mono"
+    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
+    screen.font = "15px Kode Mono"
 
+    screen.fillText("Load Game",(480-screen.measureText("Load Game").width)/2,45)
+    screen.font = "10px Kode Mono"
+    addMainMenuButton("Back",345, "#loadmenu-back",()=>{
+        Global_State = globalProgressionStates.gameSelect
+
+    })
+    if(getSaveNamesList().length == 0){
+        screen.fillText("No saved games detected.", 78,60)
+        addMainMenuButton("Start a new game",80, "#menu-newgame",()=>{
+            Global_State = globalProgressionStates.levelGen
+        })
+        return
+    }
+    for(let i = 0; i < getSaveNamesList().length; i++){
+        addMainMenuButton(getSaveNamesList()[i],70+i*25, "#load"+i+getSaveNamesList()[i],()=>{
+            loadGame(i)
+        })
+    }
+}
 
 function gameSelectScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
     screen.font = "30px Kode Mono"
     screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
-    addMainMenuButton("New game",52, "#menu-newgame",()=>{})
-    addMainMenuButton("Load game",79, "#menu-loadgame",()=>{})
-    addMainMenuButton("Settings",106, "#menu-settings",()=>{})
+    addMainMenuButton("New game",52, "#menu-newgame",()=>{
+        Global_State = globalProgressionStates.levelGen
+    })
+    addMainMenuButton("Load game",79, "#menu-loadgame",()=>{
+        Global_State = globalProgressionStates.loadGame
+    })
+    addMainMenuButton("Settings",106, "#menu-settings",()=>{
+
+    })
     addMainMenuButton("Exit",345, "#menu-exit",()=>{
         document.getElementById("gamewindow").style.visibility = "hidden"
     })
@@ -914,6 +948,7 @@ function addGUIButton(text, x, y, id, callback, highlight){
     screen.font = "15px Kode Mono"
 
     w = screen.measureText(text).width + 9
+    w = Math.min(w, 309)
     h=Number(screen.font.substring(0,screen.font.indexOf("p")))
 
     if(buttonEvents.indexOf(id) == -1){
@@ -924,7 +959,6 @@ function addGUIButton(text, x, y, id, callback, highlight){
             buttonEvents.splice(buttonEvents.indexOf(id),1)
         },{once: true})
     }
-    console.log(highlight)
     screen.fillStyle = "#264272"
 
     if(mouseInArea(x,y-h,x+w,y+6))
@@ -937,7 +971,7 @@ function addGUIButton(text, x, y, id, callback, highlight){
     screen.fillStyle = "white"
     screen.fillRect(x+w-3,y-h,3, h+6)
 
-    screen.fillText(text, x + 3, y)
+    screen.fillText(text, x + 3, y, 300)
 
 
 }
