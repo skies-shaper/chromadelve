@@ -87,7 +87,7 @@ window.addEventListener("keyup",(event)=>{
     handlePlayerMovement(event.key)
 })
 
-
+console.log(performance.now() - startTime + "ms loadup time")
 const killID = setInterval(gameloop,(1000/60))
 setInterval(autoSave, 30000)
 let showMap = false
@@ -144,7 +144,7 @@ document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
 })
 
 function gameloop(){
-   
+    
     gameTicks++
     screen.imageSmoothingEnabled= false
     screen.fillStyle ="black";
@@ -223,25 +223,25 @@ function drawHUD(){
         let mouseNoTouchZones = []
         if(round.progression == round.progressionStates.notUsingItem && canUseMovementButtons){
             let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
-            if(!(tileSRC[level[player.yPos+1][player.xPos]].collision || detectEntity(player.xPos, player.yPos+1))){
+            if(!(tileSRC[tiles[level[player.yPos+1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos+1))){
                 addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
                     movePlayer(directions.down, 1)
                 },true,180)
                 mouseNoTouchZones.push(player.xPos+","+(player.yPos+1))
             }
-            if(!(tileSRC[level[player.yPos-1][player.xPos]].collision || detectEntity(player.xPos, player.yPos-1))){
+            if(!(tileSRC[tiles[level[player.yPos-1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos-1))){
                 addButton("#move_up",src,216, 156-48, 48, 48, ()=>{
                     movePlayer(directions.up, 1)
                 },true,0)
                 mouseNoTouchZones.push(player.xPos+","+(player.yPos-1))
             }
-            if(!(tileSRC[level[player.yPos][player.xPos+1]].collision|| detectEntity(player.xPos+1, player.yPos))){
+            if(!(tileSRC[tiles[level[player.yPos][player.xPos+1]]].collision|| detectEntity(player.xPos+1, player.yPos))){
                 addButton("#move_right",src,216+48, 156, 48, 48, ()=>{
                     movePlayer(directions.right, 1)
                 },true,90)
                 mouseNoTouchZones.push((player.xPos+1)+","+player.yPos)
             }
-            if(!(tileSRC[level[player.yPos][player.xPos-1]].collision|| detectEntity(player.xPos-1, player.yPos))){
+            if(!(tileSRC[tiles[level[player.yPos][player.xPos-1]]].collision|| detectEntity(player.xPos-1, player.yPos))){
                 addButton("#move_left",src,216-48, 156, 48, 48, ()=>{
                     movePlayer(directions.left, 1)
                 },true,270)
@@ -497,7 +497,7 @@ function handleTurnLogic(){
                     mouse.mode = mouseModes.target
                 }                
         }
-        if(tileSRC[level[mouseGridY+player.yPos-4][mouseGridX+player.xPos-5]].collision){
+        if(tileSRC[tiles[level[mouseGridY+player.yPos-4][mouseGridX+player.xPos-5]]].collision){
             mouse.mode = mouseModes.target_invalid
         }
         if(mouse.mode == mouseModes.target && mouseDown && !mouseUpEvents.includes("mkAttack")){
@@ -552,10 +552,10 @@ function drawTiles(){
             }
             if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>-1 && (i+player.yPos-4)>-1){
                 try{
-                screen.drawImage(document.getElementById(tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
+                screen.drawImage(document.getElementById(tileSRC[tiles[level[i+player.yPos-4][player.xPos+j-5]]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
                 }
                 catch(e){
-                    console.log(e+", "+tileSRC[level[i+player.yPos-4][player.xPos+j-5]]["src"])
+                    console.log(e+", "+tileSRC[tiles[level[i+player.yPos-4][player.xPos+j-5]]]["src"])
                 }
             }
         }
@@ -751,7 +751,7 @@ function mouseInArea(sX, sY, eX, eY){
 
 
 function gameInit(){
-    imageLoader_importImages()
+    dynamicContent_importImages()
     //player initialization. Once the player chooses an element,
     //base dodge and health are set.
     switch(player.element){

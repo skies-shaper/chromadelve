@@ -1,14 +1,3 @@
-let tileSRC = [
-    {src: "tiles_null", collision: false, mapColor: 0},
-    {src: "tiles_generic_wall", collision: true, mapColor: 1},
-    {src: "tiles_generic-floor", collision: false, mapColor: 2},
-    {src: "tiles_orange_floor-1", collision: false, mapColor: 2},
-    {src: "tiles_orange_floor-2", collision: false, mapColor: 2},
-    {src: "tiles_orange_floor-3", collision: false, mapColor: 2},    
-    {src: "tiles_orange_wall-1", collision: true, mapColor: 1},
-    {src: "tiles_orange_wall-2", collision: true, mapColor: 1},
-    {src: "tiles_orange_wall-3", collision: true, mapColor: 1},
-]
 const structures = {
     example:{
         data: [],
@@ -19,20 +8,6 @@ const structures = {
 let bossRoomExists
 let  grid, paths, numRooms
 let numPaths = 0
-let tiles = {
-    none:  0, 
-    generic_wall:  1,
-    generic_floor: 2,
-    orange: {
-        floor_1: 3,
-        floor_2: 4,
-        floor_3: 5,
-        wall_1: 6,
-        wall_2: 7,
-        wall_3: 8
-    },
-
-}
 
 let bossRoomPossibilities = [
 
@@ -66,41 +41,41 @@ let rooms = {
     misc: [
         {
             data: [
-                [2,2,2,2,2],
-                [2,2,2,2,2],
-                [2,2,2,2,2],
-                [2,2,2,2,2],
-                [2,2,2,2,2]
+                [1,1,1,1,1],
+                [1,1,1,1,1],
+                [1,1,1,1,1],
+                [1,1,1,1,1],
+                [1,1,1,1,1]
             ],
             height: 5,
             width: 5
         },
         {
             data: [
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2]
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1]
             ],
             height: 5,
             width: 7
         },
         {
             data: [
-                [2,2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2,2]
+                [1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1]
             ],
             height: 4,
             width: 8
         },
         {
             data: [
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2],
-                [2,2,2,2,2,2,2]
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1]
             ],
             height: 3,
             width: 7
@@ -173,18 +148,18 @@ function generateLevel(){
     }
     for(let i  = 0; i< 78; i++){
         for(let j = 0; j<78; j++){
-            if(level[i][j] == 2){
+            if(level[i][j] == 1){
                 if(level[i-1][j] == 0){
-                    level[i-1][j] = 1
+                    level[i-1][j] = 2
                 }
                 if(level[i][j-1] == 0){
-                    level[i][j-1] = 1
+                    level[i][j-1] = 2
                 }
                 if(level[i+1][j] == 0){
-                    level[i+1][j] = 1
+                    level[i+1][j] = 2
                 }           
                 if(level[i][j+1] == 0){
-                    level[i][j+1] = 1
+                    level[i][j+1] = 2
                 }
             }
         }
@@ -200,28 +175,28 @@ function generateLevel(){
     for(let i = 0; i<78; i++){
         for(let j = 0; j<78; j++){
             let c = rand(1,10)
-            if(level[i][j] == tiles.generic_floor){
+            if(level[i][j] == tileSRC["tiles_generic_floor"].ID){
                 switch(c){
                     case 1:
-                        level[i][j] = tiles[level_color].floor_2
+                        level[i][j] = tileSRC["tiles_"+level_color+"_floor-2"].ID
                         break;
                     case 2:
-                        level[i][j] = tiles[level_color].floor_3
+                        level[i][j] = tileSRC["tiles_"+level_color+"_floor-3"].ID
                         break;
                     default: 
-                        level[i][j] = tiles[level_color].floor_1
+                        level[i][j] = tileSRC["tiles_"+level_color+"_floor-1"].ID
                 }
             }
-            if(level[i][j] == tiles.generic_wall){
+            if(level[i][j] == tileSRC["tiles_generic_wall"].ID){
                 switch(c){
                     case 1:
-                        level[i][j] = tiles[level_color].wall_2
+                        level[i][j] = tileSRC["tiles_"+level_color+"_wall-2"].ID
                         break;
                     case 2:
-                        level[i][j] = tiles[level_color].wall_3
+                        level[i][j] = tileSRC["tiles_"+level_color+"_wall-3"].ID
                         break;
                     default: 
-                        level[i][j] = tiles[level_color].wall_1
+                        level[i][j] = tileSRC["tiles_"+level_color+"_wall-1"].ID
                 }
             }
         }
@@ -337,32 +312,32 @@ function handlePaths(){
                 if(pathStartX == pathEndX){
                     while(currentY > pathEndY){
                         currentY--
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] = 1
                     }
                     break;
                 }
                 for(let j = 1; j<Math.floor((pathStartY-pathEndY)/2); j++){
-                    level[pathStartY-j][pathStartX] = 2
+                    level[pathStartY-j][pathStartX] = 1
                     currentY = pathStartY-j
                 }
                 
                 if(pathStartX > pathEndX){
                     while((currentX > pathEndX)){
                         currentX--
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] = 1
 
                     }
                 }
                 if(pathStartX < pathEndX){
                     while((currentX < pathEndX)){
                         currentX ++
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] = 1
 
                     }
                 }
                 while(currentY > pathEndY){
                     currentY--
-                    level[currentY][currentX] = 2
+                    level[currentY][currentX] = 1
                 }
                 
                 break;
@@ -373,25 +348,25 @@ function handlePaths(){
                 currentY = pathStartY
                 currentX = pathStartX
                 for(let j = 0; j<Math.floor((pathEndY-pathStartY)/2); j++){
-                    level[pathStartY+j][pathStartX] = 2
+                    level[pathStartY+j][pathStartX] = 1
                     currentY = pathStartY+j
                 }
                 
                 if(pathStartX > pathEndX){
                     while((currentX > pathEndX)){
                         currentX--
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
                     }
                 }
                 if(pathStartX < pathEndX){
                     while((currentX < pathEndX)){
                         currentX ++
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
 
                     }
                 }
                 while(currentY < pathEndY){
-                    level[currentY][currentX] = 2
+                    level[currentY][currentX] =1
 
                     currentY++
                 }
@@ -403,25 +378,25 @@ function handlePaths(){
                 currentY = pathStartY
                 currentX = pathStartX
                 for(let j = 0; j<Math.floor((pathEndX-pathStartX)/2); j++){
-                    level[pathStartY][pathStartX + j] = 2
+                    level[pathStartY][pathStartX + j] =1
                     currentX = pathStartX+j
                 }
                 
                 if(pathStartY > pathEndY){
                     while((currentY > pathEndY)){
                         currentY--
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
                     }
                 }
                 if(pathStartY < pathEndY){
                     while((currentY < pathEndY)){
                         currentY ++
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
 
                     }
                 }
                 while(currentX < pathEndX){
-                    level[currentY][currentX] = 2
+                    level[currentY][currentX] =1
 
                     currentX++
                 }
@@ -433,25 +408,25 @@ function handlePaths(){
                 currentY = pathStartY
                 currentX = pathStartX
                 for(let j = 1; j<Math.floor((pathStartX-pathEndX)/2); j++){
-                    level[pathStartY][pathStartX - j] = 2
+                    level[pathStartY][pathStartX - j] =1
                     currentX = pathStartX-j
                 }
                 
                 if(pathStartY > pathEndY){
                     while((currentY > pathEndY)){
                         currentY--
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
                     }
                 }
                 if(pathStartY < pathEndY){
                     while((currentY < pathEndY)){
                         currentY ++
-                        level[currentY][currentX] = 2
+                        level[currentY][currentX] =1
 
                     }
                 }
                 while(!(currentX < pathEndX)){
-                    level[currentY][currentX] = 2
+                    level[currentY][currentX] =1
 
                     currentX--
                 }
@@ -488,7 +463,7 @@ function placeRoom(gridX,gridY){
     let initialY = (gridY*10)+gridY+1 +roomOffsetY
     for(let i = 0; i<room.height; i++){
         for(let j = 0; j<room.width; j++){
-            level[i+initialY][j+initialX] = 2
+            level[i+initialY][j+initialX] =1
         }
     }
     if(gridX == 3 && gridY == 3){

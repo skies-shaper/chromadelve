@@ -92,6 +92,7 @@
         <a href="terms.html"><h2>Terms</h2></a>
         <a href="releases.html"><h2>Releases</h2></a>
      </div>
+     <img id="startupimg" style="display:none" src="imgs/GUI/title/titlescreen.png">
 
     <div id="gamebox">
     <h1>Chromadelve</h1>
@@ -100,6 +101,14 @@
         <canvas id="gamewindow" width="480" height="360" oncontextmenu="return false;">
             Game content :D
         </canvas>
+        <script>
+            {let screen = document.getElementById("gamewindow").getContext("2d")
+            screen.imageSmoothingEnabled= false
+            screen.drawImage(document.getElementById("startupimg"),0,0,480,360)
+            screen.fillStyle = "white"
+            screen.font = "30px Kode Mono"
+            screen.fillText("Loading...",70,310)}
+        </script>
     <input id="gameConsole"></input>
     <div id="console-text"></div>
     </div>
@@ -188,9 +197,8 @@
     
     <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
     <div id = "imgstore"style="display:none;">
-
     </div>
-    <script src="scripts/dynamicImageLoader.js"></script>
+    <script src="scripts/dynamicContentLoader.js"></script>
     <script src="scripts/constants.js"></script>
     <script src="scripts/localizations.js"></script>
     <script src="scripts/levelGen.js"></script>

@@ -374,3 +374,5 @@ let creditScrollState = 0
 function randomInclusive(start, end){
     return start + Math.floor(Math.random() * end);
 }
+
+dynamicContent_generateTileMappings()
