@@ -424,7 +424,7 @@ function useItem(itemIdx){
     
 
     let affectedEntity = {}
-    let affectedEntityIndex = 0
+    let affectedEntityIndex = -1
     let i = 0
     entities.forEach((entity)=>{
         if(entity.xPos == mouseGridX+player.xPos-5 && entity.yPos == mouseGridY+player.yPos-4){
@@ -433,7 +433,13 @@ function useItem(itemIdx){
         }
         i++
     })
-    
+    if(affectedEntityIndex == -1){
+        mouse.mode = mouseModes.select
+        GUI.focusedItem = -1
+        round.progression = round.progressionStates.notUsingItem
+        item.data.cooldownTime -= item.data.cooldown
+        return
+    }
     switch(item.type){
         case itemTypes.weapon:
             if(randomInclusive(1,10) > affectedEntity.stats.dodge){
@@ -478,7 +484,7 @@ function handleTurnLogic(){
         let item = player.inventory.equipped[GUI.focusedItem]
         mouse.mode  = mouseModes.target_invalid
         let rangeDist = item.data.range.distance
-
+        // console.log(item.data.range)
         switch(item.data.range.rangeType){
             case range.self: 
                 if(mouseGridX == 5 && mouseGridY == 4){
