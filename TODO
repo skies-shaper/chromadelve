@@ -45,3 +45,7 @@ This provides a lil console setup for them (to restart a game, etc)
 Everyone else goes to the provided link (if using a web browser)
 The node app will serve the multiplayer HTML file.
 The multiplayer file will mostly act to render the player's screen. The player whose turn it is will be served a list of options for what they can do (move, make various attacks). The option they choose will be transmitted to the multiplayer server, which will validate it and then send a new game state to everyone.
+
+Add settings / manage saves / delete games. 
+
+Give game saves a version + other metadata, just in case

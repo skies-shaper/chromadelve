@@ -192,6 +192,7 @@ function gameloop(){
         })
         screen.font = "30px Kode Mono"
         screen.fillText(messages.GUI.mainMenu.begin,70,310)
+        splash()
         
     }
     if(Global_State == globalProgressionStates.levelGen){        
@@ -1031,7 +1032,7 @@ function gameSelectScreen(){
 
     })
     addMainMenuButton("Exit",345, "#menu-exit",()=>{
-        document.getElementById("gamewindow").style.visibility = "hidden"
+        Global_State = globalProgressionStates.menu
     })
 
 }
@@ -1072,4 +1073,13 @@ function addGUIButton(text, x, y, id, callback, highlight){
     screen.fillText(text, x + 3, y, 300)
 
 
+}
+
+function splash(){
+    if((new Date().getMonth()) == 2 && (new Date().getDate()) == 1){
+        screen.font = "15px Kode Mono"
+        screen.fillStyle = "Orange"
+        screen.fillText("Happy Birthday Gabriel!", 260,340+(Math.sin(gameTicks/20)*8))
+
+    }
 }
