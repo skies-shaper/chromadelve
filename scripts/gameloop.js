@@ -75,7 +75,7 @@ window.addEventListener("keyup",(event)=>{
     if(event.key == "m"){
         showMap = !showMap
     }
-    if(event.key.toLowerCase() == "t"){
+    if(event.key.toLowerCase() == "t" && Global_State == globalProgressionStates.gameplay){
         document.getElementById("gameConsole").style.visibility = "visible"
         document.getElementById("console-text").style.visibility = "visible"
         document.getElementById("gameConsole").focus()
@@ -100,7 +100,7 @@ function drawMap(){
         for(let j = 0; j<level[i].length; j++){ //x
 
             if(level[i][j] != 0){
-                screen.fillStyle = mapColors[tileSRC[level[i][j]].mapColor]
+                screen.fillStyle =tileSRC[tiles[level[i][j]]].mapColor
                 screen.fillRect(99+(3*j),63+(i*3),3,3);
             }
             if(i==player.yPos && j == player.xPos){
@@ -120,6 +120,38 @@ function drawMap(){
         }
     }
 }
+document.getElementById("gameNameTextBox").addEventListener("keyup", (e)=>{
+    if(e.key != "Enter"){
+        return
+    }
+    setTimeout(function () {
+        document.getElementById("gameNameTextBox").blur()
+    }, 70)
+})
+document.getElementById("gameNameTextBox").addEventListener("focusin", (e)=>{
+    document.getElementById("gameNameTextBox").style.borderBottom = "1px solid white"
+
+})
+document.getElementById("gameNameTextBox").addEventListener("focusout", (e)=>{
+    let error = false
+    if("" == document.getElementById("gameNameTextBox").value){
+        screen.fillText("Given name not allowed.",78,100)
+        error = true
+    }
+    for(let i = 0; i < localStorage.length; i++){
+        // console.log(localStorage.key(i))
+        if(localStorage.key(i) == document.getElementById("gameNameTextBox").value){
+            screen.fillText("Name already taken.",78,100)
+            error = true
+        }
+    }
+        if(!error && mouseDown && mouseInArea(80,96,130,120)){
+            game.sessionName = document.getElementById("gameNameTextBox").value
+            document.getElementById("gameNameTextBox").style.visibility = "hidden"
+            Global_State = globalProgressionStates.levelGen
+        }
+    
+})
 
 document.getElementById("gameConsole").addEventListener("keyup",(e)=>{
     if(e.key != "Enter"){
@@ -162,10 +194,13 @@ function gameloop(){
         screen.fillText(messages.GUI.mainMenu.begin,70,310)
         
     }
-    if(Global_State == globalProgressionStates.levelGen){
+    if(Global_State == globalProgressionStates.levelGen){        
         generateLevel()
 
         // screen.fillText("generating map...",10,10)
+    }
+    if(Global_State == globalProgressionStates.createNewGame){
+        gameCreationScreen()
     }
     if(Global_State == globalProgressionStates.gameplay){ //the game
         //scripts that update if the game is running
@@ -183,12 +218,13 @@ function gameloop(){
         {
             drawMap()
         }
-        handleDebugScreen()
 
         if(isPaused){ //draw pause menu
             drawPauseMenu()
         }
     }
+    handleDebugScreen()
+
     if(Global_State == globalProgressionStates.credits){ //credits!
         drawCredits()
         creditScrollState++
@@ -206,14 +242,21 @@ function gameloop(){
 function drawPauseMenu(){
     screen.fillStyle =  "rgba(0,0,0,0.3)"
     screen.fillRect(0,0,480,360)
-    addButton("#GUI_Buttons_Unpause","GUI_Unpause",9,9,21,21,()=>{
+    addButton("#GUI_Buttons_Unpause","GUI_unpause",9,9,21,21,()=>{
         isPaused = false
     })
     screen.fillStyle = "white"
     screen.font = "20px Kode Mono"
-    screen.fillText(messages.popups.pauseMenu.gamePaused, 39,27)
-    screen.fillText(messages.popups.pauseMenu.gameQuit, 39,50)
-    screen.fillText(messages.popups.pauseMenu.gameOptionsButton, 39,73)
+    screen.fillText(messages.popups.pauseMenu.gamePaused + " - " + game.sessionName, 39,27)
+
+    addGUIButton(messages.popups.pauseMenu.gameQuit, 39,50,"#pausemenu-quit",()=>{
+        manualSave()
+        Global_State = globalProgressionStates.menu
+    })
+    addGUIButton(messages.popups.pauseMenu.gameOptionsButton, 39,73,"#pausemenu-settings",()=>{
+        
+    })
+
     screen.font = "12px Kode Mono"
 }
 function drawHUD(){
@@ -914,15 +957,60 @@ function loadGameScreen(){
     if(getSaveNamesList().length == 0){
         screen.fillText("No saved games detected.", 78,60)
         addMainMenuButton("Start a new game",80, "#menu-newgame",()=>{
-            Global_State = globalProgressionStates.levelGen
+            Global_State = globalProgressionStates.createNewGame
+            document.getElementById("gameNameTextBox").style.visibility = "visible"
+            document.getElementById("gameNameTextBox").value = ""
+            document.getElementById("gameNameTextBox").focus()
+
         })
         return
     }
     for(let i = 0; i < getSaveNamesList().length; i++){
         addMainMenuButton(getSaveNamesList()[i],70+i*25, "#load"+i+getSaveNamesList()[i],()=>{
-            loadGame(i)
+            loadGame(getSaveNamesList()[i])
+            Global_State = globalProgressionStates.gameplay
         })
     }
+}
+
+function gameCreationScreen(){
+    screen.fillStyle = "white"
+    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
+    screen.font = "30px Kode Mono"
+    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
+    screen.font = "15px Kode Mono"
+
+    screen.fillText("New Game",(480-screen.measureText("New Game").width)/2,45)
+    addMainMenuButton("Back",345, "#loadmenu-back",()=>{
+        document.getElementById("gameNameTextBox").style.visibility = "hidden"
+        Global_State = globalProgressionStates.gameSelect
+    })
+    screen.font = "15px Kode Mono"
+
+    screen.fillText("World Name", 78,60)
+    document.getElementById("gameNameTextBox").style.visibility = "visible"
+    screen.font = "10px Kode Mono"
+
+    screen.fillStyle = "red"
+    let error = false
+    if("" == document.getElementById("gameNameTextBox").value){
+        screen.fillText("Given name not allowed.",78,100)
+        error = true
+    }
+    for(let i = 0; i < localStorage.length; i++){
+        // console.log(localStorage.key(i))
+        if(localStorage.key(i) == document.getElementById("gameNameTextBox").value){
+            screen.fillText("Name already taken.",78,100)
+            error = true
+        }
+    }
+    addMainMenuButton("Start",110+(10*error), "#loadmenu-start",()=>{
+        if(!error){
+            game.sessionName = document.getElementById("gameNameTextBox").value
+            document.getElementById("gameNameTextBox").style.visibility = "hidden"
+            Global_State = globalProgressionStates.levelGen
+        }
+    })
 }
 
 function gameSelectScreen(){
@@ -931,7 +1019,10 @@ function gameSelectScreen(){
     screen.font = "30px Kode Mono"
     screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
     addMainMenuButton("New game",52, "#menu-newgame",()=>{
-        Global_State = globalProgressionStates.levelGen
+        Global_State = globalProgressionStates.createNewGame
+        document.getElementById("gameNameTextBox").style.visibility = "visible"
+        document.getElementById("gameNameTextBox").value = ""
+        document.getElementById("gameNameTextBox").focus()
     })
     addMainMenuButton("Load game",79, "#menu-loadgame",()=>{
         Global_State = globalProgressionStates.loadGame
@@ -964,6 +1055,7 @@ function addGUIButton(text, x, y, id, callback, highlight){
                 callback()
             buttonEvents.splice(buttonEvents.indexOf(id),1)
         },{once: true})
+        
     }
     screen.fillStyle = "#264272"
 

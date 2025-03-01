@@ -7,7 +7,8 @@ let globalProgressionStates = {
     gameplay: 2,
     credits: 3,
     gameSelect: 4,
-    loadGame: 5
+    loadGame: 5,
+    createNewGame: 6
 }
 
 let numEntities = 0

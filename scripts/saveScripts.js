@@ -1,5 +1,11 @@
 function getSaveNamesList(){
-    return ["First run!","etc","super cool save file name", "WOW IS THIS INCREDIBLY SUPER DUPER DUPER DUPER LONG"]
+    let ret = []
+    for(let i = 0; i < localStorage.length; i++){
+        if(localStorage.key(i) != "mostRecentSave"){
+            ret.push(localStorage.key(i))
+        }
+    }
+    return ret
 }
 
 function autoSave(){
@@ -10,9 +16,15 @@ function manualSave(){
 }
 
 function codifyLevel(){
-    return {playerData: player, levelData: {tileGrid: level, entityData: entities}}
+    return JSON.stringify({playerData: player, levelData: {tileGrid: level, entityData: entities}})
 }
 
-function loadGame(index){
-    //TO be implemented at a later date
+function loadGame(id){
+    let importedData = JSON.parse(localStorage.getItem(id))
+    player = importedData.playerData
+    level = importedData.levelData.tileGrid
+    entities = importedData.levelData.entityData
+    game.sessionName = id
+    isPaused = false
+
 }

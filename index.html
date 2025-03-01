@@ -64,7 +64,7 @@
             top: 215px;
         }
         #game{
-            position: static;
+            position: relative;
         }
         a:visited{
             color: cadetblue;
@@ -82,6 +82,24 @@
         }
         #menu img{
             float: left;
+        }
+        #gameNameTextBox{
+            font-family: "Kode Mono";
+            color: white;
+            outline: none;
+            caret-color: white;
+            z-index: 2;
+            background-color: #264272;
+            position: absolute;
+            top: 68px;
+            left: 78px;
+            width: 314px;
+            visibility: hidden;
+            padding: none;
+            border: none;
+            border-bottom: 1px solid white;
+
+            padding-left: 5px;
         }
     </style>
 
@@ -109,7 +127,9 @@
             screen.font = "30px Kode Mono"
             screen.fillText("Loading...",70,310)}
         </script>
+    <input id="gameNameTextBox"></input>
     <input id="gameConsole"></input>
+    
     <div id="console-text"></div>
     </div>
     <noscript>Unfortunately, this is a browser-based game. Which means that, short of insane technological mumbo jumbo we need Javascript to make it run. Depending on where in the future you exist, you may be able to find a desktop version of our game! That has been a floated concept at one point or another </noscript>
@@ -123,6 +143,20 @@
     <span property="dct:title">This work and all inluded assets</span> are licensed under a CC BY-NC-SA 4.0 license. (2024) <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Here's what that means.<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a>
     <div id="changelog">
         <h2>Changelog: </h2>
+        <div>
+            <h3>-February 23, 2025</h3>
+            <p>
+                OK. This bloggy bit hasn't updated in a while, but rest assured that chromadelve is now like super updated
+                <br>WE HAVE:
+            </p>
+            <p>
+                -Full menu system<br>
+                -Saves system
+                -A whole ton of backend functionality that should make adding game content so much easier you actually wouldn't believe
+                -A titlescreen
+                -MULTUDINOUS OTHER THINGS (!!)
+            </p>
+        </div>
         <div>
             <h3>-December 23, 2024</h3>
             <p>
