@@ -1,11 +1,16 @@
+if(localStorage.getItem("saveList") === null){
+    localStorage["saveList"] = JSON.stringify([])
+}
+
 function getSaveNamesList(){
     let ret = []
-    for(let i = 0; i < localStorage.length; i++){
-        if(localStorage.key(i) != "mostRecentSave"){
-            ret.push(localStorage.key(i))
-        }
+    if(JSON.parse(localStorage["saveList"]) instanceof Array){
+        return JSON.parse(localStorage["saveList"])
     }
-    return ret
+    
+    return [localStorage["saveList"]]
+    
+    
 }
 
 function autoSave(){
@@ -16,6 +21,13 @@ function manualSave(){
 }
 
 function codifyLevel(){
+    let saveList = getSaveNamesList()
+
+    
+    if(saveList.indexOf(game.sessionName) == -1){
+        saveList.push(game.sessionName)
+    }
+    localStorage["saveList"] = JSON.stringify(saveList)
     return JSON.stringify({playerData: player, levelData: {tileGrid: level, entityData: entities}})
 }
 
