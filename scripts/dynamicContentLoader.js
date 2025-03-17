@@ -1,4 +1,4 @@
-let startTime = performance.now()
+
 let tiles = []
 let tileSRC = {}
 document.getElementById("imgstore").innerHTML = ""
@@ -36,6 +36,7 @@ function dynamicContent_importImages(){
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/items/health-potion-i.png" id="items_health-potion-i"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/items/test.png" id="items_test"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/src/map-background.pixil" id="src_map-background"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/editor-blank.png" id="tiles_blue_editor-blank"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/floor.png" id="tiles_generic_floor"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/wall.png" id="tiles_generic_wall"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/green/floor-1.png" id="tiles_green_floor-1"/>'
@@ -69,6 +70,7 @@ tileSRC = {
         "tiles_null": {src: "tiles_null", collision: false, mapColor: 0, ID: 0},
 "tiles_generic_floor": {src: "tiles_generic_floor", collision: false, ID: 1, mapColor: "#000000"},
 "tiles_generic_wall": {src: "tiles_generic_wall", collision: true, ID: 2, mapColor: "#000000"},
+"tiles_blue_editor-blank": {src: "tiles_blue_editor-blank", collision: false, ID: 27, mapColor: "#000000"},
 "tiles_green_floor-1": {src: "tiles_green_floor-1", collision: false, ID: 3, mapColor: "#000000"},
 "tiles_green_floor-2": {src: "tiles_green_floor-2", collision: false, ID: 4, mapColor: "#000000"},
 "tiles_green_floor-3": {src: "tiles_green_floor-3", collision: false, ID: 5, mapColor: "#000000"},
@@ -120,4 +122,5 @@ tiles = [
 "tiles_red_floor-3",
 "tiles_red_wall-1",
 "tiles_red_wall-2",
-"tiles_red_wall-3"]}
+"tiles_red_wall-3",
+"tiles_blue_editor-blank"]}

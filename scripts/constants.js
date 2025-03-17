@@ -1,3 +1,4 @@
+let startTime = performance.now()
 let canUseMovementButtons = true
 let Global_State = 0
 
@@ -8,7 +9,9 @@ let globalProgressionStates = {
     credits: 3,
     gameSelect: 4,
     loadGame: 5,
-    createNewGame: 6
+    createNewGame: 6,
+    debug: 7,
+    roomEditor: 8
 }
 
 let numEntities = 0
@@ -320,15 +323,18 @@ function getAnimationClone(src){
     return temp
 }
 
-
+let editorCurrentlySelectedTile = 0
 const screen = document.getElementById("gamewindow").getContext("2d");
 const mapColors = { 0: "#000000", 1: "#000000", 2: "#808080", 3: "#ff0000", 4: "#00ff00" }
 let entityAnimationStage = 1
 let gameTicks = 0
-let level_color = "orange"
 let isTyping = false
 let gameConsole = []
 let level = []
+let levelData = {
+    color: "orange",
+    width: 0
+}
 let collisionMask = []
 let mouseX = 0
 let mouseY = 0

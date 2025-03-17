@@ -188,6 +188,9 @@ function gameloop(){
         drawImageRotated(0,0,480,360,0,"GUI_title_titlescreen")
         addButton("#mainmenustart","GUI_title_begin",27,270,180,63,()=>{
             Global_State = globalProgressionStates.gameSelect
+            if(isShiftPressed){
+                Global_State = globalProgressionStates.debug
+            }
             removeButton("#mainmenustart")
         })
         screen.font = "30px Kode Mono"
@@ -239,6 +242,23 @@ function gameloop(){
     // if(entities.length == 0){
     //     spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
     // }
+    if(Global_State == globalProgressionStates.debug){ 
+        debugGameScreen()
+    }
+    if(Global_State == globalProgressionStates.roomEditor){
+        if(!isPaused){
+            handlePlayerMovement()
+        }
+        //scripts that update always
+        
+        drawTiles()
+        drawEntities()
+        drawEditorHUD()
+
+        if(isPaused){ //draw pause menu
+            drawPauseMenu()
+        }
+    }
 }
 function drawPauseMenu(){
     screen.fillStyle =  "rgba(0,0,0,0.3)"
@@ -600,7 +620,7 @@ function drawTiles(){
                 mouseGridX = j
                 mouseGridY = i
             }
-            if((i+player.yPos-4)<78 && (player.xPos+j-5)<78 && (player.xPos+j-5)>-1 && (i+player.yPos-4)>-1){
+            if((i+player.yPos-4)<levelData.width && (player.xPos+j-5)<levelData.width && (player.xPos+j-5)>-1 && (i+player.yPos-4)>-1){
                 try{
                 screen.drawImage(document.getElementById(tileSRC[tiles[level[i+player.yPos-4][player.xPos+j-5]]]["src"]),((j)*48)-24,((i)*48)-36,48,48)
                 }
@@ -1034,7 +1054,66 @@ function gameSelectScreen(){
     addMainMenuButton("Exit",345, "#menu-exit",()=>{
         Global_State = globalProgressionStates.menu
     })
+}
+function debugGameScreen(){
+    gameSelectScreen()
+    addMainMenuButton("Room Editor",133, "#room-editor",()=>{
+        levelData.width = 10
+        level = []
+        for(let i = 0; i < 10; i++){
+            level.push([])
+            for(let j = 0; j < 10; j++){
+                level[i].push(tileSRC["tiles_blue_editor-blank"].ID)
+            }
+        }
+        player.xPos = 5
+        player.yPos = 5
+        Global_State = globalProgressionStates.roomEditor
 
+    })
+}
+function drawEditorHUD(){
+    if(!isPaused){
+        
+        let mouseNoTouchZones = []
+        if(round.progression == round.progressionStates.notUsingItem && canUseMovementButtons){
+            let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
+            
+                addButton("#move_down",src,216, 156+48, 48, 48, ()=>{
+                    movePlayer(directions.down, 1)
+                },true,180)
+                mouseNoTouchZones.push(player.xPos+","+(player.yPos+1))
+                addButton("#move_up",src,216, 156-48, 48, 48, ()=>{
+                    movePlayer(directions.up, 1)
+                },true,0)
+                mouseNoTouchZones.push(player.xPos+","+(player.yPos-1))
+                addButton("#move_right",src,216+48, 156, 48, 48, ()=>{
+                    movePlayer(directions.right, 1)
+                },true,90)
+                mouseNoTouchZones.push((player.xPos+1)+","+player.yPos)
+                addButton("#move_left",src,216-48, 156, 48, 48, ()=>{
+                    movePlayer(directions.left, 1)
+                },true,270)
+                mouseNoTouchZones.push((player.xPos-1)+","+player.yPos)
+            
+        }
+        else{
+            removeButton("#move_up")
+            removeButton("#move_down")
+            removeButton("#move_left")
+            removeButton("#move_right")
+            canUseMovementButtons = false;
+        }   
+        editorCurrentlySelectedTile  = 10
+        if(!mouseNoTouchZones.includes((mouseGridX+player.xPos-5)+","+(mouseGridY+player.yPos-4))){
+            screen.drawImage(document.getElementById(tileSRC[tiles[editorCurrentlySelectedTile]].src),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+        }
+        // TO DO:
+        // arrow keys change which tile is currently selected
+        // number keys switch color group
+        // little HUD icons &c (over mouse?)
+        // when you click, select that file. Etc
+    }
 }
 function addMainMenuButton(text, y, id, callback){
     addGUIButton(text, 78, y, id, callback, true)

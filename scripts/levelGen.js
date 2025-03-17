@@ -84,6 +84,7 @@ let rooms = {
 }
 
 function generateLevel(){
+    levelData.width = 78
     //initializing rooms
     while(true){
         numRooms = 0
