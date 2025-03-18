@@ -195,18 +195,20 @@ function gameloop(){
     screen.fillRect(0,0,480,360)
 
     if(Global_State == globalProgressionStates.menu){ 
-
+    
         drawImageRotated(0,0,480,360,0,"GUI_title_titlescreen")
+        splash()
+        screen.fillStyle = "black"
         addButton("#mainmenustart","GUI_title_begin",27,270,180,63,()=>{
             Global_State = globalProgressionStates.gameSelect
-            if(true){
+            if(isShiftPressed){
                 Global_State = globalProgressionStates.debug
             }
             removeButton("#mainmenustart")
         })
         screen.font = "30px Kode Mono"
         screen.fillText(messages.GUI.mainMenu.begin,70,310)
-        splash()
+
         
     }
     if(Global_State == globalProgressionStates.levelGen){        
@@ -1250,6 +1252,11 @@ function splash(){
         screen.font = "15px Kode Mono"
         screen.fillStyle = "Orange"
         screen.fillText("Happy Birthday Gabriel!", 260,340+(Math.sin(gameTicks/20)*8))
-
+    }
+    else{
+        screen.font = "10px Kode Mono"
+        screen.fillStyle = "DeepSkyBlue"
+        let splashText ="Does this feel like it's copying Minecraft too much?"
+        screen.fillText(splashText, 480-(screen.measureText(splashText).width),340+(Math.sin(gameTicks/20)*8))
     }
 }
