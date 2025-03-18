@@ -14,7 +14,8 @@ function getSaveNamesList(){
 }
 
 function autoSave(){
-    localStorage["mostRecentSave"] = codifyLevel()
+    if(Global_State != globalProgressionStates.editor)
+        localStorage["mostRecentSave"] = codifyLevel()
 }
 function manualSave(){
     localStorage[game.sessionName] = codifyLevel()

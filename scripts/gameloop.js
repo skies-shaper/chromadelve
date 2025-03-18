@@ -26,6 +26,16 @@ window.addEventListener("mouseup",()=>{
 })
 window.addEventListener("keydown",(event)=>{
     showMouseIndicator = false
+    if(("ArrowUp"  == event.key || "ArrowLeft" == event.key) && Global_State == globalProgressionStates.roomEditor)
+    {
+        if(editorCurrentlySelectedTile > 0)
+            editorCurrentlySelectedTile --
+    }
+    if(("ArrowDown" == event.key || "ArrowRight" == event.key) && Global_State == globalProgressionStates.roomEditor)
+    {
+        if(editorCurrentlySelectedTile < tiles.length-1)
+            editorCurrentlySelectedTile ++
+    }
 
     if(event.key == "Shift"){
         isShiftPressed = true
@@ -63,6 +73,7 @@ window.addEventListener("keydown",(event)=>{
     {
         player.direction = directions.right
     }
+   
 })
 window.addEventListener("keyup",(event)=>{
     if(event.key == "Shift"){
@@ -188,7 +199,7 @@ function gameloop(){
         drawImageRotated(0,0,480,360,0,"GUI_title_titlescreen")
         addButton("#mainmenustart","GUI_title_begin",27,270,180,63,()=>{
             Global_State = globalProgressionStates.gameSelect
-            if(isShiftPressed){
+            if(true){
                 Global_State = globalProgressionStates.debug
             }
             removeButton("#mainmenustart")
@@ -256,9 +267,28 @@ function gameloop(){
         drawEditorHUD()
 
         if(isPaused){ //draw pause menu
-            drawPauseMenu()
+            drawEditorPauseMenu()
         }
     }
+}
+function drawEditorPauseMenu(){
+    screen.fillStyle =  "rgba(0,0,0,0.3)"
+    screen.fillRect(0,0,480,360)
+    addButton("#GUI_Buttons_Unpause","GUI_unpause",9,9,21,21,()=>{
+        isPaused = false
+    })
+    screen.fillStyle = "white"
+    screen.font = "20px Kode Mono"
+    screen.fillText(messages.popups.pauseMenu.editorPaused, 39,27)
+
+    addGUIButton(messages.popups.pauseMenu.editorSave, 39,50,"#editor-save",()=>{
+        saveEditor()
+    })
+    addGUIButton(messages.popups.pauseMenu.editorQuit, 39,73,"#editor-quit",()=>{
+        Global_State = globalProgressionStates.menu
+    })
+
+    screen.font = "12px Kode Mono"
 }
 function drawPauseMenu(){
     screen.fillStyle =  "rgba(0,0,0,0.3)"
@@ -280,6 +310,58 @@ function drawPauseMenu(){
 
     screen.font = "12px Kode Mono"
 }
+function saveEditor(){
+
+        let string = ""
+        let save = []
+        let save_i = 0;
+        let save_j = 0;
+        for(let i = 0; i < level.length; i++){
+            let isRowEmpty = true
+            for(let j = 0; j < level[0].length; j++){
+                if(level[i][j] != 27){
+                    isRowEmpty = false
+                }
+            }
+              if(!isRowEmpty){
+              console.log("-")
+              save.push(level[i])
+            }
+            
+        }
+        let save2 = []
+        console.log(save[0].length)
+        console.log(save.length)
+    
+        for(let i = 0; i < save[0].length; i++){
+            let isColEmpty = true
+            let temp = []
+            for(let j = 0; j < save.length; j++){
+                temp.push(save[j][i])
+                if(save[j][i] != 27){
+                    isColEmpty = false
+                }
+            }
+              if(!isColEmpty){
+              console.log("-")
+              save2.push(temp)
+               
+            }
+            
+        }
+        console.log(save2)
+        save = []
+        for(let i = 0; i < save2[0].length; i++){
+            let temp = []
+            for(let j = 0; j < save2.length; j++){
+                temp.push(save2[j][i])
+            }
+            save.push(temp)
+        }
+        navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+"\n},")
+       
+}
+
 function drawHUD(){
     screen.drawImage(document.getElementById("GUI_chat"),9,315,39,27)
     if(!isPaused){
@@ -616,7 +698,8 @@ function drawTiles(){
             if(Math.min(i+player.yPos-4,player.xPos+j-5) < 0){
                 continue;
             }
-            if((j*48)-24 < mouseX && (j+1)*48-24 > mouseX && (i*48)-36 < mouseY && (i+1)*48-36 > mouseY && (level[i+player.yPos-4][player.xPos+j-5] != 0)){
+            if(i+player.yPos-4 < level.length && i+player.yPos-4 > 0 && player.xPos+j-5 < level[0].length && player.xPos+j-5 > 0)
+            if((j*48)-24 < mouseX && (j+1)*48-24 > mouseX && (i*48)-36 < mouseY && (i+1)*48-36 > mouseY && !(level[i+player.yPos-4][player.xPos+j-5] == 0 || typeof level[i+player.yPos-4][player.xPos+j-5] == "undefined")){
                 mouseGridX = j
                 mouseGridY = i
             }
@@ -1061,15 +1144,12 @@ function debugGameScreen(){
         levelData.width = 10
         level = []
         for(let i = 0; i < 10; i++){
-            level.push([])
-            for(let j = 0; j < 10; j++){
-                level[i].push(tileSRC["tiles_blue_editor-blank"].ID)
-            }
+            level.push([27,27,27,27,27,27,27,27,27,27])
         }
         player.xPos = 5
         player.yPos = 5
         Global_State = globalProgressionStates.roomEditor
-
+        isPaused = false
     })
 }
 function drawEditorHUD(){
@@ -1104,14 +1184,25 @@ function drawEditorHUD(){
             removeButton("#move_right")
             canUseMovementButtons = false;
         }   
-        editorCurrentlySelectedTile  = 10
         if(!mouseNoTouchZones.includes((mouseGridX+player.xPos-5)+","+(mouseGridY+player.yPos-4))){
             screen.drawImage(document.getElementById(tileSRC[tiles[editorCurrentlySelectedTile]].src),((mouseGridX)*48)-21,((mouseGridY)*48)-33,42,42)
+            if(mouseDown){
+                level[mouseGridY+player.yPos-4][mouseGridX+player.xPos-5] = editorCurrentlySelectedTile
+            }
         }
+        screen.fillStyle = "black"
+        screen.fillRect(0,300,480,60)
+        screen.fillStyle = 'yellow'
+
+        screen.fillRect(218,308,46,46)
+        for(let i = -7; i < 7; i++){
+            if(editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length){
+                screen.drawImage(document.getElementById(tileSRC[tiles[editorCurrentlySelectedTile + i]].src),220 + (i * 45),310,42,42)
+            }
+        }
+        screen.fillStyle = "white"
+        screen.fillText("Currently Selected: "+tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
         // TO DO:
-        // arrow keys change which tile is currently selected
-        // number keys switch color group
-        // little HUD icons &c (over mouse?)
         // when you click, select that file. Etc
     }
 }

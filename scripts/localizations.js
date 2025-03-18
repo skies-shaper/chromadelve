@@ -3,7 +3,7 @@
 const localizations = {
     english: englishLocalization,
     deutsch: germanLocalization,
-    spanish: spanishLocalization,
+    espanol: spanishLocalization,
 }
 
 function englishLocalization(){ //this is the base translation function. It puts strings into all of the code-defined places.
@@ -12,7 +12,12 @@ function englishLocalization(){ //this is the base translation function. It puts
     messages.popups.pauseMenu.gamePaused = "Game Paused"
     messages.popups.pauseMenu.gameQuit = "-Save and quit"
     messages.popups.pauseMenu.gameOptionsButton = "-Settings"
-    
+
+    messages.popups.pauseMenu.editorPaused = "Editor Paused"
+    messages.popups.pauseMenu.editorSave = "Copy room code"
+    messages.popups.pauseMenu.editorQuit = "Quit"
+
+
     //item names, etc
     items.null.name = "Null Item"
     items.shortSword.name = "Short Sword"

@@ -23,7 +23,8 @@ let messages = {
         pauseMenu: {
             gamePaused: "",
             gameQuit: "",
-            gameOptionsButton: ""
+            gameOptionsButton: "",
+            editorPaused: ""
         },
         debugNotifications: {
             playerCoordinates: {
