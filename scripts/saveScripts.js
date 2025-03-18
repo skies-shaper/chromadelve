@@ -41,3 +41,55 @@ function loadGame(id){
     isPaused = false
 
 }
+
+function saveEditor(){
+
+    let string = ""
+    let save = []
+    let save_i = 0;
+    let save_j = 0;
+    for(let i = 0; i < level.length; i++){
+        let isRowEmpty = true
+        for(let j = 0; j < level[0].length; j++){
+            if(level[i][j] != 27){
+                isRowEmpty = false
+            }
+        }
+          if(!isRowEmpty){
+          console.log("-")
+          save.push(level[i])
+        }
+        
+    }
+    let save2 = []
+    console.log(save[0].length)
+    console.log(save.length)
+
+    for(let i = 0; i < save[0].length; i++){
+        let isColEmpty = true
+        let temp = []
+        for(let j = 0; j < save.length; j++){
+            temp.push(save[j][i])
+            if(save[j][i] != 27){
+                isColEmpty = false
+            }
+        }
+          if(!isColEmpty){
+          console.log("-")
+          save2.push(temp)
+           
+        }
+        
+    }
+    console.log(save2)
+    save = []
+    for(let i = 0; i < save2[0].length; i++){
+        let temp = []
+        for(let j = 0; j < save2.length; j++){
+            temp.push(save2[j][i])
+        }
+        save.push(temp)
+    }
+    navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+"\n},")
+   
+}

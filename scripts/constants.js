@@ -13,7 +13,7 @@ let globalProgressionStates = {
     debug: 7,
     roomEditor: 8
 }
-
+let level_color = "orange"
 let numEntities = 0
 let messages = {
     console: {
