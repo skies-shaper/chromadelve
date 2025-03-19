@@ -92,7 +92,6 @@ window.addEventListener("keyup", (event) => {
 
 console.log(performance.now() - startTime + "ms loadup time")
 const killID = setInterval(gameloop, (1000 / 60))
-setInterval(autoSave, 30000)
 let showMap = false
 
 function drawMap() {
@@ -205,8 +204,6 @@ function gameloop() {
     }
     if (Global_State == globalProgressionStates.levelGen) {
         generateLevel()
-
-        // screen.fillText("generating map...",10,10)
     }
     if (Global_State == globalProgressionStates.createNewGame) {
         gameCreationScreen()
@@ -243,9 +240,6 @@ function gameloop() {
     if (Global_State == globalProgressionStates.loadGame) {
         loadGameScreen()
     }
-    // if(entities.length == 0){
-    //     spawnEntity("testGoblin", player.xPos+1, player.yPos+1)
-    // }
     if (Global_State == globalProgressionStates.debug) {
         debugGameScreen()
     }
@@ -253,7 +247,6 @@ function gameloop() {
         if (!isPaused) {
             handlePlayerMovement()
         }
-        //scripts that update always
 
         drawTiles()
         drawEntities()
@@ -262,6 +255,12 @@ function gameloop() {
         if (isPaused) { //draw pause menu
             drawEditorPauseMenu()
         }
+    }
+    if(Global_State == globalProgressionStates.settings){
+        settingsScreen()
+    }
+    if(Global_State == globalProgressionStates.saveDeleter){
+        deleteSavesScreen()
     }
 }
 function drawEditorPauseMenu() {
@@ -298,7 +297,8 @@ function drawPauseMenu() {
         Global_State = globalProgressionStates.menu
     })
     addGUIButton(messages.popups.pauseMenu.gameOptionsButton, 39, 73, "#pausemenu-settings", () => {
-
+        progressionReturn = globalProgressionStates.gameplay
+        Global_State = globalProgressionStates.settings
     })
 
     screen.font = "12px Kode Mono"
@@ -635,7 +635,6 @@ function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
 function drawTiles() {
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 11; j++) {
-            // console.log(level[i][j])
             if (Math.min(i + player.yPos - 4, player.xPos + j - 5) < 0) {
                 continue;
             }

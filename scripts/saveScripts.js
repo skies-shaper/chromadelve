@@ -3,7 +3,14 @@ if(localStorage.getItem("saveList") === null){
 }
 
 function getSaveNamesList(){
+    if(localStorage.getItem("saveList") === null){
+        localStorage["saveList"] = JSON.stringify([])
+    }
+    
     let ret = []
+    if(localStorage["saveList"] == ""){
+        return []
+    }
     if(JSON.parse(localStorage["saveList"]) instanceof Array){
         return JSON.parse(localStorage["saveList"])
     }
@@ -39,7 +46,15 @@ function loadGame(id){
     entities = importedData.levelData.entityData
     game.sessionName = id
     isPaused = false
+    showMap = false
+    
+}
 
+function deleteSave(num){
+    let saveList = getSaveNamesList()
+    localStorage.removeItem(saveList[num])
+    saveList.splice(num, 1)
+    localStorage["saveList"] = JSON.stringify(saveList)
 }
 
 function saveEditor(){

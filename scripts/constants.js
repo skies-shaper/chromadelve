@@ -11,8 +11,11 @@ let globalProgressionStates = {
     loadGame: 5,
     createNewGame: 6,
     debug: 7,
-    roomEditor: 8
+    roomEditor: 8,
+    settings: 9,
+    saveDeleter: 10
 }
+let progressionReturn = -1
 let level_color = "orange"
 let numEntities = 0
 let messages = {
@@ -382,5 +385,5 @@ let creditScrollState = 0
 function randomInclusive(start, end){
     return start + Math.floor(Math.random() * end);
 }
-
+let checkBoxes = []
 dynamicContent_generateTileMappings()

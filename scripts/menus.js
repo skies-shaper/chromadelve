@@ -64,7 +64,8 @@ function gameSelectScreen(){
         Global_State = globalProgressionStates.loadGame
     })
     addMainMenuButton("Settings",106, "#menu-settings",()=>{
-
+        progressionReturn = globalProgressionStates.gameSelect
+        Global_State = globalProgressionStates.settings
     })
     addMainMenuButton("Exit",345, "#menu-exit",()=>{
         Global_State = globalProgressionStates.menu
@@ -154,4 +155,55 @@ function loadGameScreen(){
             Global_State = globalProgressionStates.gameplay
         })
     }
+}
+
+function settingsScreen(){
+    screen.fillStyle = "white"
+    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
+    screen.font = "30px Kode Mono"
+    screen.fillText("Settings",(480-screen.measureText("Settings").width)/2,30)
+    screen.font = "15px Kode Mono"
+    addMainMenuButton("Back",345, "#loadmenu-back",()=>{
+        Global_State = progressionReturn
+    })
+    addMainMenuButton("delete save(s)", 52, "#delete-saves", ()=>{
+        Global_State = globalProgressionStates.saveDeleter
+    })
+
+}
+let itemToDelete = -1
+function deleteSavesScreen(){
+    screen.fillStyle = "white"
+    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
+    screen.font = "30px Kode Mono"
+    screen.fillText("Delete Saves",(480-screen.measureText("Delete Saves").width)/2,30)
+    screen.font = "15px Kode Mono"
+
+    addMainMenuButton("Back",345, "#loadmenu-back",()=>{
+        Global_State = globalProgressionStates.gameSelect
+
+    })
+    if(getSaveNamesList().length == 0){
+        screen.fillText("No saved games detected.", 78,60)
+        
+        return
+    }
+    let offset = 0
+    if(itemToDelete > -1){
+        screen.fillText("Do you want to delete '"+getSaveNamesList()[itemToDelete]+"'?", 78, 55)
+        addGUIButton("yes",315,55, "#deletesaveconfirm",()=>{
+            deleteSave(itemToDelete)
+            itemToDelete = -1
+        })
+        addGUIButton("no",355,55, "#deletesavedeny",()=>{
+            itemToDelete = -1
+        })
+        offset = 5
+    }
+    for(let i = 0; i < getSaveNamesList().length; i++){
+        addMainMenuButton(getSaveNamesList()[i],offset+70+i*25, "#load"+i+getSaveNamesList()[i],()=>{
+            itemToDelete = i
+        })
+    }
+    
 }

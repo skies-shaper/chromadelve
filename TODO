@@ -48,7 +48,7 @@ The multiplayer file will mostly act to render the player's screen. The player w
 
 Add settings:
 \_ manage saves
-    \_ delete, rename (?) games
+    \_ rename (?) games
 
 Game saves:
 \_ give most recent version saved in and other metadata, just in case
