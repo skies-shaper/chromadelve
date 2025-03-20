@@ -6,7 +6,6 @@ function getSaveNamesList(){
     if(localStorage.getItem("saveList") === null){
         localStorage["saveList"] = JSON.stringify([])
     }
-    
     let ret = []
     if(localStorage["saveList"] == ""){
         return []
@@ -14,10 +13,7 @@ function getSaveNamesList(){
     if(JSON.parse(localStorage["saveList"]) instanceof Array){
         return JSON.parse(localStorage["saveList"])
     }
-    
     return [localStorage["saveList"]]
-    
-    
 }
 
 function autoSave(){
@@ -31,7 +27,6 @@ function manualSave(){
 function codifyLevel(){
     let saveList = getSaveNamesList()
 
-    
     if(saveList.indexOf(game.sessionName) == -1){
         saveList.push(game.sessionName)
     }
@@ -46,8 +41,7 @@ function loadGame(id){
     entities = importedData.levelData.entityData
     game.sessionName = id
     isPaused = false
-    showMap = false
-    
+    showMap = false    
 }
 
 function deleteSave(num){
@@ -58,11 +52,7 @@ function deleteSave(num){
 }
 
 function saveEditor(){
-
-    let string = ""
     let save = []
-    let save_i = 0;
-    let save_j = 0;
     for(let i = 0; i < level.length; i++){
         let isRowEmpty = true
         for(let j = 0; j < level[0].length; j++){
@@ -91,10 +81,8 @@ function saveEditor(){
         }
           if(!isColEmpty){
           console.log("-")
-          save2.push(temp)
-           
-        }
-        
+          save2.push(temp)  
+        }        
     }
     console.log(save2)
     save = []
@@ -105,6 +93,5 @@ function saveEditor(){
         }
         save.push(temp)
     }
-    navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+"\n},")
-   
+    navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+"\n},")   
 }
