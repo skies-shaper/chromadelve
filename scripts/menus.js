@@ -185,7 +185,6 @@ function deleteSavesScreen(){
     })
     if(getSaveNamesList().length == 0){
         screen.fillText("No saved games detected.", 78,60)
-        
         return
     }
     let offset = 0

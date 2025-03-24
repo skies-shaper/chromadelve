@@ -10,7 +10,7 @@ Add basic enemy AI
 Essentially, a lil fighty dungeon crawler (infinite I suppose) - randomized end goals, just rack up a score. THEN, (since combat sytem will be worked out), do the chroma bit :)
 
 Fire: 
-Red, volcanic rocks.
+Red, volcanic rocks. Basalt, jagged edges on occasion
 
 Poison:
 Darker stone bricks, dripping with oozes
@@ -19,10 +19,10 @@ Water:
 A lighter-grey stone brick, with some ice and stuff
 
 Air: 
-brighter colors - more white / yellow versions of the bricks in 
+brighter colors - more white / yellow versions of the generic stone bricks
 
 Life: 
-very mossy stones
+very mossy stones - brighter stone, light green.
 
 Lightning: 
 spaceshippppp
@@ -32,11 +32,8 @@ Gameplay turn loop:
 
 -Move
 -Attack    
-
 -Enemies attack
 -Enemies move
-
-
 
 
 Multiplayer (LAN):

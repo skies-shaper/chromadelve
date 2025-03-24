@@ -1,7 +1,4 @@
-
 gameInit()
-
-
 let buttonEvents = []
 let mouseDown
 let isPaused, isShiftPressed
