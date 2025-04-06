@@ -38,6 +38,7 @@ function loadGame(id){
     let importedData = JSON.parse(localStorage.getItem(id))
     player = importedData.playerData
     level = importedData.levelData.tileGrid
+    levelData.width = importedData.levelData.tileGrid.length
     entities = importedData.levelData.entityData
     game.sessionName = id
     isPaused = false

@@ -1,14 +1,14 @@
 function splash(){
     if((new Date().getMonth()) == 2 && (new Date().getDate()) == 1){
-        screen.font = "15px Kode Mono"
+        setFont("15px Kode Mono")
         screen.fillStyle = "Orange"
-        screen.fillText("Happy Birthday Gabriel!", 260,340+(Math.sin(gameTicks/20)*8))
+        drawText("Happy Birthday Gabriel!", 260,340+(Math.sin(gameTicks/20)*8))
     }
     else{
-        screen.font = "10px Kode Mono"
+        setFont("10px Kode Mono")
         screen.fillStyle = "DeepSkyBlue"
         let splashText ="Does this feel like it's copying Minecraft too much?"
-        screen.fillText(splashText, 480-(screen.measureText(splashText).width),340+(Math.sin(gameTicks/20)*8))
+        screen.fillText(splashText, 480*screenData.scale - ((screen.measureText(splashText).width)),340*screenData.scale+(Math.sin(gameTicks/20)*8)*screenData.scale)
     }
 }
 function addMainMenuButton(text, y, id, callback){
@@ -21,13 +21,13 @@ function addGUIButton(text, x, y, id, callback, highlight){
     screen.font = "15px Kode Mono"
 
     w = screen.measureText(text).width + 9
-    w = Math.min(w, 309)
-    h=Number(screen.font.substring(0,screen.font.indexOf("p")))
-
+    w = Math.min(w, 309*screenData.width)
+    h = 15
+    setFont("15px Kode Mono")
     if(buttonEvents.indexOf(id) == -1){
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup",()=>{
-            if(mouseInArea(x,y-h,x+w,y+6))
+            if(mouseInArea(x*screenData.scale,(y-h)*screenData.scale,(x+w)*screenData.scale,(y+6)*screenData.scale))
                 callback()
             buttonEvents.splice(buttonEvents.indexOf(id),1)
         },{once: true})
@@ -35,27 +35,38 @@ function addGUIButton(text, x, y, id, callback, highlight){
     }
     screen.fillStyle = "#264272"
 
-    if(mouseInArea(x,y-h,x+w,y+6))
+    if(mouseInArea(x*screenData.scale,(y-h)*screenData.scale,(x+w)*screenData.scale,(y+6)*screenData.scale))
     {
         screen.fillStyle="#5D8AD7"
     }
     screen.filter = "none"
-    screen.font = "15px Kode Mono"
-    screen.fillRect(x    ,y-h,w, h+6)
+    setFont("15px Kode Mono")
+    screen.fillRect(x*screenData.scale,(y-h)*screenData.scale,w*screenData.scale, (h+6)*screenData.scale)
     screen.fillStyle = "white"
-    screen.fillRect(x+w-3,y-h,3, h+6)
+    screen.fillRect((x+w-3)*screenData.scale,(y-h)*screenData.scale,3*screenData.scale, (h+6)*screenData.scale)
 
-    screen.fillText(text, x + 3, y, 300)
+    drawText(text, x + 3, y, 300)
 
 
 }
 function gameSelectScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    screen.font = "30px Kode Mono"
-    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
+    setFont("30px Kode Mono")
+    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
     addMainMenuButton("New game",52, "#menu-newgame",()=>{
         Global_State = globalProgressionStates.createNewGame
+        if(screenData.isModified){
+            document.getElementById("gameNameTextBox").style.left = (window.innerWidth - screenData.width)/2 +78*screenData.scale+"px"
+            document.getElementById("gameNameTextBox").style.paddingLeft = 5*screenData.scale+"px"
+            document.getElementById("gameNameTextBox").style.top = (window.innerHeight - screenData.height)/2 +66*screenData.scale +"px"
+            document.getElementById("gameNameTextBox").style.width = 314*screenData.scale +"px"
+            document.getElementById("gameNameTextBox").style.fontSize = 15*screenData.scale + "px"
+            document.getElementById("gameNameTextBox").style.borderBottom = screenData.scale + "px solid white"
+        }
+        console.log("left: "+document.getElementById("gameNameTextBox").style.left)
+        console.log("top: "+document.getElementById("gameNameTextBox").style.top)
+
         document.getElementById("gameNameTextBox").style.visibility = "visible"
         document.getElementById("gameNameTextBox").value = ""
         document.getElementById("gameNameTextBox").focus()
@@ -89,31 +100,33 @@ function debugGameScreen(){
 function gameCreationScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    screen.font = "30px Kode Mono"
-    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
-    screen.font = "15px Kode Mono"
+    setFont("30px Kode Mono")
+    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
+    
+    setFont("15px Kode Mono")
+    
+    screen.fillText("New Game",(screenData.width-screen.measureText("New Game").width)/2,45*screenData.scale)
 
-    screen.fillText("New Game",(480-screen.measureText("New Game").width)/2,45)
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         document.getElementById("gameNameTextBox").style.visibility = "hidden"
         Global_State = globalProgressionStates.gameSelect
     })
-    screen.font = "15px Kode Mono"
+    setFont("15px Kode Mono")
 
-    screen.fillText("World Name", 78,60)
+    drawText("World Name", 78,60)
     document.getElementById("gameNameTextBox").style.visibility = "visible"
-    screen.font = "10px Kode Mono"
+    setFont("10px Kode Mono")
 
     screen.fillStyle = "red"
     let error = false
     if("" == document.getElementById("gameNameTextBox").value){
-        screen.fillText("Given name not allowed.",78,100)
+        drawText("Given name not allowed.",78,100)
         error = true
     }
     for(let i = 0; i < localStorage.length; i++){
         // console.log(localStorage.key(i))
         if(localStorage.key(i) == document.getElementById("gameNameTextBox").value){
-            screen.fillText("Name already taken.",78,100)
+            drawText("Name already taken.",78,100)
             error = true
         }
     }
@@ -128,18 +141,18 @@ function gameCreationScreen(){
 function loadGameScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    screen.font = "30px Kode Mono"
-    screen.fillText("Chromadelve",(480-screen.measureText("Chromadelve").width)/2,30)
-    screen.font = "15px Kode Mono"
+    setFont("30px Kode Mono")
+    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
+    setFont("15px Kode Mono")
 
-    screen.fillText("Load Game",(480-screen.measureText("Load Game").width)/2,45)
-    screen.font = "10px Kode Mono"
+    drawText("Load Game",(480-screen.measureText("Load Game").width)/2,45)
+    setFont("10px Kode Mono")
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         Global_State = globalProgressionStates.gameSelect
 
     })
     if(getSaveNamesList().length == 0){
-        screen.fillText("No saved games detected.", 78,60)
+        drawText("No saved games detected.", 78,60)
         addMainMenuButton("Start a new game",80, "#menu-newgame",()=>{
             Global_State = globalProgressionStates.createNewGame
             document.getElementById("gameNameTextBox").style.visibility = "visible"
@@ -160,9 +173,9 @@ function loadGameScreen(){
 function settingsScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    screen.font = "30px Kode Mono"
-    screen.fillText("Settings",(480-screen.measureText("Settings").width)/2,30)
-    screen.font = "15px Kode Mono"
+    setFont("30px Kode Mono")
+    drawText("Settings",(480-screen.measureText("Settings").width)/2,30)
+    setFont("15px Kode Mono")
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         Global_State = progressionReturn
     })
@@ -175,21 +188,21 @@ let itemToDelete = -1
 function deleteSavesScreen(){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    screen.font = "30px Kode Mono"
-    screen.fillText("Delete Saves",(480-screen.measureText("Delete Saves").width)/2,30)
-    screen.font = "15px Kode Mono"
+    setFont("30px Kode Mono")
+    drawText("Delete Saves",(480-screen.measureText("Delete Saves").width)/2,30)
+    setFont("15px Kode Mono")
 
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         Global_State = globalProgressionStates.gameSelect
 
     })
     if(getSaveNamesList().length == 0){
-        screen.fillText("No saved games detected.", 78,60)
+        drawText("No saved games detected.", 78,60)
         return
     }
     let offset = 0
     if(itemToDelete > -1){
-        screen.fillText("Do you want to delete '"+getSaveNamesList()[itemToDelete]+"'?", 78, 55)
+        drawText("Do you want to delete '"+getSaveNamesList()[itemToDelete]+"'?", 78, 55)
         addGUIButton("yes",315,55, "#deletesaveconfirm",()=>{
             deleteSave(itemToDelete)
             itemToDelete = -1

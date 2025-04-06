@@ -1,6 +1,27 @@
 let startTime = performance.now()
 let canUseMovementButtons = true
 let Global_State = 0
+let hideConsoleID
+
+let screenData = {
+    height: 360,
+    width: 480,
+    scale: 1,
+    baseHeight: 360, 
+    baseWidth: 480,
+    isModified: false
+}
+
+let popups = {
+    consts: {
+        dialog: 0
+    },
+    displayed: [
+        
+    ]
+}
+popups.displayed.push({text:"hi", speaker: "It's a secret!", type: popups.consts.dialog})
+
 
 let globalProgressionStates = {
     menu: 0,

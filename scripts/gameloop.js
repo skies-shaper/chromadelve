@@ -76,12 +76,7 @@ window.addEventListener("keyup", (event) => {
         showMap = !showMap
     }
     if (event.key.toLowerCase() == "t" && Global_State == globalProgressionStates.gameplay) {
-        document.getElementById("gameConsole").style.visibility = "visible"
-        document.getElementById("console-text").style.visibility = "visible"
-        document.getElementById("gameConsole").focus()
-        document.getElementById("gameConsole").value = ""
-        isTyping = true
-
+        initConsole()
     }
     userKeys[event.key] = false;
     handlePlayerMovement(event.key)
@@ -93,27 +88,26 @@ let showMap = false
 
 function drawMap() {
     screen.fillStyle = "tan";
-
-    screen.drawImage(document.getElementById("GUI_mapBG"), 90, 48, 264, 264)
+    drawImage(90, 48, 264, 264, "GUI_mapBG")
     for (let i = 0; i < level.length; i++) { //y
         for (let j = 0; j < level[i].length; j++) { //x
 
             if (level[i][j] != 0) {
                 screen.fillStyle = tileSRC[tiles[level[i][j]]].mapColor
-                screen.fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
             }
             if (i == player.yPos && j == player.xPos) {
                 screen.fillStyle = ["red", "orange", "yellow", "blue", "green", "purple"][rand(0, 5)]
-                screen.fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
             }
             if (Debug.mapGrid) {
                 if (j % 11 == 0) {
                     screen.fillStyle = "orange"
-                    screen.fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
                 }
                 if (i % 11 == 0) {
                     screen.fillStyle = "orange"
-                    screen.fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
                 }
             }
         }
@@ -134,13 +128,13 @@ document.getElementById("gameNameTextBox").addEventListener("focusin", (e) => {
 document.getElementById("gameNameTextBox").addEventListener("focusout", (e) => {
     let error = false
     if ("" == document.getElementById("gameNameTextBox").value) {
-        screen.fillText("Given name not allowed.", 78, 100)
+        drawText("Given name not allowed.", 78, 100)
         error = true
     }
     for (let i = 0; i < localStorage.length; i++) {
         // console.log(localStorage.key(i))
         if (localStorage.key(i) == document.getElementById("gameNameTextBox").value) {
-            screen.fillText("Name already taken.", 78, 100)
+            drawText("Name already taken.", 78, 100)
             error = true
         }
     }
@@ -162,26 +156,27 @@ document.getElementById("gameConsole").addEventListener("keyup", (e) => {
 
         return
     }
-    setTimeout(function () {
-        document.getElementById("gameConsole").blur()
-        document.getElementById("gameConsole").style.visibility = "hidden"
-        document.getElementById("console-text").style.visibility = "hidden"
-        if (document.getElementById("gameConsole").value != "")
-            document.getElementById("console-text").textContent += document.getElementById("gameConsole").value + "\n\r"
+    document.getElementById("gameConsole").blur()
+    document.getElementById("gameConsole").style.visibility = "hidden"
+    isTyping = false
+    if (document.getElementById("gameConsole").value != "")
+    document.getElementById("console-text").textContent += document.getElementById("gameConsole").value + "\n\r"
 
-        isTyping = false
-    }, 700)
+
+    hideConsoleID = setTimeout(function () {
+        document.getElementById("console-text").style.visibility = "hidden"
+    }, 3000)
 
 })
 
 function gameloop() {
-
+    document.getElementById("gamewindow").dispatchEvent(new Event("update"))
     gameTicks++
     screen.imageSmoothingEnabled = false
     screen.fillStyle = "black";
-    screen.font = "12px Kode Mono"
-    screen.fillRect(0, 0, 480, 360)
-
+    setFont("12px Kode Mono")
+    fillRect(0, 0, 480, 360)
+    showMouseIndicator = true
     if (Global_State == globalProgressionStates.menu) {
 
         drawImageRotated(0, 0, 480, 360, 0, "GUI_title_titlescreen")
@@ -194,8 +189,8 @@ function gameloop() {
             }
             removeButton("#mainmenustart")
         })
-        screen.font = "30px Kode Mono"
-        screen.fillText(messages.GUI.mainMenu.begin, 70, 310)
+        setFont("30px Kode Mono")
+        drawText(messages.GUI.mainMenu.begin, 70, 310)
 
 
     }
@@ -262,13 +257,13 @@ function gameloop() {
 }
 function drawEditorPauseMenu() {
     screen.fillStyle = "rgba(0,0,0,0.3)"
-    screen.fillRect(0, 0, 480, 360)
+    fillRect(0, 0, 480, 360)
     addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
         isPaused = false
     })
     screen.fillStyle = "white"
-    screen.font = "20px Kode Mono"
-    screen.fillText(messages.popups.pauseMenu.editorPaused, 39, 27)
+    setFont("20px Kode Mono")
+    drawText(messages.popups.pauseMenu.editorPaused, 39, 27)
 
     addGUIButton(messages.popups.pauseMenu.editorSave, 39, 50, "#editor-save", () => {
         saveEditor()
@@ -277,17 +272,17 @@ function drawEditorPauseMenu() {
         Global_State = globalProgressionStates.menu
     })
 
-    screen.font = "12px Kode Mono"
+    setFont("12px Kode Mono")
 }
 function drawPauseMenu() {
     screen.fillStyle = "rgba(0,0,0,0.3)"
-    screen.fillRect(0, 0, 480, 360)
+    fillRect(0, 0, 480, 360)
     addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
         isPaused = false
     })
     screen.fillStyle = "white"
-    screen.font = "20px Kode Mono"
-    screen.fillText(messages.popups.pauseMenu.gamePaused + " - " + game.sessionName, 39, 27)
+    setFont("20px Kode Mono")
+    drawText(messages.popups.pauseMenu.gamePaused + " - " + game.sessionName, 39, 27)
 
     addGUIButton(messages.popups.pauseMenu.gameQuit, 39, 50, "#pausemenu-quit", () => {
         manualSave()
@@ -298,14 +293,15 @@ function drawPauseMenu() {
         Global_State = globalProgressionStates.settings
     })
 
-    screen.font = "12px Kode Mono"
+    setFont("12px Kode Mono")
 }
 
 function drawHUD() {
-    screen.drawImage(document.getElementById("GUI_chat"), 9, 315, 39, 27)
+    drawImage(9, 315, 39, 27, "GUI_chat")
+    let mouseNoTouchZones = []
+
     if (!isPaused) {
 
-        let mouseNoTouchZones = []
         if (round.progression == round.progressionStates.notUsingItem && canUseMovementButtons) {
             let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
             if (!(tileSRC[tiles[level[player.yPos + 1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos + 1))) {
@@ -342,55 +338,51 @@ function drawHUD() {
         }
         addButton("#GUI_Buttons_Pause", "GUI_pause", 9, 9, 21, 21, () => {
             isPaused = true
-        })
-        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, () => {
-            document.getElementById("gameConsole").style.visibility = "visible"
-            document.getElementById("console-text").style.visibility = "visible"
-            document.getElementById("gameConsole").focus()
-            document.getElementById("gameConsole").value = ""
-            isTyping = true
-        })
-        if (!isPaused && showMouseIndicator && (level[mouseGridY + player.yPos - 4][player.xPos + mouseGridX - 5] != 0)) {
+        })   
+    }
+    if (!isPaused && showMouseIndicator && (level[mouseGridY + player.yPos - 4][player.xPos + mouseGridX - 5] != 0)) {
 
-            if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
-                if (mouse.mode == mouseModes.select) {
-                    screen.strokeStyle = "yellow"
-                    screen.lineWidth = 3
-                    screen.strokeRect(((mouseGridX) * 48) - 24, ((mouseGridY) * 48) - 36, 48, 48)
-                }
-                if (mouse.mode == mouseModes.target) {
-                    screen.drawImage(document.getElementById("GUI_target-active"), ((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42)
-                }
-                if (mouse.mode == mouseModes.target_invalid) {
-                    screen.drawImage(document.getElementById("GUI_target-inactive"), ((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42)
+        if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
+            if (mouse.mode == mouseModes.select) {
+                screen.strokeStyle = "yellow"
+                screen.lineWidth = 3*screenData.scale
+                screen.strokeRect((((mouseGridX) * 48) - 24)*screenData.scale, (((mouseGridY) * 48) - 36)*screenData.scale, 48*screenData.scale, 48*screenData.scale)
+            }
+            if (mouse.mode == mouseModes.target) {
 
-                }
+                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, "GUI_target-active")
+            }
+            if (mouse.mode == mouseModes.target_invalid) {
+                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, "GUI_target-inactive")
+
             }
         }
     }
-    screen.drawImage(document.getElementById("GUI_stats-back"), 357, 3, 120, 120)
+    drawImage(357, 3, 120, 120, "GUI_stats-back")
     //health rectangle
     screen.fillStyle = "red"
     if (player.stats.health / player.stats.maxHealth < 0.2 && entityAnimationStage == 1) {
         screen.fillStyle = "darkred"
     }
     let healthHeighConversion = Math.round(((player.stats.health / player.stats.maxHealth) * 33) / 3) * 3
-    screen.fillRect(363, 45 - healthHeighConversion, 39, healthHeighConversion)
-    screen.drawImage(document.getElementById("GUI_stats-front"), 357, 3, 120, 120)
-    screen.font = "14px Kode Mono"
-    screen.fillText(player.stats.health + " " + messages.GUI.HP, 410, 29)
+    fillRect(363, 45 - healthHeighConversion, 39, healthHeighConversion)
+    drawImage(357, 3, 120, 120, "GUI_stats-front")
+    setFont("14px Kode Mono")
+    drawText(player.stats.health + " " + messages.GUI.HP, 410, 29)
     screen.fillStyle = "slategrey"
-    screen.fillText(((player.stats.dodge / gameConstants.maxDodge) * 100 + "%").padStart(3, "0").padStart(4, " "), 405, 71)
+    drawText(((player.stats.dodge / gameConstants.maxDodge) * 100 + "%").padStart(3, "0").padStart(4, " "), 405, 71)
     screen.fillStyle = "black"
+    
+    
     for (let i = 0; i < 4; i++) {
         let btnOffset = 0
         cItem = player.inventory.equipped[i]
-        if (mouseInArea(387, 87 + (i * 57), 477, (48 + 87 + (i * 57)))) {
+        if (mouseInArea(387*screenData.scale, (87 + (i * 57))*screenData.scale, 477*screenData.scale, ((48 + 87 + (i * 57))*screenData.scale))) {
             btnOffset = -6
         }
         if (cItem.type == itemTypes.spell) {
             if (isPaused) {
-                screen.drawImage(document.getElementById("GUI_spellscroll"), 387 + btnOffset, 87 + (i * 57), 90, 54)
+                drawImage(387 + btnOffset, 87 + (i * 57), 90, 54, "GUI_spellscroll")
                 cooldownBar(i, btnOffset)
             }
             else {
@@ -400,13 +392,13 @@ function drawHUD() {
                 cooldownBar(i, btnOffset)
 
             }
-            screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
+            setFont("10px Kode Mono")
+            drawText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
         }
         if (player.inventory.equipped[i].type == itemTypes.weapon) {
             let tSrc = (player.inventory.equipped[i].data.cooldownTime < 0.05) ? "GUI_attack-unavailable" : "GUI_attack-available"
             if (isPaused) {
-                screen.drawImage(document.getElementById("GUI_spellscroll"), 387 + btnOffset, 87 + (i * 57), 90, 54)
+                drawImage(387 + btnOffset, 87 + (i * 57), 90, 54, "GUI_spellscroll")
                 drawImageRotated(393 + btnOffset, 102 + (i * 57), 15, 15, 0, tSrc)
             }
             else {
@@ -416,8 +408,8 @@ function drawHUD() {
                 drawImageRotated(393 + btnOffset, 99 + (i * 57), 15, 15, 0, tSrc)
 
             }
-            screen.font = "10px Kode Mono"
-            screen.fillText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
+            setFont("10px Kode Mono")
+            drawText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
 
         }
         if (player.inventory.equipped[i].type == itemTypes.consumable) {
@@ -431,44 +423,60 @@ function drawHUD() {
                     focusItem(i)
                 }, false)
             }
-            screen.drawImage(document.getElementById("GUI_item frame"), 423 + btnOffset, 87 + (i * 57), 54, 54)
+            drawImage(423 + btnOffset, 87 + (i * 57), 54, 54, "GUI_item frame")
+
             try {
-                screen.drawImage(document.getElementById(player.inventory.equipped[i].data.src), 426 + btnOffset, 90 + (i * 57), 48, 48)
+                drawImage(426 + btnOffset, 90 + (i * 57), 48, 48, player.inventory.equipped[i].data.src)
             }
             catch (e) {
 
             }
-            screen.font = "10px Kode Mono"
+            setFont("10px Kode Mono")
             screen.fillStyle = "white"
-            screen.fillText(player.inventory.equipped[i].data.uses, 392 + btnOffset, 137 + (i * 57))
+            drawText(player.inventory.equipped[i].data.uses, 392 + btnOffset, 137 + (i * 57))
             screen.fillStyle = "black"
-            screen.fillText(player.inventory.equipped[i].data.uses, 391 + btnOffset, 136 + (i * 57))
+            drawText(player.inventory.equipped[i].data.uses, 391 + btnOffset, 136 + (i * 57))
 
         }
 
         if (GUI.focusedItem == i) {
             screen.fillStyle = "green"
-            screen.fillRect(381 + btnOffset, 87 + (i * 57), 3, 54)
+            fillRect(381 + btnOffset, 87 + (i * 57), 3, 54)
             screen.fillStyle = "black"
         }
     }
+    //draw popup
+    for(let i = 0; i < popups.displayed.length; i++){
+        if(popups.displayed[i].type == popups.consts.dialog){
+            screen.fill = "#ababab"
+            screen.filter = "opacity(0.5)"
+            fillRect(15,200,450,145)
+            screen.filter = "none"
+            screen.fill = "white"
+            drawText(popups.displayed[i].speaker, 40, 220)
+        }
+    }
+    if(!isPaused){
+        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole)
+    }
+    
 }
 function cooldownBar(i, btnOffset) {
     let cItem = player.inventory.equipped[i]
     let maxCooldown = cItem.data.cooldown
     let currentCooldown = cItem.data.cooldownTime
     screen.fillStyle = "grey"
-    screen.fillRect(396 + btnOffset, 102 + (i * 57), 72, 3)
+    fillRect(396 + btnOffset, 102 + (i * 57), 72, 3)
     if (maxCooldown < 1) {
         screen.fillStyle = "mediumSeaGreen"
 
 
-        screen.fillRect(396 + btnOffset, 102 + (i * 57), (currentCooldown * 72), 3)
+        fillRect(396 + btnOffset, 102 + (i * 57), (currentCooldown * 72), 3)
 
         screen.fillStyle = "black"
 
         for (let j = 0; j < 1 / maxCooldown - 1; j++) {
-            screen.fillRect(396 + btnOffset + ((j + 1) * maxCooldown * 72), 102 + (i * 57), 3, 3)
+            fillRect(396 + btnOffset + ((j + 1) * maxCooldown * 72), 102 + (i * 57), 3, 3)
         }
         return
     }
@@ -478,14 +486,14 @@ function cooldownBar(i, btnOffset) {
     else {
         screen.fillStyle = "green"
     }
-    screen.fillRect(396 + btnOffset, 102 + (i * 57), (72 * (currentCooldown / maxCooldown)), 3)
+    fillRect(396 + btnOffset, 102 + (i * 57), (72 * (currentCooldown / maxCooldown)), 3)
 
 
 
     screen.fillStyle = "black"
 }
 function healthRect() {
-    screen.fillRect((363 - ((player.stats.health / player.stats.maxHealth) * 33)), 45, 36, ((player.stats.health / player.stats.maxHealth) * 33))
+    fillRect((363 - ((player.stats.health / player.stats.maxHealth) * 33)), 45, 36, ((player.stats.health / player.stats.maxHealth) * 33))
 }
 
 function focusItem(itemIdx) {
@@ -512,7 +520,7 @@ function useItem(itemIdx) {
     let affectedEntityIndex = -1
     let i = 0
     entities.forEach((entity) => {
-        if (entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
+        if(entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
             affectedEntity = entity
             affectedEntityIndex = i
         }
@@ -614,15 +622,16 @@ function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
     if (buttonEvents.indexOf(id) == -1) {
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup", () => {
-            if (mouseInArea(x, y, x + w, y + h))
+            if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale))
                 callback()
             buttonEvents.splice(buttonEvents.indexOf(id), 1)
         }, { once: true })
     }
 
-    if (mouseInArea(x, y, x + w, y + h)) {
+    if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale)) {
         if (highlight != false)
             screen.filter = "brightness(140%)"
+            showMouseIndicator = false
     }
     drawImageRotated(x, y, w, h, rotation, src)
     screen.filter = "none"
@@ -636,13 +645,13 @@ function drawTiles() {
                 continue;
             }
             if (i + player.yPos - 4 < level.length && i + player.yPos - 4 > 0 && player.xPos + j - 5 < level[0].length && player.xPos + j - 5 > 0)
-                if ((j * 48) - 24 < mouseX && (j + 1) * 48 - 24 > mouseX && (i * 48) - 36 < mouseY && (i + 1) * 48 - 36 > mouseY && !(level[i + player.yPos - 4][player.xPos + j - 5] == 0 || typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")) {
+                if (((j * 48) - 24)*screenData.scale < mouseX && ((j + 1) * 48 - 24)*screenData.scale > mouseX && ((i * 48) - 36)*screenData.scale < mouseY && ((i + 1) * 48 - 36)*screenData.scale > mouseY && !(level[i + player.yPos - 4][player.xPos + j - 5] == 0 || typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")) {
                     mouseGridX = j
                     mouseGridY = i
                 }
             if ((i + player.yPos - 4) < levelData.width && (player.xPos + j - 5) < levelData.width && (player.xPos + j - 5) > -1 && (i + player.yPos - 4) > -1) {
                 try {
-                    screen.drawImage(document.getElementById(tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"]), ((j) * 48) - 24, ((i) * 48) - 36, 48, 48)
+                    drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
                 }
                 catch (e) {
                     console.log(e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
@@ -663,7 +672,8 @@ function drawEntities() {
     //player character
     if (Debug.unfetteredMovement) {
         screen.filter = "opacity(75%)"
-        screen.drawImage(document.getElementById("Characters_Player_DebugGhost_1"), 216, 156, 48, 48)
+        
+        drawImage(216, 156, 48, 48,"Characters_Player_DebugGhost_1")
     }
     else {
         drawImageRotated(216, 156, 48, 48, 0, animations.player.nextFrame())
@@ -791,24 +801,24 @@ function handleDebugScreen() {
             if (key == "showCoordinates") {
                 screen.fillStyle = "black";
                 screen.strokeStyle = "black";
-                screen.fillText("Player X: " + player.xPos + ", Player Y: " + player.yPos, 10, 40)
+                drawText("Player X: " + player.xPos + ", Player Y: " + player.yPos, 10, 40)
                 screen.strokeStyle = "white";
                 screen.fillStyle = "white";
-                screen.fillText("Player X: " + player.xPos + ", Player Y: " + player.yPos, 11, 41)
+                drawText("Player X: " + player.xPos + ", Player Y: " + player.yPos, 11, 41)
 
             }
             if (key == "unfetteredMovement") {
                 screen.fillStyle = "black";
-                screen.fillText("Unfettered movement: on", 10, 52)
+                drawText("Unfettered movement: on", 10, 52)
                 screen.fillStyle = "white";
                 screen.strokeStyle = "white";
-                screen.fillText("Unfettered movement: on", 11, 53)
+                drawText("Unfettered movement: on", 11, 53)
             }
             if (key == "showMouseXY") {
                 screen.fillStyle = "black";
-                screen.fillText("Mouse X: " + mouseX + ", Mouse Y: " + mouseY + ". Mouse Tile X: " + mouseGridX + ", Mouse Tile Y: " + mouseGridY, 10, 64)
+                drawText("Mouse X: " + mouseX + ", Mouse Y: " + mouseY + ". Mouse Tile X: " + mouseGridX + ", Mouse Tile Y: " + mouseGridY, 10, 64)
                 screen.fillStyle = "lightblue";
-                screen.fillText("Mouse X: " + mouseX + ", Mouse Y: " + mouseY + ". Mouse Tile X: " + mouseGridX + ", Mouse Tile Y: " + mouseGridY, 11, 65)
+                drawText("Mouse X: " + mouseX + ", Mouse Y: " + mouseY + ". Mouse Tile X: " + mouseGridX + ", Mouse Tile Y: " + mouseGridY, 11, 65)
             }
         }
     })
@@ -894,6 +904,30 @@ function spawnEntity(tName, x, y) {
     entities.push(temp)
 }
 
+function drawText(str, x, y, maxWidth){
+    if(typeof maxWidth == 'undefined'){
+        screen.fillText(str, x*screenData.scale, y*screenData.scale)
+    }
+    screen.fillText(str, x*screenData.scale, y*screenData.scale, maxWidth*screenData.scale)
+}
+
+function fillRect(x,y,w,h){
+    screen.fillRect(x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
+}
+
+function setFont(font){
+    screen.font = font.substring(0,font.indexOf("p"))*screenData.scale + "px Kode Mono"
+}
+
+function drawImage(x,y,w,h,src){
+    try {
+        screen.drawImage(document.getElementById(src),x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
+    }
+    catch(e){
+        console.log("Image source not found: "+src)
+    }
+}
+
 function drawGridImage(x, y, w, h, r, src) {
 
     drawImageRotated(((x - player.xPos) * 48) + 216, ((y - player.yPos) * 48) + 156, w, h, r, src)
@@ -921,17 +955,13 @@ function drawImageRotated(x, y, w, h, r, src) {
     }
     let drawX = x - offsetX
     let drawY = y - offsetY
-    screen.translate(drawX, drawY);
+    screen.translate(drawX*screenData.scale, drawY*screenData.scale);
     screen.rotate(r * (Math.PI / 180))
-    try {
-        screen.drawImage(document.getElementById(src), 0, 0, w, h)
-    }
-    catch {
-        screen.drawImage(document.getElementById("GUI_blank"), 0, 0, 0, 0)
-        console.warn("image source not found: " + src)
-    }
+    
+    drawImage(0,0,w,h,src)
+    
     screen.rotate(-r * (Math.PI / 180))
-    screen.translate(-drawX, -drawY)
+    screen.translate(-drawX*screenData.scale, -drawY*screenData.scale)
 }
 
 function movePlayer(direction, amount) {
@@ -957,12 +987,12 @@ let textSpacing = 10
 function drawCredits() {
     textSpacing = 10
     screen.fillStyle = "white"
-    screen.font = "30px Kode Mono"
+    setFont("30px Kode Mono")
     centerText("Chromadelve")
     textSpacing += 20
-    screen.font = "20px Kode Mono"
+    setFont("20px Kode Mono")
     centerText("Lead Developer")
-    screen.font = "15px Kode Mono"
+    setFont("15px Kode Mono")
     centerText("Skies_Shaper")
     //now we just need more people lol
 
@@ -970,7 +1000,7 @@ function drawCredits() {
 }
 function centerText(text) {
     textSpacing += Number(screen.font.substring(0, screen.font.indexOf("p")))
-    screen.fillText(text, (480 - screen.measureText(text).width) / 2, textSpacing - (creditScrollState) / 2)
+    screen.fillText(text, (screenData.width - screen.measureText(text).width) / 2, textSpacing - (creditScrollState) / 2)
 }
 
 function detectEntity(x, y) {
@@ -1014,22 +1044,42 @@ function drawEditorHUD() {
             canUseMovementButtons = false;
         }
         if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
-            screen.drawImage(document.getElementById(tileSRC[tiles[editorCurrentlySelectedTile]].src), ((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42)
+            drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
             if (mouseDown) {
                 level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
             }
         }
         screen.fillStyle = "black"
-        screen.fillRect(0, 300, 480, 60)
+        fillRect(0, 300, 480, 60)
         screen.fillStyle = 'yellow'
 
-        screen.fillRect(218, 308, 46, 46)
+        fillRect(218, 308, 46, 46)
         for (let i = -7; i < 7; i++) {
             if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
-                screen.drawImage(document.getElementById(tileSRC[tiles[editorCurrentlySelectedTile + i]].src), 220 + (i * 45), 310, 42, 42)
+                drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
             }
         }
         screen.fillStyle = "white"
-        screen.fillText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
+        drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
     }
+}
+
+function initConsole(){
+    clearTimeout(hideConsoleID)
+    document.getElementById("gameConsole").style.visibility = 
+    document.getElementById("console-text").style.visibility = "visible"
+
+    document.getElementById("gameConsole").style.left = 
+    document.getElementById("console-text").style.left = (window.innerWidth - screenData.width)/2 + "px"
+
+    document.getElementById("gameConsole").style.fontSize = 
+    document.getElementById("console-text").style.fontSize = 10*screenData.scale + "px"
+
+    document.getElementById("gameConsole").style.top = 330*screenData.scale + "px"
+    document.getElementById("console-text").style.top = 0
+    document.getElementById("console-text").style.width = 
+    document.getElementById("gameConsole").style.width = 300*screenData.scale + "px"
+    document.getElementById("gameConsole").focus()
+    document.getElementById("gameConsole").value = ""
+    isTyping = true
 }

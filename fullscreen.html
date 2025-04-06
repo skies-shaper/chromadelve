@@ -1,0 +1,190 @@
+<!doctype HTML>
+<html>
+<head>
+    <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&display=swap" rel="stylesheet">
+    <title>Chromadelve</title>
+    <style>
+
+        body{ 
+            background-color: lightgray;
+            font-family: "Kode Mono";
+            margin: 0;
+        }
+        #gamebox {
+            margin-left: calc(50% - 240px);
+            max-width: 480px;
+        }
+        h1 {
+            max-width: 500px;
+            width: 500px;
+            font-size: 30px;
+        }
+        #menu {
+            height: 50px;
+            background-color: black;
+            margin: none;
+            color: white;
+            width: 100%;
+        }
+        #gameConsole{
+            /* font-family: "Kode Mono";
+            color: white;
+            outline: none;
+            caret-color: white;
+            z-index: 2;
+            position: relative;
+            top: -30px;
+            width: 300px;
+            padding: none;
+            border: none;
+            border-bottom: 1px solid black;
+            visibility: hidden;
+            padding-left: 5px; */
+            font-family: "Kode Mono";
+            color: white;
+            outline: none;
+            caret-color: white;
+            z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+            position: absolute;
+            top: -10px;
+            left: 0px;
+            width: 300px;
+            visibility: hidden;
+            padding: none;
+            border: none;
+            border-bottom: 1px solid black;
+
+            padding-left: 5px;
+        }
+        #console-text {
+            padding-left: 5px;
+            font-size: small;
+            color: white;
+            z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+            max-height: 300px;
+            overflow: auto;
+            width: 300px;
+            padding: none;
+            border: none;
+            visibility: hidden;
+            white-space: pre-line;
+            margin: none;
+            position: absolute;
+            top: 215px;
+        }
+        #game{
+            position: relative;
+        }
+        a:visited{
+            color: cadetblue;
+        }
+        a{
+            color: darkturquoise;
+        }
+        a:hover {
+            color:aqua;
+        }
+        #menu h2{
+            float: left;
+            margin: 5px;
+            margin-top: 9px;
+        }
+        #menu img{
+            float: left;
+        }
+        #gameNameTextBox{
+            font-family: "Kode Mono";
+            color: white;
+            outline: none;
+            caret-color: white;
+            z-index: 2;
+            background-color: #264272;
+            position: absolute;
+            top: 68px;
+            left: 78px;
+            width: 314px;
+            visibility: hidden;
+            padding: none;
+            border: none;
+            border-bottom: 1px solid white;
+
+            padding-left: 5px;
+        }
+    </style>
+
+</head>
+<body>
+
+        <canvas id="gamewindow" width="480" height="360" oncontextmenu="return false;">
+            Game content :D
+        </canvas>
+        
+        <script>
+
+            {let screen = document.getElementById("gamewindow").getContext("2d")
+            screen.imageSmoothingEnabled= false
+            // screen.drawImage(document.getElementById("startupimg"),0,0,480,360)
+            screen.fillStyle = "white"
+            screen.font = "30px Kode Mono"
+            screen.fillText("Loading...",70,310)}
+        </script>
+    <input id="gameNameTextBox"></input>
+    <input id="gameConsole"></input>
+    
+    <div id="console-text"></div>
+    
+    <!--The following div element holds all of the image data for the game :D ufortunately it is very long. Don't put anything below this ok?-->
+    <div id = "imgstore"style="display:none;">
+    </div>
+    <script src="scripts/dynamicContentLoader.js"></script>
+    <script src="scripts/constants.js"></script>
+    <script src="scripts/localizations.js"></script>
+    <script src="scripts/levelGen.js"></script>
+    <script src="scripts/saveScripts.js"></script>
+    <script src="scripts/menus.js"></script>
+    <script src="scripts/gameloop.js"></script>
+    <script>
+        screenData.width = (window.innerHeight/360)*480
+        screenData.height = window.innerHeight
+        screenData.scale = window.innerHeight/360
+        screenData.isModified = true
+        document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
+        document.getElementById("gamewindow").height = window.innerHeight
+        document.getElementById("gamewindow").width = (window.innerHeight/360)*480
+        window.addEventListener("resize", (event) => {
+            screenData.width = (window.innerHeight/360)*480
+            screenData.height = window.innerHeight
+            screenData.scale = window.innerHeight/360
+            screenData.isModified = true
+            document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
+            document.getElementById("gamewindow").height = window.innerHeight
+            document.getElementById("gamewindow").width = (window.innerHeight/360)*480
+            if(Global_State == globalProgressionStates.createNewGame){
+                document.getElementById("gameNameTextBox").style.left = (window.innerWidth - screenData.width)/2 +78*screenData.scale+"px"
+                document.getElementById("gameNameTextBox").style.paddingLeft = 5*screenData.scale+"px"
+                document.getElementById("gameNameTextBox").style.top = (window.innerHeight - screenData.height)/2 +66*screenData.scale +"px"
+                document.getElementById("gameNameTextBox").style.width = 314*screenData.scale +"px"
+                document.getElementById("gameNameTextBox").style.fontSize = 15*screenData.scale + "px"
+                document.getElementById("gameNameTextBox").style.borderBottom = screenData.scale + "px solid white"
+            }
+            if(isTyping){
+                document.getElementById("gameConsole").style.left = 
+                document.getElementById("console-text").style.left = (window.innerWidth - screenData.width)/2 + "px"
+                document.getElementById("gameConsole").style.fontSize = 
+                document.getElementById("console-text").style.fontSize = 15*screenData.scale + "px"
+                document.getElementById("gameConsole").style.top = 330*screenData.scale + "px"
+                document.getElementById("console-text").style.width = 
+                document.getElementById("gameConsole").style.width = 300*screenData.scale + "px"
+                document.getElementById("gameConsole").style.fontSize = 
+                document.getElementById("console-text").style.fontSize = 10*screenData.scale + "px"
+            }
+        });
+    </script>
+</body>
+</html>
