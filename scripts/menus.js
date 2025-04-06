@@ -7,7 +7,7 @@ function splash(){
     else{
         setFont("10px Kode Mono")
         screen.fillStyle = "DeepSkyBlue"
-        let splashText ="Does this feel like it's copying Minecraft too much?"
+        let splashText ="Does this splash feel like it's copying Minecraft too much?"
         screen.fillText(splashText, 480*screenData.scale - ((screen.measureText(splashText).width)),340*screenData.scale+(Math.sin(gameTicks/20)*8)*screenData.scale)
     }
 }

@@ -178,7 +178,6 @@ function gameloop() {
     fillRect(0, 0, 480, 360)
     showMouseIndicator = true
     if (Global_State == globalProgressionStates.menu) {
-
         drawImageRotated(0, 0, 480, 360, 0, "GUI_title_titlescreen")
         splash()
         screen.fillStyle = "black"
@@ -189,7 +188,14 @@ function gameloop() {
             }
             removeButton("#mainmenustart")
         })
+
+        screen.fillStyle = "white"
+        setFont("10px Kode Mono")
+        drawText("(c) 2025", 2, 355)
+        screen.fillStyle = "black"
+
         setFont("30px Kode Mono")
+        
         drawText(messages.GUI.mainMenu.begin, 70, 310)
 
 
