@@ -59,13 +59,11 @@ function gameSelectScreen(){
         if(screenData.isModified){
             document.getElementById("gameNameTextBox").style.left = (window.innerWidth - screenData.width)/2 +78*screenData.scale+"px"
             document.getElementById("gameNameTextBox").style.paddingLeft = 5*screenData.scale+"px"
-            document.getElementById("gameNameTextBox").style.top = (window.innerHeight - screenData.height)/2 +66*screenData.scale +"px"
+            document.getElementById("gameNameTextBox").style.top = 66*screenData.scale +"px"
             document.getElementById("gameNameTextBox").style.width = 314*screenData.scale +"px"
             document.getElementById("gameNameTextBox").style.fontSize = 15*screenData.scale + "px"
             document.getElementById("gameNameTextBox").style.borderBottom = screenData.scale + "px solid white"
         }
-        console.log("left: "+document.getElementById("gameNameTextBox").style.left)
-        console.log("top: "+document.getElementById("gameNameTextBox").style.top)
 
         document.getElementById("gameNameTextBox").style.visibility = "visible"
         document.getElementById("gameNameTextBox").value = ""

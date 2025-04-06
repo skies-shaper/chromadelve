@@ -150,25 +150,47 @@
     <script src="scripts/menus.js"></script>
     <script src="scripts/gameloop.js"></script>
     <script>
-        screenData.width = (window.innerHeight/360)*480
-        screenData.height = window.innerHeight
-        screenData.scale = window.innerHeight/360
         screenData.isModified = true
-        document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
-        document.getElementById("gamewindow").height = window.innerHeight
-        document.getElementById("gamewindow").width = (window.innerHeight/360)*480
-        window.addEventListener("resize", (event) => {
+        if(window.innerWidth < (window.innerHeight/360)*480){
+            screenData.width = window.innerWidth
+            screenData.height = (window.innerWidth/480)*360
+            screenData.scale = window.innerWidth/480
+            document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
+            document.getElementById("gamewindow").height = screenData.height
+            document.getElementById("gamewindow").width = screenData.width
+        }
+        else{
             screenData.width = (window.innerHeight/360)*480
             screenData.height = window.innerHeight
             screenData.scale = window.innerHeight/360
-            screenData.isModified = true
             document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
             document.getElementById("gamewindow").height = window.innerHeight
             document.getElementById("gamewindow").width = (window.innerHeight/360)*480
+        }
+        window.addEventListener("resize", (event) => {
+            screenData.isModified = true
+
+            if(window.innerWidth < (window.innerHeight/360)*480){
+                screenData.width = window.innerWidth
+                screenData.height = (window.innerWidth/480)*360
+                screenData.scale = window.innerWidth/480
+                document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
+                document.getElementById("gamewindow").height = screenData.height
+                document.getElementById("gamewindow").width = screenData.width
+            }
+            else{
+                screenData.width = (window.innerHeight/360)*480
+                screenData.height = window.innerHeight
+                screenData.scale = window.innerHeight/360
+                document.getElementById("gamewindow").style.marginLeft = (window.innerWidth - screenData.width)/2 + "px"
+                document.getElementById("gamewindow").height = window.innerHeight
+                document.getElementById("gamewindow").width = (window.innerHeight/360)*480
+            }
+            //resizing various HTML elements
             if(Global_State == globalProgressionStates.createNewGame){
                 document.getElementById("gameNameTextBox").style.left = (window.innerWidth - screenData.width)/2 +78*screenData.scale+"px"
                 document.getElementById("gameNameTextBox").style.paddingLeft = 5*screenData.scale+"px"
-                document.getElementById("gameNameTextBox").style.top = (window.innerHeight - screenData.height)/2 +66*screenData.scale +"px"
+                document.getElementById("gameNameTextBox").style.top = 66*screenData.scale +"px"
                 document.getElementById("gameNameTextBox").style.width = 314*screenData.scale +"px"
                 document.getElementById("gameNameTextBox").style.fontSize = 15*screenData.scale + "px"
                 document.getElementById("gameNameTextBox").style.borderBottom = screenData.scale + "px solid white"

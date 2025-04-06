@@ -67,13 +67,16 @@
             position: relative;
         }
         a:visited{
-            color: cadetblue;
+            color: darkturquoise;
         }
         a{
             color: darkturquoise;
         }
         a:hover {
             color:aqua;
+        }
+        .nohover:hover{
+            color: darkturquoise
         }
         #menu h2{
             float: left;
@@ -100,6 +103,22 @@
             border-bottom: 1px solid white;
 
             padding-left: 5px;
+        }
+        #newTab {
+            fill: darkturquoise
+        }
+        .linkImage {
+            margin: -5px;
+            width: 20px;
+            height: 20px;
+        }
+        .button {
+            background-color: rgb(81, 101, 101);
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        .button:hover {
+            background-color: lightslategrey
         }
     </style>
 
@@ -133,6 +152,7 @@
     <div id="console-text"></div>
     </div>
     <noscript>Unfortunately, this is a browser-based game. Which means that, short of insane technological mumbo jumbo we need Javascript to make it run. Depending on where in the future you exist, you may be able to find a desktop version of our game! That has been a floated concept at one point or another </noscript>
+    <span class="button"><a class="nohover" href="fullscreen.html">play in fullscreen <img class="linkImage" src="open-newtab.svg"></a></span>
     <h2>Controls:</h2>
     <ul>
         <li>'m': toggle map</li>

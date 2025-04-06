@@ -651,7 +651,7 @@ function drawTiles() {
                 }
             if ((i + player.yPos - 4) < levelData.width && (player.xPos + j - 5) < levelData.width && (player.xPos + j - 5) > -1 && (i + player.yPos - 4) > -1) {
                 try {
-                    drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
+                    drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"], true)
                 }
                 catch (e) {
                     console.log(e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
@@ -919,7 +919,16 @@ function setFont(font){
     screen.font = font.substring(0,font.indexOf("p"))*screenData.scale + "px Kode Mono"
 }
 
-function drawImage(x,y,w,h,src){
+function drawImage(x,y,w,h,src,round){
+    if(typeof round !== "undefined"){
+        try {
+            screen.drawImage(document.getElementById(src),Math.floor(x*screenData.scale), Math.floor(y*screenData.scale), Math.ceil(w*screenData.scale), Math.ceil(h*screenData.scale))
+        }
+        catch(e){
+            console.log("Image source not found: "+src)
+        }
+        return;
+    }
     try {
         screen.drawImage(document.getElementById(src),x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
     }
