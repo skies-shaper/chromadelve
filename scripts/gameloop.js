@@ -191,7 +191,7 @@ function gameloop() {
 
         screen.fillStyle = "white"
         setFont("10px Kode Mono")
-        drawText("(c) 2025", 2, 355)
+        drawText("(c) 2025 Build "+build.version.major+"."+build.version.minor+"."+build.version.inc+", "+build.date, 2, 355)
         screen.fillStyle = "black"
 
         setFont("30px Kode Mono")

@@ -1,4 +1,5 @@
 
+
 let tiles = []
 let tileSRC = {}
 document.getElementById("imgstore").innerHTML = ""
@@ -123,4 +124,5 @@ tiles = [
 "tiles_red_wall-1",
 "tiles_red_wall-2",
 "tiles_red_wall-3",
-"tiles_blue_editor-blank"]}
+"tiles_blue_editor-blank"]
+}

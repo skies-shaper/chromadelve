@@ -3,6 +3,15 @@ let canUseMovementButtons = true
 let Global_State = 0
 let hideConsoleID
 
+let build = {
+    version: {
+        major: 0,
+        minor: 0,
+        inc: 6
+    },
+    date: "4/21/2025"
+}
+
 let screenData = {
     height: 360,
     width: 480,
