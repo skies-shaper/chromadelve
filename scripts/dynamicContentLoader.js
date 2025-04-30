@@ -38,6 +38,25 @@ function dynamicContent_importImages(){
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/items/test.png" id="items_test"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/src/map-background.pixil" id="src_map-background"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/editor-blank.png" id="tiles_blue_editor-blank"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-1.png" id="tiles_blue_row-1-column-1"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-2.png" id="tiles_blue_row-1-column-2"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-3.png" id="tiles_blue_row-1-column-3"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-4.png" id="tiles_blue_row-1-column-4"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-5.png" id="tiles_blue_row-1-column-5"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-1-column-6.png" id="tiles_blue_row-1-column-6"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-2-column-1.png" id="tiles_blue_row-2-column-1"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-2-column-3.png" id="tiles_blue_row-2-column-3"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-2-column-4.png" id="tiles_blue_row-2-column-4"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-2-column-6.png" id="tiles_blue_row-2-column-6"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-1.png" id="tiles_blue_row-3-column-1"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-2.png" id="tiles_blue_row-3-column-2"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-3.png" id="tiles_blue_row-3-column-3"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-4.png" id="tiles_blue_row-3-column-4"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-5.png" id="tiles_blue_row-3-column-5"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-3-column-6.png" id="tiles_blue_row-3-column-6"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-4-column-1.png" id="tiles_blue_row-4-column-1"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/wave-1.png" id="tiles_blue_wave-1"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/wave-2.png" id="tiles_blue_wave-2"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/floor.png" id="tiles_generic_floor"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/wall.png" id="tiles_generic_wall"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/green/floor-1.png" id="tiles_green_floor-1"/>'
@@ -72,6 +91,25 @@ tileSRC = {
 "tiles_generic_floor": {src: "tiles_generic_floor", collision: false, ID: 1, mapColor: "#000000"},
 "tiles_generic_wall": {src: "tiles_generic_wall", collision: true, ID: 2, mapColor: "#000000"},
 "tiles_blue_editor-blank": {src: "tiles_blue_editor-blank", collision: false, ID: 27, mapColor: "#000000"},
+"tiles_blue_row-1-column-1": {src: "tiles_blue_row-1-column-1", collision: false, ID: 28, mapColor: "#000000"},
+"tiles_blue_row-1-column-2": {src: "tiles_blue_row-1-column-2", collision: false, ID: 29, mapColor: "#000000"},
+"tiles_blue_row-1-column-3": {src: "tiles_blue_row-1-column-3", collision: false, ID: 30, mapColor: "#000000"},
+"tiles_blue_row-1-column-4": {src: "tiles_blue_row-1-column-4", collision: false, ID: 31, mapColor: "#000000"},
+"tiles_blue_row-1-column-5": {src: "tiles_blue_row-1-column-5", collision: false, ID: 32, mapColor: "#000000"},
+"tiles_blue_row-1-column-6": {src: "tiles_blue_row-1-column-6", collision: false, ID: 33, mapColor: "#000000"},
+"tiles_blue_row-2-column-1": {src: "tiles_blue_row-2-column-1", collision: false, ID: 34, mapColor: "#000000"},
+"tiles_blue_row-2-column-3": {src: "tiles_blue_row-2-column-3", collision: false, ID: 35, mapColor: "#000000"},
+"tiles_blue_row-2-column-4": {src: "tiles_blue_row-2-column-4", collision: false, ID: 36, mapColor: "#000000"},
+"tiles_blue_row-2-column-6": {src: "tiles_blue_row-2-column-6", collision: false, ID: 37, mapColor: "#000000"},
+"tiles_blue_row-3-column-1": {src: "tiles_blue_row-3-column-1", collision: false, ID: 38, mapColor: "#000000"},
+"tiles_blue_row-3-column-2": {src: "tiles_blue_row-3-column-2", collision: false, ID: 39, mapColor: "#000000"},
+"tiles_blue_row-3-column-3": {src: "tiles_blue_row-3-column-3", collision: false, ID: 40, mapColor: "#000000"},
+"tiles_blue_row-3-column-4": {src: "tiles_blue_row-3-column-4", collision: false, ID: 41, mapColor: "#000000"},
+"tiles_blue_row-3-column-5": {src: "tiles_blue_row-3-column-5", collision: false, ID: 42, mapColor: "#000000"},
+"tiles_blue_row-3-column-6": {src: "tiles_blue_row-3-column-6", collision: false, ID: 43, mapColor: "#000000"},
+"tiles_blue_row-4-column-1": {src: "tiles_blue_row-4-column-1", collision: false, ID: 44, mapColor: "#000000"},
+"tiles_blue_wave-1": {src: "tiles_blue_wave-1", collision: false, ID: 45, mapColor: "#000000"},
+"tiles_blue_wave-2": {src: "tiles_blue_wave-2", collision: false, ID: 46, mapColor: "#000000"},
 "tiles_green_floor-1": {src: "tiles_green_floor-1", collision: false, ID: 3, mapColor: "#000000"},
 "tiles_green_floor-2": {src: "tiles_green_floor-2", collision: false, ID: 4, mapColor: "#000000"},
 "tiles_green_floor-3": {src: "tiles_green_floor-3", collision: false, ID: 5, mapColor: "#000000"},
@@ -124,5 +162,24 @@ tiles = [
 "tiles_red_wall-1",
 "tiles_red_wall-2",
 "tiles_red_wall-3",
-"tiles_blue_editor-blank"]
+"tiles_blue_editor-blank",
+"tiles_blue_row-1-column-1",
+"tiles_blue_row-1-column-2",
+"tiles_blue_row-1-column-3",
+"tiles_blue_row-1-column-4",
+"tiles_blue_row-1-column-5",
+"tiles_blue_row-1-column-6",
+"tiles_blue_row-2-column-1",
+"tiles_blue_row-2-column-3",
+"tiles_blue_row-2-column-4",
+"tiles_blue_row-2-column-6",
+"tiles_blue_row-3-column-1",
+"tiles_blue_row-3-column-2",
+"tiles_blue_row-3-column-3",
+"tiles_blue_row-3-column-4",
+"tiles_blue_row-3-column-5",
+"tiles_blue_row-3-column-6",
+"tiles_blue_row-4-column-1",
+"tiles_blue_wave-1",
+"tiles_blue_wave-2"]
 }
