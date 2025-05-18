@@ -10,5 +10,11 @@
         "src": "https://skies-shaper.github.io/chromadelve/releases/HTML/Chromadelve%20-%20beta%200.0.3.zip",
         "online?": false, 
         "openInLauncher?":false
+    },
+    {
+        "version": "beta 0.1",
+        "src": "https://github.com/skies-shaper/chromadelve/releases/download/0.1/Beta.v0.1.zip",
+        "online?": false, 
+        "openInLauncher?":false
     }
 ]
