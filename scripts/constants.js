@@ -7,9 +7,9 @@ let build = {
     version: {
         major: 0,
         minor: 0,
-        inc: 6
+        inc: 7
     },
-    date: "4/21/2025"
+    date: "4/29/2025"
 }
 
 let screenData = {
@@ -29,7 +29,7 @@ let popups = {
         
     ]
 }
-popups.displayed.push({text:"hi", speaker: "It's a secret!", type: popups.consts.dialog})
+// popups.displayed.push({text:"hi", speaker: "It's a secret!", type: popups.consts.dialog})
 
 
 let globalProgressionStates = {
@@ -130,6 +130,21 @@ let animations = {
             frames: [
                 "characters_debug-ghost-1",
                 "characters_debug-ghost-2"
+            ],
+            nextFrame: nF
+        },
+        wave: {
+            tileX: 10,
+            tileY: 10,
+            rotation: 0,
+            maxFrames: 3,
+            currentFrame: 0,
+            repeat: true,
+            frames: [
+                "tiles_blue_wave-1",
+                "tiles_blue_wave-1",
+                "tiles_blue_wave-2",
+                "tiles_blue_wave-2"
             ],
             nextFrame: nF
         },
