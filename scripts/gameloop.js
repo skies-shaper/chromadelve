@@ -83,7 +83,12 @@ window.addEventListener("keyup", (event) => {
 })
 
 console.log(performance.now() - startTime + "ms loadup time")
-const killID = setInterval(gameloop, (1000 / 60))
+finishedLoad = true
+
+window.addEventListener("beginGameloop", ()=>{
+    const killID = setInterval(gameloop, (1000 / 60))
+})
+    
 let showMap = false
 
 function drawMap() {
@@ -885,7 +890,6 @@ function gameInit() {
             break;
     }
     player.stats.maxHealth = player.stats.health
-
 }
 
 

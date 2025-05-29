@@ -25,20 +25,51 @@
         <canvas id="gamewindow" width="480" height="360" oncontextmenu="return false;">
             Game content :D
         </canvas>
-        <script>
-            {let screen = document.getElementById("gamewindow").getContext("2d")
+        <script>    
+            const beginLoop = new Event("beginGameloop")
+            let finishedLoad = false
+            const goFast = new Event("speeeed")
+            let screen2 = document.getElementById("gamewindow").getContext("2d")
             screen.imageSmoothingEnabled= false
-            screen.drawImage(document.getElementById("startupimg"),0,0,480,360)
-            screen.fillStyle = "white"
-            screen.font = "30px Kode Mono"
-            screen.fillText("Loading...",70,310)}
+            let loadingPercent = 0
+            let slowInterval = setInterval(()=>{
+                screen.fillStyle = "green"
+                screen.fillRect(0,0,480,360)
+                screen.fillStyle = "black"
+                screen.fillRect(140,170,200,20)
+                screen.fillStyle = "red"
+                screen.fillRect(142,172,194*(loadingPercent/100),16)
+                loadingPercent++
+                console.log(finishedLoad)
+                if(loadingPercent >= 100 || finishedLoad){
+                    window.dispatchEvent(goFast)
+                    clearInterval(slowInterval)
+                }
+            },40)
+            window.addEventListener("speeeed",()=>{
+                let fastInterval = setInterval(()=>{
+                    screen.fillStyle = "green"
+                    screen.fillRect(0,0,480,360)
+                    screen.fillStyle = "black"
+                    screen.fillRect(140,170,200,20)
+                    screen.fillStyle = "blue"
+                    screen.fillRect(142,172,194*(loadingPercent/100),16)
+                    loadingPercent++
+                    if(loadingPercent >= 100){
+                        window.dispatchEvent(beginLoop)
+
+                        clearInterval(fastInterval)
+                    }
+                },10)
+            })
+        
         </script>
     <input id="gameNameTextBox"></input>
     <input id="gameConsole"></input>
     
     <div id="console-text"></div>
     </div>
-    <noscript>Unfortunately, this is a browser-based game. Which means that, short of insane technological mumbo jumbo we need Javascript to make it run. Depending on where in the future you exist, you may be able to find a desktop version of our game! That has been a floated concept at one point or another </noscript>
+    <noscript>Unfortunately, this is a browser-based game. Which means that, short of insane technological mumbo jumbo, we need Javascript to make it run. Depending on where in the future you exist, you may be able to find a desktop version of our game! That has been a floated concept at one point or another </noscript>
 
     <div id="gameScreenSizeWarning">
         <img src="imgs/GUI/title/titlescreen.png" style="width: 100%; image-rendering: pixelated;">

@@ -89,14 +89,44 @@
             Game content :D
         </canvas>
         
-        <script>
-
-            {let screen = document.getElementById("gamewindow").getContext("2d")
+        <script>    
+            const beginLoop = new Event("beginGameloop")
+            let finishedLoad = false
+            const goFast = new Event("speeeed")
+            let screen2 = document.getElementById("gamewindow").getContext("2d")
             screen.imageSmoothingEnabled= false
-            // screen.drawImage(document.getElementById("startupimg"),0,0,480,360)
-            screen.fillStyle = "white"
-            screen.font = "30px Kode Mono"
-            screen.fillText("Loading...",70,310)}
+            let loadingPercent = 0
+            let slowInterval = setInterval(()=>{
+                screen.fillStyle = "green"
+                screen.fillRect(0,0,480*screenData.scale,360*screenData.scale)
+                screen.fillStyle = "black"
+                screen.fillRect(140*screenData.scale,170*screenData.scale,200*screenData.scale,20*screenData.scale)
+                screen.fillStyle = "red"
+                screen.fillRect(142*screenData.scale,172*screenData.scale,194*(loadingPercent/100)*screenData.scale,16*screenData.scale)
+                loadingPercent++
+                console.log(finishedLoad)
+                if(loadingPercent >= 100 || finishedLoad){
+                    window.dispatchEvent(goFast)
+                    clearInterval(slowInterval)
+                }
+            },40)
+            window.addEventListener("speeeed",()=>{
+                let fastInterval = setInterval(()=>{
+                    screen.fillStyle = "green"
+                    screen.fillRect(0*screenData.scale,0*screenData.scale,480*screenData.scale,360*screenData.scale)
+                    screen.fillStyle = "black"
+                    screen.fillRect(140*screenData.scale,170*screenData.scale,200*screenData.scale,20*screenData.scale)
+                    screen.fillStyle = "blue"
+                    screen.fillRect(142*screenData.scale,172*screenData.scale,194*(loadingPercent/100)*screenData.scale,16*screenData.scale)
+                    loadingPercent++
+                    if(loadingPercent >= 100){
+                        window.dispatchEvent(beginLoop)
+
+                        clearInterval(fastInterval)
+                    }
+                },10)
+            })
+        
         </script>
     <input id="gameNameTextBox"></input>
     <input id="gameConsole"></input>

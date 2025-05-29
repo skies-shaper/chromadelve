@@ -6,10 +6,10 @@ let hideConsoleID
 let build = {
     version: {
         major: 0,
-        minor: 0,
-        inc: 7
+        minor: 1,
+        inc: 1
     },
-    date: "4/29/2025"
+    date: "5/28/2025"
 }
 
 let screenData = {
