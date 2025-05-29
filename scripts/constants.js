@@ -31,7 +31,16 @@ let popups = {
 }
 // popups.displayed.push({text:"hi", speaker: "It's a secret!", type: popups.consts.dialog})
 
-
+let editorLayers = ["background","tile", "metadata"]
+let editorLayerIdx = 1
+let metadataTiles = [
+    tiles[27],
+    "tiles_editor_door-down",
+    "tiles_editor_door-left",
+    "tiles_editor_door-right",
+    "tiles_editor_door-up"
+]
+let EditorRoomMetadata = []
 let globalProgressionStates = {
     menu: 0,
     levelGen: 1,

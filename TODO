@@ -41,8 +41,8 @@ Finish Popup logic
 
 \_ add support for background animations (like waves, clouds ETC)
 \_ improve the room generation algorithm 
-    \_ room metadata: which walls have doors, have doors have positions in the room's design? - have corridors use the closest of those, for each wall. 
-        \_ meta tiles: DOOR_LEFT, DOOR_RIGHT, DOOR_UP, DOOR_DOWN - that is where the link occurs.
+    ✅ room metadata: which walls have doors, have doors have positions in the room's design? - have corridors use the closest of those, for each wall. 
+        ✅ meta tiles: DOOR_LEFT, DOOR_RIGHT, DOOR_UP, DOOR_DOWN - that is where the link occurs.
         new room obj: 
         {
             data: [][]
@@ -55,9 +55,9 @@ Finish Popup logic
                 right: []
             }
         }
---> 1) place out where rooms will be
---> 2) determine which of the template rooms could fit based on the door combo - the doors list only shows potential doors, so all sides with potential doors do not need to be filled.
---> 3) add that room to the thing, add that room's door positions to a list
+✅--> 1) place out where rooms will be
+✅--> 2) determine which of the template rooms could fit based on the door combo - the doors list only shows potential doors, so all sides with potential doors do not need to be filled.
+✅--> 3) add that room to the thing, add that room's door positions to a list
 --> 4) for each room, connect its door positions with the next room's door positions
 
 

@@ -83,10 +83,14 @@ function gameSelectScreen(){
 function debugGameScreen(){
     gameSelectScreen()
     addMainMenuButton("Room Editor",133, "#room-editor",()=>{
+        editorCurrentlySelectedTile = 0
         levelData.width = 10
         level = []
         for(let i = 0; i < 10; i++){
             level.push([27,27,27,27,27,27,27,27,27,27])
+        }
+        for(let i = 0; i < 10; i++){
+            EditorRoomMetadata.push([0,0,0,0,0,0,0,0,0,0])
         }
         player.xPos = 5
         player.yPos = 5

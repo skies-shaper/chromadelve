@@ -57,6 +57,10 @@ function dynamicContent_importImages(){
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/row-4-column-1.png" id="tiles_blue_row-4-column-1"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/wave-1.png" id="tiles_blue_wave-1"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/blue/wave-2.png" id="tiles_blue_wave-2"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/editor/door-down.png" id="tiles_editor_door-down"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/editor/door-left.png" id="tiles_editor_door-left"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/editor/door-right.png" id="tiles_editor_door-right"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/editor/door-up.png" id="tiles_editor_door-up"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/floor.png" id="tiles_generic_floor"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/generic/wall.png" id="tiles_generic_wall"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/tiles/green/floor-1.png" id="tiles_green_floor-1"/>'
@@ -133,7 +137,11 @@ tileSRC = {
 "tiles_red_floor-3": {src: "tiles_red_floor-3", collision: false, ID: 23, mapColor: "#000000"},
 "tiles_red_wall-1": {src: "tiles_red_wall-1", collision: true, ID: 24, mapColor: "#000000"},
 "tiles_red_wall-2": {src: "tiles_red_wall-2", collision: true, ID: 25, mapColor: "#000000"},
-"tiles_red_wall-3": {src: "tiles_red_wall-3", collision: true, ID: 26, mapColor: "#000000"}}
+"tiles_red_wall-3": {src: "tiles_red_wall-3", collision: true, ID: 26, mapColor: "#000000"},
+"tiles_editor_door-down": {src: "tiles_editor_door-down", collision: false, ID: 47, mapColor: "#000000"},
+"tiles_editor_door-left": {src: "tiles_editor_door-left", collision: false, ID: 48, mapColor: "#000000"},
+"tiles_editor_door-right": {src: "tiles_editor_door-right", collision: false, ID: 49, mapColor: "#000000"},
+"tiles_editor_door-up": {src: "tiles_editor_door-up", collision: false, ID: 50, mapColor: "#000000"}}
 tiles = [
         "tiles_null",
 "tiles_generic_floor",
@@ -181,5 +189,9 @@ tiles = [
 "tiles_blue_row-3-column-6",
 "tiles_blue_row-4-column-1",
 "tiles_blue_wave-1",
-"tiles_blue_wave-2"]
+"tiles_blue_wave-2",
+"tiles_editor_door-down",
+"tiles_editor_door-left",
+"tiles_editor_door-right",
+"tiles_editor_door-up"]
 }

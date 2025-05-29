@@ -53,6 +53,7 @@ function deleteSave(num){
 }
 
 function saveEditor(){
+    let metadataSave = []
     let save = []
     for(let i = 0; i < level.length; i++){
         let isRowEmpty = true
@@ -64,18 +65,22 @@ function saveEditor(){
           if(!isRowEmpty){
           console.log("-")
           save.push(level[i])
+          metadataSave.push(EditorRoomMetadata[i])
         }
         
     }
     let save2 = []
+    let metadataSave2 = []
     console.log(save[0].length)
     console.log(save.length)
 
     for(let i = 0; i < save[0].length; i++){
         let isColEmpty = true
         let temp = []
+        let temp2 = []
         for(let j = 0; j < save.length; j++){
             temp.push(save[j][i])
+            temp2.push(metadataSave[j][i])
             if(save[j][i] != 27){
                 isColEmpty = false
             }
@@ -83,16 +88,47 @@ function saveEditor(){
           if(!isColEmpty){
           console.log("-")
           save2.push(temp)  
+          metadataSave2.push(temp2)
         }        
     }
     console.log(save2)
     save = []
+    metadataSave = []
     for(let i = 0; i < save2[0].length; i++){
         let temp = []
+        let temp2 = []
         for(let j = 0; j < save2.length; j++){
             temp.push(save2[j][i])
+            temp2.push(metadataSave2[j][i])
         }
         save.push(temp)
+        metadataSave.push(temp2)
     }
-    navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+"\n},")   
+    let metadata = {
+        doors: {
+            up : [],
+            down: [],
+            left: [],
+            right: []
+        }
+    }
+    for(let i = 0; i < metadataSave.length; i++){
+        for(let j = 0; j < metadataSave[0].length; j++){
+            // console.log(metadataSave[i][j])
+            if(metadataSave[i][j] == 1)
+                metadata.doors.down.push({x: i, y: j})
+
+            if(metadataSave[i][j] == 2)
+                metadata.doors.left.push({x: i, y: j})
+
+            if(metadataSave[i][j] == 3)
+                metadata.doors.right.push({x: i, y: j})
+
+            if(metadataSave[i][j] == 4)
+                metadata.doors.up.push({x: i, y: j})
+            
+        }    
+    }
+    console.log(metadata)
+    navigator.clipboard.writeText("{\ndata: "+JSON.stringify(save)+",\nwidth: "+save[0].length+",\nheight: "+save.length+",\nmetadata: "+JSON.stringify(metadata)+"},")   
 }

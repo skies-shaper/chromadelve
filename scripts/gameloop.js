@@ -28,8 +28,9 @@ window.addEventListener("keydown", (event) => {
             editorCurrentlySelectedTile--
     }
     if (("ArrowDown" == event.key || "ArrowRight" == event.key) && Global_State == globalProgressionStates.roomEditor) {
-        if (editorCurrentlySelectedTile < tiles.length - 1)
+        if ((editorCurrentlySelectedTile < tiles.length - 1 && editorLayerIdx == 1) || (editorCurrentlySelectedTile < metadataTiles.length - 1 && editorLayerIdx == 2))
             editorCurrentlySelectedTile++
+
     }
 
     if (event.key == "Shift") {
@@ -84,9 +85,9 @@ window.addEventListener("keyup", (event) => {
 
 console.log(performance.now() - startTime + "ms loadup time")
 finishedLoad = true
-
+let killID
 window.addEventListener("beginGameloop", ()=>{
-    const killID = setInterval(gameloop, (1000 / 60))
+    killID = setInterval(gameloop, (1000 / 60))
 })
     
 let showMap = false
@@ -660,12 +661,29 @@ function drawTiles() {
                     mouseGridX = j
                     mouseGridY = i
                 }
+                else{
+                    if(Global_State == globalProgressionStates.roomEditor && ((j * 48) - 24)*screenData.scale < mouseX && ((j + 1) * 48 - 24)*screenData.scale > mouseX && ((i * 48) - 36)*screenData.scale < mouseY && ((i + 1) * 48 - 36)*screenData.scale > mouseY && !(typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")){
+                        mouseGridX = j
+                        mouseGridY = i
+                        }
+
+                }
+                
             if ((i + player.yPos - 4) < levelData.width && (player.xPos + j - 5) < levelData.width && (player.xPos + j - 5) > -1 && (i + player.yPos - 4) > -1) {
                 try {
+                    
                     drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"], true)
+                    if(Global_State == globalProgressionStates.roomEditor && editorLayerIdx == 2){
+                        // screen.fillColor = "grey"
+                        // screen.filter = "opacity(50%)"
+                        // fillRect(0,0,480,300)
+                        // screen.filter = "none"
+                        drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, metadataTiles[EditorRoomMetadata[i + player.yPos - 4][player.xPos + j - 5]], true)
+                    }
                 }
                 catch (e) {
-                    console.log(e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
+                    console.log(level[i + player.yPos - 4][player.xPos + j - 5])
+                    console.log("error in tile renderer: "+e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
                 }
             }
         }
@@ -930,6 +948,9 @@ function setFont(font){
 }
 
 function drawImage(x,y,w,h,src,round){
+    if(src == "undefined" || typeof src === "undefined"){
+        return
+    }
     if(typeof round !== "undefined"){
         try {
             screen.drawImage(document.getElementById(src),Math.floor(x*screenData.scale), Math.floor(y*screenData.scale), Math.ceil(w*screenData.scale), Math.ceil(h*screenData.scale))
@@ -943,7 +964,7 @@ function drawImage(x,y,w,h,src,round){
         screen.drawImage(document.getElementById(src),x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
     }
     catch(e){
-        console.log("Image source not found: "+src)
+        console.log("Image source not found: "+src+e.stack)
     }
 }
 
@@ -1032,7 +1053,7 @@ function detectEntity(x, y) {
 
 function drawEditorHUD() {
     if (!isPaused) {
-
+        
         let mouseNoTouchZones = []
         if (round.progression == round.progressionStates.notUsingItem && canUseMovementButtons) {
             let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
@@ -1063,9 +1084,19 @@ function drawEditorHUD() {
             canUseMovementButtons = false;
         }
         if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
-            drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
-            if (mouseDown) {
-                level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
+            if(editorLayerIdx == 1)
+                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
+            if(editorLayerIdx == 2)
+                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, metadataTiles[editorCurrentlySelectedTile])
+                // console.log(metadataTiles[editorCurrentlySelectedTile])
+            if (mouseDown && mouseY > screenData.scale*35) {
+                if(editorLayerIdx == 1){
+                    console.log("changed!")
+                    level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
+                }
+                if(editorLayerIdx == 2){
+                    EditorRoomMetadata[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
+                }
             }
         }
         screen.fillStyle = "black"
@@ -1073,13 +1104,30 @@ function drawEditorHUD() {
         screen.fillStyle = 'yellow'
 
         fillRect(218, 308, 46, 46)
-        for (let i = -7; i < 7; i++) {
-            if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
-                drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
+        if(editorLayerIdx == 1){
+            for (let i = -7; i < 7; i++) {
+                if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
+                    drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
+                }
             }
+            screen.fillStyle = "white"
+            drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
         }
-        screen.fillStyle = "white"
-        drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
+        if(editorLayerIdx == 2){
+            for (let i = -7; i < 7; i++) {
+                if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < metadataTiles.length) {
+                    drawImage(220 + (i * 45), 310, 42, 42, metadataTiles[editorCurrentlySelectedTile + i])
+                }
+            }
+            screen.fillStyle = "white"
+            drawText("Currently Selected: " + metadataTiles[editorCurrentlySelectedTile], 5, 300)
+        }
+        addGUIButton("layer: "+editorLayers[editorLayerIdx],10,25,"changeEditorLayer",()=>{
+
+            editorLayerIdx++
+            editorLayerIdx%= editorLayers.length
+            editorCurrentlySelectedTile = 0
+        })
     }
 }
 
