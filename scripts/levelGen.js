@@ -23,7 +23,14 @@ let rooms = {
                 [4, 4, 4, 4, 4, 4]
             ],
             height: 4,
-            width: 6
+            width: 6,
+            metadata: { "doors": { 
+                "up": [{ "x": 2, "y": 0 }, { "x": 3, "y": 0 }], 
+                "down": [{ "x": 3, "y": 3 }, { "x": 2, "y": 3 }], 
+                "left": [{ "x": 0, "y": 2 }], 
+                "right": [{ "x": 5, "y": 1 }] 
+            } 
+            }
         },
         boss: {
             data: [
@@ -35,7 +42,8 @@ let rooms = {
                 [3, 3, 3, 3, 3, 3, 3, 3, 3]
             ],
             height: 6,
-            width: 9
+            width: 9,
+            metadata: { "doors": { "up": [{ "x": 5, "y": 0 }], "down": [{ "x": 5, "y": 5 }], "left": [{ "x": 0, "y": 3 }], "right": [{ "x": 8, "y": 3 }] } }
         }
     },
     misc: [
@@ -77,10 +85,11 @@ let rooms = {
             width: 8,
             metadata: { "doors": { "up": [], "down": [], "left": [], "right": [] } }
         }, {
-            data: [[1,1,1,1],[1,1,1,1],[1,1,1,1],[27,1,1,1]],
+            data: [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [0, 1, 1, 1]],
             width: 4,
             height: 4,
-            metadata: {"doors":{"up":[{"x":0,"y":1},{"x":0,"y":2}],"down":[{"x":3,"y":1},{"x":3,"y":2}],"left":[{"x":2,"y":0}],"right":[{"x":2,"y":3}]}}},
+            metadata: { "doors": { "up": [{ "x": 2, "y": 0 }, { "x": 1, "y": 0 }], "down": [{ "x": 1, "y": 3 }, { "x": 2, "y": 3 }], "left": [{ "x": 0, "y": 2 }], "right": [{ "x": 3, "y": 2 }] } }
+        },
         {
             data: [
                 [1, 1, 1, 1, 1, 1, 1],
@@ -158,24 +167,7 @@ function generateLevel() {
             }
         }
     }
-    for (let i = 0; i < 78; i++) {
-        for (let j = 0; j < 78; j++) {
-            if (level[i][j] == 1) {
-                if (level[i - 1][j] == 0) {
-                    level[i - 1][j] = 2
-                }
-                if (level[i][j - 1] == 0) {
-                    level[i][j - 1] = 2
-                }
-                if (level[i + 1][j] == 0) {
-                    level[i + 1][j] = 2
-                }
-                if (level[i][j + 1] == 0) {
-                    level[i][j + 1] = 2
-                }
-            }
-        }
-    }
+
 
     //places down room tile data
     for (let i = 0; i < 7; i++) {
@@ -214,7 +206,24 @@ function generateLevel() {
         }
     }
 
-
+    for (let i = 1; i < 77; i++) {
+        for (let j = 0; j < 78; j++) {
+            if (!tileSRC[tiles[level[i][j]]].collision && level[i][j] != 0) {
+                if ([0,27].indexOf(level[i - 1][j]) > -1) {
+                    level[i - 1][j] = 2
+                }
+                if ([0,27].indexOf(level[i][j - 1]) > -1) {
+                    level[i][j - 1] = 2
+                }
+                if ([0,27].indexOf(level[i + 1][j]) > -1) {
+                    level[i + 1][j] = 2
+                }
+                if ([0,27].indexOf(level[i][j + 1]) > -1) {
+                    level[i][j + 1] = 2
+                }
+            }
+        }
+    }
     console.log("Level Generation Done!")
     Global_State = 2
 }
@@ -297,6 +306,7 @@ function path(sP, eP) {
 function handlePaths() {
     let pathDirection = 0
     for (let i = 0; i < paths.length; i++) {
+
         let pathStartX = grid[paths[i].startPos.y][paths[i].startPos.x].xPos
         let pathStartY = grid[paths[i].startPos.y][paths[i].startPos.x].yPos
         let pathEndX = grid[paths[i].endPos.y][paths[i].endPos.x].xPos
@@ -314,14 +324,30 @@ function handlePaths() {
 
         if (paths[i].startPos.x > paths[i].endPos.x)
             pathDirection = directions.left
-        
+
+        let sRoomData, eRoomData
+        if (grid[paths[i].startPos.y][paths[i].startPos.x] == 0 || grid[paths[i].endPos.y][paths[i].endPos.x] == 0) {
+            continue;
+        }
+
+        sRoomData = rooms[grid[paths[i].startPos.y][paths[i].startPos.x].namespace][grid[paths[i].startPos.y][paths[i].startPos.x].id]
+        eRoomData = rooms[grid[paths[i].endPos.y][paths[i].endPos.x].namespace][grid[paths[i].endPos.y][paths[i].endPos.x].id]
+
+        ////console.log(eRoomData)
+        ////console.log(sRoomData)
+
         switch (pathDirection) {
             case directions.up:
-                pathEndY += grid[paths[i].endPos.y][paths[i].endPos.x].height
-                pathStartX += Math.ceil(grid[paths[i].startPos.y][paths[i].startPos.x].width / 2)
-                pathEndX += Math.ceil(grid[paths[i].endPos.y][paths[i].endPos.x].width / 2)
+                pathEndY += eRoomData.metadata.doors.down[rand(0, eRoomData.metadata.doors.down.length - 1)].y - 1
+                pathStartX += sRoomData.metadata.doors.up[rand(0, sRoomData.metadata.doors.up.length - 1)].x
+                pathEndX += eRoomData.metadata.doors.down[rand(0, eRoomData.metadata.doors.down.length - 1)].x
+                pathStartY += sRoomData.metadata.doors.up[rand(0, eRoomData.metadata.doors.up.length - 1)].y
+
                 currentY = pathStartY
                 currentX = pathStartX
+
+
+
                 if (pathStartX == pathEndX) {
                     while (currentY > pathEndY) {
                         currentY--
@@ -333,6 +359,7 @@ function handlePaths() {
                     level[pathStartY - j][pathStartX] = 1
                     currentY = pathStartY - j
                 }
+                level[currentY][currentX] = 1
 
                 if (pathStartX > pathEndX) {
                     while ((currentX > pathEndX)) {
@@ -348,6 +375,9 @@ function handlePaths() {
 
                     }
                 }
+                level[currentY][currentX] = 1
+
+                //console.log(currentX)
                 while (currentY > pathEndY) {
                     currentY--
                     level[currentY][currentX] = 1
@@ -355,15 +385,22 @@ function handlePaths() {
 
                 break;
             case directions.down:
-                pathStartY += grid[paths[i].startPos.y][paths[i].startPos.x].height
-                pathStartX += Math.ceil(grid[paths[i].startPos.y][paths[i].startPos.x].width / 2)
-                pathEndX += Math.ceil(grid[paths[i].endPos.y][paths[i].endPos.x].width / 2)
+                pathStartY += sRoomData.metadata.doors.down[rand(0, sRoomData.metadata.doors.down.length - 1)].y 
+                pathStartX += sRoomData.metadata.doors.down[rand(0, sRoomData.metadata.doors.down.length - 1)].x
+                pathEndX += eRoomData.metadata.doors.up[rand(0, eRoomData.metadata.doors.up.length - 1)].x
+                pathEndY += eRoomData.metadata.doors.up[rand(0, eRoomData.metadata.doors.up.length - 1)].y
+
+
                 currentY = pathStartY
                 currentX = pathStartX
-                for (let j = 0; j < Math.floor((pathEndY - pathStartY) / 2); j++) {
+                // level[pathStartY + 1][pathStartX] = 1
+
+
+                for (let j = 1; j < Math.max(2,Math.ceil((pathEndY - pathStartY) / 2)); j++) {
                     level[pathStartY + j][pathStartX] = 1
                     currentY = pathStartY + j
                 }
+                level[currentY][currentX] = 1
 
                 if (pathStartX > pathEndX) {
                     while ((currentX > pathEndX)) {
@@ -378,6 +415,9 @@ function handlePaths() {
 
                     }
                 }
+                level[currentY][currentX] = 1
+
+                //console.log(currentX)
                 while (currentY < pathEndY) {
                     level[currentY][currentX] = 1
 
@@ -385,16 +425,20 @@ function handlePaths() {
                 }
                 break;
             case directions.right:
-                pathStartX += grid[paths[i].startPos.y][paths[i].startPos.x].width
-                pathStartY += Math.ceil(grid[paths[i].startPos.y][paths[i].startPos.x].height / 2)
-                pathEndY += Math.ceil(grid[paths[i].endPos.y][paths[i].endPos.x].height / 2)
+                pathStartX += sRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].x + 1
+                pathStartY += sRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].y
+                pathEndY += eRoomData.metadata.doors.left[rand(0, eRoomData.metadata.doors.left.length - 1)].y
+                pathEndX += eRoomData.metadata.doors.left[rand(0, eRoomData.metadata.doors.left.length - 1)].x
+
                 currentY = pathStartY
                 currentX = pathStartX
+                level[pathStartY][pathStartX] = 1
+
                 for (let j = 0; j < Math.floor((pathEndX - pathStartX) / 2); j++) {
                     level[pathStartY][pathStartX + j] = 1
                     currentX = pathStartX + j
                 }
-
+                level[currentY][currentX] = 1
                 if (pathStartY > pathEndY) {
                     while ((currentY > pathEndY)) {
                         currentY--
@@ -408,6 +452,9 @@ function handlePaths() {
 
                     }
                 }
+                level[currentY][currentX] = 1
+
+                //console.log(currentY)
                 while (currentX < pathEndX) {
                     level[currentY][currentX] = 1
 
@@ -415,15 +462,23 @@ function handlePaths() {
                 }
                 break;
             case directions.left:
-                pathEndX += grid[paths[i].endPos.y][paths[i].endPos.x].width
-                pathStartY += Math.ceil(grid[paths[i].startPos.y][paths[i].startPos.x].height / 2)
-                pathEndY += Math.ceil(grid[paths[i].endPos.y][paths[i].endPos.x].height / 2)
+                pathEndX += eRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].x + 1
+                pathStartY += sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].y
+                pathStartX += sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].x
+                pathEndY += eRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].y
+                console.log(sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].y)
+                
+                showMap = true
+
                 currentY = pathStartY
                 currentX = pathStartX
-                for (let j = 1; j < Math.floor((pathStartX - pathEndX) / 2); j++) {
+                
+
+                for (let j = 1; j < Math.max(2,Math.ceil((pathStartX - pathEndX) / 2)); j++) {
                     level[pathStartY][pathStartX - j] = 1
                     currentX = pathStartX - j
                 }
+                level[currentY][currentX] = 1
 
                 if (pathStartY > pathEndY) {
                     while ((currentY > pathEndY)) {
@@ -438,14 +493,15 @@ function handlePaths() {
 
                     }
                 }
+                level[currentY][currentX] = 1
+
+                //console.log(currentY)
                 while (!(currentX < pathEndX)) {
                     level[currentY][currentX] = 1
-
                     currentX--
                 }
                 break;
         }
-
     }
 }
 function rand(min, max) { // min and max included 
@@ -459,76 +515,80 @@ function placeRoom(gridX, gridY) {
     if (!grid[gridY][gridX]) {
         return
     }
-    
+
 
     let nbL, nbR, nbU, nbD //vars for left, right, up, down neighbors
     nbL = nbR = nbU = nbD = true
-    if(gridX == 0){
+    if (gridX == 0) {
         nbL = false
     }
     else {
-        if(!grid[gridY][gridX-1])
+        if (!grid[gridY][gridX - 1])
             nbL = false
     }
-    
-    if(gridX == 6){
+
+    if (gridX == 6) {
         nbR = false
     }
-    else{
-        if(!grid[gridY][gridX+1])
+    else {
+        if (!grid[gridY][gridX + 1])
             nbR = false
     }
-    
-    if(gridY == 0){
+
+    if (gridY == 0) {
         nbU = false
     }
     else {
-        if(!grid[gridY-1][gridX])
+        if (!grid[gridY - 1][gridX])
             nbU = false
     }
-    
-    if(gridY == 6){
+
+    if (gridY == 6) {
         nbD = false
     }
-    else{
-        if(!grid[gridY+1][gridX])
+    else {
+        if (!grid[gridY + 1][gridX])
             nbD = false
     }
-    
-    console.log(nbL+","+nbR+","+nbU+","+nbD)
 
+    //console.log(nbL+","+nbR+","+nbU+","+nbD)
+    let namespace = "misc"
     let roomID = -1
     fails = true
     let test = 0
-    console.log("finding rooms!")
-    while(fails && test < 10000){
+    //console.log("finding rooms!")
+    while (fails && test < 10000) {
         fails = false
-        roomID= rand(0, rooms.misc.length - 1)
+        roomID = rand(0, rooms.misc.length - 1)
         let md = rooms.misc[roomID].metadata.doors
-        
-        if(nbL && md.left.length == 0){
+
+        if (nbL && md.left.length == 0) {
             fails = true
         }
-        if(nbR && md.right.length == 0){
+        if (nbR && md.right.length == 0) {
             fails = true
         }
-        if(nbU && md.up.length == 0){
+        if (nbU && md.up.length == 0) {
             fails = true
         }
-        if(nbD && md.down.length == 0){
+        if (nbD && md.down.length == 0) {
             fails = true
         }
         test++
     }
-    console.log(test)
+    //console.log(test)
     let room = rooms.misc[roomID]
-    
-    console.log(room)
+
+    //console.log(room)
 
     if (gridX == bossX && gridY == bossY) {
+        namespace = "essential"
+        roomID = "boss"
         room = rooms.essential.boss
     }
     if (gridX == 3 && gridY == 3) {
+        namespace = "essential"
+        roomID = "start"
         room = rooms.essential.start
     }
 
@@ -546,8 +606,8 @@ function placeRoom(gridX, gridY) {
         player.xPos = initialX
         player.yPos = initialY
     }
-    saveRoom(gridX, gridY, initialX, initialY, room.width, room.height, room.data, roomID)
+    saveRoom(gridX, gridY, initialX, initialY, room.width, room.height, room.data, roomID, namespace)
 }
-function saveRoom(gX, gY, xi, yi, wi, hi, di, idi) {
-    grid[gY][gX] = { xPos: xi, yPos: yi, width: wi, height: hi, data: di, id: idi }
+function saveRoom(gX, gY, xi, yi, wi, hi, di, idi, ns) {
+    grid[gY][gX] = { xPos: xi, yPos: yi, width: wi, height: hi, data: di, id: idi, namespace: ns }
 }

@@ -99,8 +99,12 @@ function drawMap() {
         for (let j = 0; j < level[i].length; j++) { //x
 
             if (level[i][j] != 0) {
+                screen.filter = "brightness(140%)"
+
                 screen.fillStyle = tileSRC[tiles[level[i][j]]].mapColor
                 fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                screen.filter = "none"
+
             }
             if (i == player.yPos && j == player.xPos) {
                 screen.fillStyle = ["red", "orange", "yellow", "blue", "green", "purple"][rand(0, 5)]
@@ -118,6 +122,8 @@ function drawMap() {
             }
         }
     }
+    screen.filter = "none"
+
 }
 document.getElementById("gameNameTextBox").addEventListener("keyup", (e) => {
     if (e.key != "Enter") {
@@ -645,6 +651,7 @@ function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
             screen.filter = "brightness(140%)"
             showMouseIndicator = false
     }
+    screen.filter = "none"
     drawImageRotated(x, y, w, h, rotation, src)
     screen.filter = "none"
 }
