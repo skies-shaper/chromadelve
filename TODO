@@ -41,3 +41,33 @@ Finish Popup logic
 
 \_ add support for background animations (like waves, clouds ETC)
 
+PHASE 1
+
+\_ Finish dialog system: 
+-> some indicator of who it is that is talking
+-> name
+-> dialog
+-> "continue" / "done" button
+
+\_ Flavor text, instructions system:
+->nice bounding box, text. boom!
+->> Image support? mmmmm no
+
+\_Figure out basic enemies: simple mob that attacks, short range, moves. (towards player if > 50% HP, away from player if <50% HP)
+-->Figure way of storing AI -> functions?
+    ->AI has an ID ("base-malevolent-spirit") which corresponds to a function call.
+    ->
+--->JS can you call functions from a string?
+-----> future moddable/data-driven support: external file containing any number of things that adds in stuff (datapack-like)
+
+\_ Inventory system : simple grid with held items
+    -> need item sprites
+\_ Construct basic "tutorial" level with basic enemies, combat, everything worked out!
+    -> simple rooms (make a chest, pot?, basic functional tiles)
+    -> basic stone tileset - the "village" - so to speak  - tileset
+    -> This will be what many others are corrupted *off* of
+    -> In end game, this will be an optional door to go down before lvl 1.
+
+PHASE 2
+
+More tilesets, enemies, etc!

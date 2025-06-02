@@ -515,7 +515,7 @@ function healthRect() {
 }
 
 function focusItem(itemIdx) {
-    if (player.inventory.equipped[itemIdx].data.cooldownTime <= 0.05) {
+    if (player.inventory.equipped[itemIdx].data.cooldownTime / player.inventory.equipped[itemIdx].data.cooldown < 1) {
         return
     }
     if (itemIdx == GUI.focusedItem) {
@@ -532,12 +532,12 @@ function focusItem(itemIdx) {
 function useItem(itemIdx) {
     //various checks
     let item = player.inventory.equipped[itemIdx]
-
-
     let affectedEntity = {}
     let affectedEntityIndex = -1
     let i = 0
-    entities.forEach((entity) => {
+    if(item.data.range.rangeType != range.self)
+    {
+        entities.forEach((entity) => {
         if(entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
             affectedEntity = entity
             affectedEntityIndex = i
@@ -545,12 +545,15 @@ function useItem(itemIdx) {
         i++
     })
     if (affectedEntityIndex == -1) {
+        console.log(":(")
+
         mouse.mode = mouseModes.select
         GUI.focusedItem = -1
         round.progression = round.progressionStates.notUsingItem
         item.data.cooldownTime -= item.data.cooldown
         return
-    }
+    }}
+    console.log("hi")
     switch (item.type) {
         case itemTypes.weapon:
             if (randomInclusive(1, 10) > affectedEntity.stats.dodge) {
@@ -579,11 +582,13 @@ function useItem(itemIdx) {
             }
             break;
     }
-    if (entities[affectedEntityIndex].stats.health < 1) {
-        addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
-        console.log(affectedEntity.display.hurtAnimation.maxFrames)
-        setTimeout(() => { entities.splice(affectedEntityIndex, 1) }, (1000 / 6) * (affectedEntity.display.hurtAnimation.maxFrames) + 1)
+    if(item.data.range.rangeType != range.self){
+        if (entities[affectedEntityIndex].stats.health < 1) {
+            addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
+            console.log(affectedEntity.display.hurtAnimation.maxFrames)
+            setTimeout(() => { entities.splice(affectedEntityIndex, 1) }, (1000 / 6) * (affectedEntity.display.hurtAnimation.maxFrames) + 1)
 
+        }
     }
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
@@ -651,7 +656,6 @@ function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
             screen.filter = "brightness(140%)"
             showMouseIndicator = false
     }
-    screen.filter = "none"
     drawImageRotated(x, y, w, h, rotation, src)
     screen.filter = "none"
 }
