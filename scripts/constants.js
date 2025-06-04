@@ -21,15 +21,36 @@ let screenData = {
     isModified: false
 }
 
-let popups = {
+let popups = {}
+popups = {
     consts: {
-        dialog: 0
+        dialog: 0,
+        flavor: 1,
+        none : 3
     },
-    displayed: [
-        
-    ]
+    
+    displayed: []
 }
-// popups.displayed.push({text:"hi", speaker: "It's a secret!", type: popups.consts.dialog})
+let nullPopup = {
+    text: "",
+    speaker: "",
+    type: popups.consts.none
+}
+let popupStorage = {
+
+    example:  {
+        text : "example text",
+        speaker: "example speaker",
+        type: popups.consts.dialog,
+        onContinue: nullPopup
+    },
+    exampleFlavor: {
+        text : "Welcome to Chromadelve!",
+        speaker: "",
+        type: popups.consts.flavor,
+        onContinue: nullPopup
+    }
+}
 
 let editorLayers = ["background","tile", "metadata"]
 let editorLayerIdx = 1
@@ -390,6 +411,8 @@ let isTyping = false
 let gameConsole = []
 let level = []
 let levelData = {
+    flags: [],
+    ID: "",
     color: "orange",
     width: 0
 }

@@ -103,7 +103,7 @@ let rooms = {
     ]
 }
 
-function generateLevel() {
+function generateLevel(args) {
     levelData.width = 78
     //initializing rooms
     while (true) {
@@ -468,7 +468,7 @@ function handlePaths() {
                 pathEndY += eRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].y
                 console.log(sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].y)
                 
-                showMap = true
+                // showMap = true // If working with worldgen, uncomment this!
 
                 currentY = pathStartY
                 currentX = pathStartX

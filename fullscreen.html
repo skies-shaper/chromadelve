@@ -94,15 +94,15 @@
             let finishedLoad = false
             const goFast = new Event("speeeed")
             let screen2 = document.getElementById("gamewindow").getContext("2d")
-            screen.imageSmoothingEnabled= false
+            screen2.imageSmoothingEnabled= false
             let loadingPercent = 0
             let slowInterval = setInterval(()=>{
-                screen.fillStyle = "green"
-                screen.fillRect(0,0,480*screenData.scale,360*screenData.scale)
-                screen.fillStyle = "black"
-                screen.fillRect(140*screenData.scale,170*screenData.scale,200*screenData.scale,20*screenData.scale)
-                screen.fillStyle = "red"
-                screen.fillRect(142*screenData.scale,172*screenData.scale,194*(loadingPercent/100)*screenData.scale,16*screenData.scale)
+                screen2.fillStyle = "green"
+                screen2.fillRect(0,0,480*screenData.scale,360*screenData.scale)
+                screen2.fillStyle = "black"
+                screen2.fillRect(140*screenData.scale,170*screenData.scale,200*screenData.scale,20*screenData.scale)
+                screen2.fillStyle = "red"
+                screen2.fillRect(142*screenData.scale,172*screenData.scale,194*(loadingPercent/100)*screenData.scale,16*screenData.scale)
                 loadingPercent++
                 console.log(finishedLoad)
                 if(loadingPercent >= 100 || finishedLoad){

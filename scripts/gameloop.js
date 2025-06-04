@@ -82,6 +82,13 @@ window.addEventListener("keyup", (event) => {
     userKeys[event.key] = false;
     handlePlayerMovement(event.key)
 })
+tutorialInit()
+function tutorialInit(){
+    game.sessionName = "tutorial"
+    levelData.ID = "tutorial"
+    document.getElementById("gameNameTextBox").style.visibility = "hidden"
+    Global_State = globalProgressionStates.levelGen
+}
 
 console.log(performance.now() - startTime + "ms loadup time")
 finishedLoad = true
@@ -224,8 +231,10 @@ function gameloop() {
             handlePlayerMovement()
             handleTurnLogic()
             handleEntityLogic()
+            handleLevelLogic()
         }
         //scripts that update always
+        
         drawTiles()
         drawEntities()
         drawHUD()
@@ -273,6 +282,16 @@ function gameloop() {
         deleteSavesScreen()
     }
 }
+
+function handleLevelLogic(){
+    if(levelData.ID == "tutorial"){
+        if(levelData.flags.indexOf("introductionComplete") < 0){
+            popups.displayed.push(popupStorage.exampleFlavor)
+            levelData.flags.push("introductionComplete")
+        }
+    }
+}
+
 function drawEditorPauseMenu() {
     screen.fillStyle = "rgba(0,0,0,0.3)"
     fillRect(0, 0, 480, 360)
@@ -379,7 +398,7 @@ function drawHUD() {
     drawImage(357, 3, 120, 120, "GUI_stats-back")
     //health rectangle
     screen.fillStyle = "red"
-    if (player.stats.health / player.stats.maxHealth < 0.2 && entityAnimationStage == 1) {
+    if (player.stats.health / player.stats.maxHealth < 0.2 && entityAnimationStage%10 < 5) {
         screen.fillStyle = "darkred"
     }
     let healthHeighConversion = Math.round(((player.stats.health / player.stats.maxHealth) * 33) / 3) * 3
@@ -411,23 +430,23 @@ function drawHUD() {
 
             }
             setFont("10px Kode Mono")
-            drawText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
+            drawText(player.inventory.equipped[i].name.substring(0, 13), 393 + btnOffset, 102 + (i * 57))
         }
         if (player.inventory.equipped[i].type == itemTypes.weapon) {
             let tSrc = (player.inventory.equipped[i].data.cooldownTime < 0.05) ? "GUI_attack-unavailable" : "GUI_attack-available"
             if (isPaused) {
                 drawImage(387 + btnOffset, 87 + (i * 57), 90, 54, "GUI_spellscroll")
-                drawImageRotated(393 + btnOffset, 102 + (i * 57), 15, 15, 0, tSrc)
+                drawImageRotated(393 + btnOffset, 105 + (i * 57), 15, 15, 0, tSrc)
             }
             else {
                 addButton("#Use_Item_" + i, "GUI_spellscroll", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
                 }, false)
-                drawImageRotated(393 + btnOffset, 99 + (i * 57), 15, 15, 0, tSrc)
+                drawImageRotated(393 + btnOffset, 105 + (i * 57), 15, 15, 0, tSrc)
 
             }
             setFont("10px Kode Mono")
-            drawText(player.inventory.equipped[i].name.substring(0, 13), 391 + btnOffset, 97 + (i * 57))
+            drawText(player.inventory.equipped[i].name.substring(0, 13), 393 + btnOffset, 102 + (i * 57))
 
         }
         if (player.inventory.equipped[i].type == itemTypes.consumable) {
@@ -484,17 +503,17 @@ function cooldownBar(i, btnOffset) {
     let maxCooldown = cItem.data.cooldown
     let currentCooldown = cItem.data.cooldownTime
     screen.fillStyle = "grey"
-    fillRect(396 + btnOffset, 102 + (i * 57), 72, 3)
+    fillRect(396 + btnOffset, 105 + (i * 57), 72, 3)
     if (maxCooldown < 1) {
         screen.fillStyle = "mediumSeaGreen"
 
 
-        fillRect(396 + btnOffset, 102 + (i * 57), (currentCooldown * 72), 3)
+        fillRect(396 + btnOffset, 105 + (i * 57), (currentCooldown * 72), 3)
 
         screen.fillStyle = "black"
 
         for (let j = 0; j < 1 / maxCooldown - 1; j++) {
-            fillRect(396 + btnOffset + ((j + 1) * maxCooldown * 72), 102 + (i * 57), 3, 3)
+            fillRect(396 + btnOffset + ((j + 1) * maxCooldown * 72), 105 + (i * 57), 3, 3)
         }
         return
     }
@@ -504,7 +523,7 @@ function cooldownBar(i, btnOffset) {
     else {
         screen.fillStyle = "green"
     }
-    fillRect(396 + btnOffset, 102 + (i * 57), (72 * (currentCooldown / maxCooldown)), 3)
+    fillRect(396 + btnOffset, 105 + (i * 57), (72 * (currentCooldown / maxCooldown)), 3)
 
 
 
@@ -919,6 +938,7 @@ function gameInit() {
             break;
     }
     player.stats.maxHealth = player.stats.health
+    Global_State = globalProgressionStates.levelGen
 }
 
 
