@@ -9,6 +9,7 @@ function dynamicContent_importImages(){
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/blank.png" id="GUI_blank"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/chat.png" id="GUI_chat"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/chromadelve-beta logo.png" id="GUI_chromadelve-beta logo"/>'
+	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/cutscenes/opening sequence.png" id="GUI_cutscenes_opening sequence"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/item frame.png" id="GUI_item frame"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/mapBG.png" id="GUI_mapBG"/>'
 	document.getElementById("imgstore").innerHTML += '<img src="imgs/GUI/mvmntarrow-highlight-up.png" id="GUI_mvmntarrow-highlight-up"/>'
@@ -135,8 +136,8 @@ tileSRC = {
 "tiles_red_floor-1": {src: "tiles_red_floor-1", collision: false, ID: 21, mapColor: "#000000"},
 "tiles_red_floor-2": {src: "tiles_red_floor-2", collision: false, ID: 22, mapColor: "#000000"},
 "tiles_red_floor-3": {src: "tiles_red_floor-3", collision: false, ID: 23, mapColor: "#000000"},
-"tiles_red_wall-1": {src: "tiles_red_wall-1", collision: true, ID: 24, mapColor: "#ff0000"},
-"tiles_red_wall-2": {src: "tiles_red_wall-2", collision: true, ID: 25, mapColor: "#00ff00"},
+"tiles_red_wall-1": {src: "tiles_red_wall-1", collision: true, ID: 24, mapColor: "#000000"},
+"tiles_red_wall-2": {src: "tiles_red_wall-2", collision: true, ID: 25, mapColor: "#000000"},
 "tiles_red_wall-3": {src: "tiles_red_wall-3", collision: true, ID: 26, mapColor: "#000000"},
 "tiles_editor_door-down": {src: "tiles_editor_door-down", collision: false, ID: 47, mapColor: "#000000"},
 "tiles_editor_door-left": {src: "tiles_editor_door-left", collision: false, ID: 48, mapColor: "#000000"},

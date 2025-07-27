@@ -82,7 +82,7 @@ window.addEventListener("keyup", (event) => {
     userKeys[event.key] = false;
     handlePlayerMovement(event.key)
 })
-tutorialInit()
+// tutorialInit()
 function tutorialInit(){
     game.sessionName = "tutorial"
     levelData.ID = "tutorial"
@@ -225,6 +225,9 @@ function gameloop() {
     if (Global_State == globalProgressionStates.createNewGame) {
         gameCreationScreen()
     }
+    if (Global_State == globalProgressionStates.gameCreation) {
+        handleIntroCutscenes()
+    }
     if (Global_State == globalProgressionStates.gameplay) { //the game
         //scripts that update if the game is running
         if (!isPaused) {
@@ -286,7 +289,7 @@ function gameloop() {
 function handleLevelLogic(){
     if(levelData.ID == "tutorial"){
         if(levelData.flags.indexOf("introductionComplete") < 0){
-            popups.displayed.push(popupStorage.exampleFlavor)
+            // popups.displayed.push(popupStorage.exampleFlavor) !REMOVE, replace w new system
             levelData.flags.push("introductionComplete")
         }
     }
@@ -482,22 +485,58 @@ function drawHUD() {
             screen.fillStyle = "black"
         }
     }
-    //draw popup
-    for(let i = 0; i < popups.displayed.length; i++){
-        if(popups.displayed[i].type == popups.consts.dialog){
-            screen.fill = "#ababab"
-            screen.filter = "opacity(0.5)"
-            fillRect(15,200,450,145)
-            screen.filter = "none"
-            screen.fill = "white"
-            drawText(popups.displayed[i].speaker, 40, 220)
-        }
-    }
-    if(!isPaused){
+    //draw popups
+    popupHandler()
+    
+    if(!isPaused && popups.displayed.length < 0){
         addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole)
     }
     
 }
+
+function popupHandler() {
+    if(popups.displayed.currentDialog != ""){
+        screen.fillStyle = "#000000"
+        screen.filter = "opacity(0.75)"
+        setFont("15px Kode Mono")
+        let h = calculateTextHeight(popups.displayed.currentDialog.text, 440)
+        fillRect(15,270 - (15 * (h.length - 1)),450,75+(15 * (h.length - 1)))
+        setFont("30px kode mono")
+        screen.filter = "none"
+        screen.fillStyle = "#ffffff"
+        if(popups.displayed.currentDialog.speaker == "$HERO"){
+            for(let i = 0; i < 30; i++){
+                for(let j = 0; j < 150; j++){
+                    if(Math.random() < .5 - (Math.abs(j-75)/150)){
+                        fillRect(20 + j, 302 - i - (15 * (h.length-1)), 1, 1)
+                    }
+                }
+            }
+        }
+        else{
+            drawText(popups.displayed.currentDialog.speaker, 20, 300- (15 * (h.length-1)))
+        }
+        setFont("15px Kode Mono")
+        for(let i = 0; i < h.length; i++){
+            drawText(h[i], 20, 320 -  (15 * (h.length - i-1)))
+        }
+
+        addButton("#nextDialog", "#264272", 380,322,80,15, ()=>{
+                popups.displayed.currentDialog = popupStorage[popups.displayed.currentDialog.onContinue]
+        })
+        screen.fillStyle = "white"
+        drawText("continue>",380,335)
+
+    }
+    if(popups.displayed.currentFlavor != ""){
+
+    }
+}
+
+function getFontSize(){
+    return screen.font.substring(0,screen.font.indexOf("p"))
+}
+
 function cooldownBar(i, btnOffset) {
     let cItem = player.inventory.equipped[i]
     let maxCooldown = cItem.data.cooldown
@@ -675,7 +714,13 @@ function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
             screen.filter = "brightness(140%)"
             showMouseIndicator = false
     }
-    drawImageRotated(x, y, w, h, rotation, src)
+    if(src.charAt(0) == "#"){
+        screen.fillStyle = src
+        fillRect(x,y,w,h)
+    }
+    else{
+        drawImageRotated(x, y, w, h, rotation, src)
+    }
     screen.filter = "none"
 }
 
@@ -704,7 +749,7 @@ function drawTiles() {
                     
                     drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"], true)
                     if(Global_State == globalProgressionStates.roomEditor && editorLayerIdx == 2){
-                        // screen.fillColor = "grey"
+                        // screen.fillStyle = "grey"
                         // screen.filter = "opacity(50%)"
                         // fillRect(0,0,480,300)
                         // screen.filter = "none"
@@ -938,7 +983,7 @@ function gameInit() {
             break;
     }
     player.stats.maxHealth = player.stats.health
-    Global_State = globalProgressionStates.levelGen
+    // Global_State = globalProgressionStates.levelGen
 }
 
 
@@ -1180,4 +1225,38 @@ function initConsole(){
     document.getElementById("gameConsole").focus()
     document.getElementById("gameConsole").value = ""
     isTyping = true
+}
+
+function handleIntroCutscenes() {
+    drawImage(0,0,480,360,"GUI_cutscenes_opening sequence")
+    popupHandler()
+}
+function calculateTextHeight(text, pixelwidth){
+    let OVERSEER = 1000
+    let textArray = []
+    let charWidth = screen.measureText("1").width  / screenData.scale
+    let maxCharWidth = Math.floor(pixelwidth / charWidth)
+    let EOLL = 0
+    for(let i = 0; i < text.length; i++){
+        if(i - EOLL >= maxCharWidth){
+            if(text.charAt(i) == " "){
+                textArray.push(text.substring(EOLL,i))
+                i++
+            }
+            else{
+                while(text.charAt(i) != " "){
+                    i--
+                    if(i < 0){
+                        i = text.length
+                        break;
+                    }
+                }
+                textArray.push(text.substring(EOLL, i))
+                i++
+            }
+            EOLL = i 
+        }
+    }
+    textArray.push(text.substring(EOLL))
+    return textArray
 }

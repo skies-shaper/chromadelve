@@ -79,6 +79,10 @@ function gameSelectScreen(){
     addMainMenuButton("Exit",345, "#menu-exit",()=>{
         Global_State = globalProgressionStates.menu
     })
+    addMainMenuButton("Start actual game (no saves :/)", 133, "#menu-actualgame", ()=>{
+        Global_State = globalProgressionStates.gameCreation
+        popups.displayed.currentDialog = popupStorage.introduction_1
+    })
 }
 function debugGameScreen(){
     gameSelectScreen()

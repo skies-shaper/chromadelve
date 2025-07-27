@@ -7,9 +7,9 @@ let build = {
     version: {
         major: 0,
         minor: 1,
-        inc: 1
+        inc: 3
     },
-    date: "5/28/2025"
+    date: "7/26/2025"
 }
 
 let screenData = {
@@ -29,7 +29,10 @@ popups = {
         none : 3
     },
     
-    displayed: []
+    displayed: {
+        currentDialog: "",
+        currentFlavor: ""
+    }
 }
 let nullPopup = {
     text: "",
@@ -37,19 +40,68 @@ let nullPopup = {
     type: popups.consts.none
 }
 let popupStorage = {
-
+    "" : "",
     example:  {
         text : "example text",
         speaker: "example speaker",
-        type: popups.consts.dialog,
         onContinue: nullPopup
     },
     exampleFlavor: {
         text : "Welcome to Chromadelve!",
         speaker: "",
-        type: popups.consts.flavor,
         onContinue: nullPopup
+    },
+    introduction_1 : {
+            text : "What's this? Disembodied once more?",
+            speaker: "$HERO",
+            onContinue: "introduction_2"
+    },
+    introduction_2 : {
+        text: "A tragedy.",
+        speaker: "$HERO",
+        onContinue: "introduction_3"
+    },
+    introduction_3 : {
+        text: "My task was almost complete, my bondage nearly ended, my soul almost freed.",
+        speaker: "$HERO",
+        onContinue: "introduction_4"
+    },
+    introduction_4 : {
+        text: "I was so close...",
+        speaker : "$HERO",
+        onContinue : "introduction_5"
+    },
+    introduction_5 : {
+        text: "Fear not, old friend. The Cycle will continue. Your shackles to the bowels of the earth will break, and you will be freed!",
+        speaker : "Omu",
+        onContinue : "introduction_6"
+    },
+    introduction_6 : {
+        text: "I feel a calling from the physical plane. Should I heed it? Should I delve once more into the dark, seeking out my enemy though I know I will fail?",
+        speaker : "$HERO",
+        onContinue : "introduction_7"
+    },
+    introduction_7 : {
+        text: "That is your nature, old friend. One day, your cycle will end. You will be free.",
+        speaker : "Omu",
+        onContinue : "introduction_8"
+    },
+    introduction_8 : {
+        text: "But in what form should I regenerate this time? I can recall only flashes of my previous moments in this ethereal plane.",
+        speaker : "$HERO",
+        onContinue : "introduction_9"
+    },
+    introduction_9 : {
+        text: "I will guide you now, as I have guided you a thousand thousands of times before.",
+        speaker : "Omu",
+        onContinue : "introduction_10"
+    },
+    introduction_10 : {
+        text: "Thank you, ancient one.",
+        speaker : "$HERO",
+        onContinue : ""
     }
+    
 }
 
 let editorLayers = ["background","tile", "metadata"]
@@ -73,7 +125,8 @@ let globalProgressionStates = {
     debug: 7,
     roomEditor: 8,
     settings: 9,
-    saveDeleter: 10
+    saveDeleter: 10, 
+    gameCreation: 11
 }
 let progressionReturn = -1
 let level_color = "orange"
