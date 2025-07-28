@@ -1,5 +1,10 @@
 gameInit()
 let buttonEvents = []
+let buttonAborts = {}
+let hotkeyactions = {}
+let buttonignoresignals = {}
+
+
 let mouseDown
 let isPaused, isShiftPressed
 let userKeys = []
@@ -13,12 +18,7 @@ window.addEventListener("mousedown", () => {
 })
 window.addEventListener("mouseup", () => {
     mouseDown = false
-    for (let i = 0; i < mouseUpEvents.length; i++) {
-        if (mouseUpEvents[i] == "mkAttack") {
-            useItem(GUI.focusedItem)
-        }
-    }
-    mouseUpEvents = []
+    // setTimeout(()=>{canUseMovementButtons = true},100000)
     canUseMovementButtons = true
 })
 window.addEventListener("keydown", (event) => {
@@ -39,8 +39,10 @@ window.addEventListener("keydown", (event) => {
     //key events that can occur on the main menu below this
 
     //key events that can occur on the pause menu below this
-    if (event.key == "Escape") {
+    if(event.key == "Escape"){
         event.preventDefault()
+    }
+    if (event.key == hotkeys.pause) {
         if (isTyping) {
             document.getElementById("gameConsole").blur()
             document.getElementById("gameConsole").style.visibility = "hidden"
@@ -67,20 +69,27 @@ window.addEventListener("keydown", (event) => {
 
 })
 window.addEventListener("keyup", (event) => {
-    if (event.key == "Shift") {
-        isShiftPressed = false
-    }
+    // if (event.key == "Shift") {
+    //     isShiftPressed = false
+    // }
     if (isPaused || isTyping) {
         return
     }
-    if (event.key == "m") {
+    if (event.key == hotkeys.toggleMap) {
         showMap = !showMap
     }
-    if (event.key.toLowerCase() == "t" && Global_State == globalProgressionStates.gameplay) {
-        initConsole()
+    // if (event.key.toLowerCase() == "t" && Global_State == globalProgressionStates.gameplay) {
+    //     initConsole()
+    // }
+    // userKeys[event.key] = false;
+    if(hotkeyactions[event.key.toLowerCase()] !== undefined){
+        hotkeyactions[event.key.toLowerCase()].func()
+        // buttonEvents.splice(buttonEvents.indexOf(hotkeyactions[event.key.toLowerCase()].removeID), 1)
+        hotkeyactions[event.key.toLowerCase()].func = ()=>{}
+        hotkeyactions[event.key.toLowerCase()].removeID = ""
     }
-    userKeys[event.key] = false;
-    handlePlayerMovement(event.key)
+    
+
 })
 // tutorialInit()
 function tutorialInit(){
@@ -284,6 +293,13 @@ function gameloop() {
     if(Global_State == globalProgressionStates.saveDeleter){
         deleteSavesScreen()
     }
+    if(Global_State == globalProgressionStates.configKeybinds){
+        configKeybindsScreen()
+    }
+
+    if(Global_State == globalProgressionStates.configKeybinds_2){
+        configKeybindsScreen2()
+    }
 }
 
 function handleLevelLogic(){
@@ -347,25 +363,25 @@ function drawHUD() {
             if (!(tileSRC[tiles[level[player.yPos + 1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos + 1))) {
                 addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
                     movePlayer(directions.down, 1)
-                }, true, 180)
+                }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown, ignoreSignal : "attack"})
                 mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
             }
             if (!(tileSRC[tiles[level[player.yPos - 1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos - 1))) {
                 addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
                     movePlayer(directions.up, 1)
-                }, true, 0)
+                }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp, ignoreSignal : "attack"})
                 mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
             }
             if (!(tileSRC[tiles[level[player.yPos][player.xPos + 1]]].collision || detectEntity(player.xPos + 1, player.yPos))) {
                 addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
                     movePlayer(directions.right, 1)
-                }, true, 90)
+                }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight, ignoreSignal : "attack"})
                 mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
             }
             if (!(tileSRC[tiles[level[player.yPos][player.xPos - 1]]].collision || detectEntity(player.xPos - 1, player.yPos))) {
                 addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
                     movePlayer(directions.left, 1)
-                }, true, 270)
+                }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft, ignoreSignal : "attack"})
                 mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
             }
         }
@@ -374,7 +390,7 @@ function drawHUD() {
             removeButton("#move_down")
             removeButton("#move_left")
             removeButton("#move_right")
-            canUseMovementButtons = false;
+            canUseMovementButtons = false
         }
         addButton("#GUI_Buttons_Pause", "GUI_pause", 9, 9, 21, 21, () => {
             isPaused = true
@@ -428,7 +444,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_spellscroll", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, false)
+                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
                 cooldownBar(i, btnOffset)
 
             }
@@ -444,7 +460,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_spellscroll", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, false)
+                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
                 drawImageRotated(393 + btnOffset, 105 + (i * 57), 15, 15, 0, tSrc)
 
             }
@@ -461,7 +477,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_blank", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, false)
+                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
             }
             drawImage(423 + btnOffset, 87 + (i * 57), 54, 54, "GUI_item frame")
 
@@ -488,8 +504,8 @@ function drawHUD() {
     //draw popups
     popupHandler()
     
-    if(!isPaused && popups.displayed.length < 0){
-        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole)
+    if(!isPaused && popups.displayed.currentDialog == 0 && popups.displayed.currentFlavor == ""){
+        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole, {altKey : hotkeys.chat})
     }
     
 }
@@ -500,12 +516,12 @@ function popupHandler() {
         screen.filter = "opacity(0.75)"
         setFont("15px Kode Mono")
         let h = calculateTextHeight(popups.displayed.currentDialog.text, 440)
-        fillRect(15,270 - (15 * (h.length - 1)),450,75+(15 * (h.length - 1)))
-        setFont("30px kode mono")
+        fillRect(15,280 - (15 * (h.length - 1)),450,65+(15 * (h.length - 1)))
+        setFont("20px kode mono")
         screen.filter = "none"
         screen.fillStyle = "#ffffff"
         if(popups.displayed.currentDialog.speaker == "$HERO"){
-            for(let i = 0; i < 30; i++){
+            for(let i = 0; i < 20; i++){
                 for(let j = 0; j < 150; j++){
                     if(Math.random() < .5 - (Math.abs(j-75)/150)){
                         fillRect(20 + j, 302 - i - (15 * (h.length-1)), 1, 1)
@@ -521,11 +537,12 @@ function popupHandler() {
             drawText(h[i], 20, 320 -  (15 * (h.length - i-1)))
         }
 
-        addButton("#nextDialog", "#264272", 380,322,80,15, ()=>{
+        let t = screen.measureText("["+hotkeys.continue+"] continue>").width / screenData.scale
+        addButton("#nextDialog", "#264272", 460 - t,322,5 + t,17, ()=>{
                 popups.displayed.currentDialog = popupStorage[popups.displayed.currentDialog.onContinue]
-        })
+        }, {altKey : hotkeys.continue})
         screen.fillStyle = "white"
-        drawText("continue>",380,335)
+        drawText("["+hotkeys.continue+"] continue>",460 - t,335)
 
     }
     if(popups.displayed.currentFlavor != ""){
@@ -573,12 +590,14 @@ function healthRect() {
 }
 
 function focusItem(itemIdx) {
+
     if (player.inventory.equipped[itemIdx].data.cooldownTime / player.inventory.equipped[itemIdx].data.cooldown < 1) {
         return
     }
     if (itemIdx == GUI.focusedItem) {
         round.progression = round.progressionStates.notUsingItem
         GUI.focusedItem = -1
+        canUseMovementButtons = true
         return
     }
     round.progression = round.progressionStates.useItem
@@ -609,6 +628,9 @@ function useItem(itemIdx) {
         GUI.focusedItem = -1
         round.progression = round.progressionStates.notUsingItem
         item.data.cooldownTime -= item.data.cooldown
+        if(!mouseDown){
+            // canUseMovementButtons = true
+        }  
         return
     }}
     console.log("hi")
@@ -651,6 +673,9 @@ function useItem(itemIdx) {
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
     round.progression = round.progressionStates.notUsingItem
+    if(!mouseDown){
+        // canUseMovementButtons = true
+    }  
     item.data.cooldownTime -= item.data.cooldown
 }
 function handleTurnLogic() {
@@ -680,11 +705,14 @@ function handleTurnLogic() {
         if (tileSRC[tiles[level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5]]].collision) {
             mouse.mode = mouseModes.target_invalid
         }
-        if (mouse.mode == mouseModes.target && mouseDown && !mouseUpEvents.includes("mkAttack")) {
-            // mouseUpEvents.push("mkAttack")
+        if (mouse.mode == mouseModes.target && mouseDown) {
             // console.log("attack")
             useItem(GUI.focusedItem)
         }
+    }
+    else{
+        mouse.mode = mouseModes.select
+
     }
 }
 
@@ -695,20 +723,46 @@ function handleEntityLogic() {
 
 function removeButton(id) {
     if (buttonEvents.indexOf(id) > -1) {
+        buttonignoresignals[id] = true
         buttonEvents.splice(id, 1)
+        for(let i = 0; i < hotkeyactions.length; i++){
+            if(hotkeyactions[i].removeID == id){
+                hotkeyactions[i].func = ()=>{}
+            }
+        }
     }
 }
 
-function addButton(id, src, x, y, w, h, callback, highlight, rotation) {
+function addButton(id, src, x, y, w, h, callback, options) {
+    let highlight, rotation, hotkey, ignoreSignal
+    if(options !== undefined){
+        highlight = options.highlight
+        rotation = options.rotation
+        hotkey = options.altKey
+        ignoreSignal = options.ignoreSignal
+    }
     if (buttonEvents.indexOf(id) == -1) {
+        buttonignoresignals[id] = false
+
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup", () => {
-            if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale))
+            if(buttonignoresignals[id]){
+                buttonignoresignals[id] = false
+                return
+            }
+            if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale)){
                 callback()
+            }
             buttonEvents.splice(buttonEvents.indexOf(id), 1)
-        }, { once: true })
+            if(hotkey !== undefined){
+                hotkeyactions[hotkey.toLowerCase()] = {func : ()=>{}, removeID : ""}
+            }
+        }, { once: true})
+        
     }
-
+    if(hotkey !== undefined){
+        hotkeyactions[hotkey.toLowerCase()] = {func : callback, removeID : id}
+    }
     if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale)) {
         if (highlight != false)
             screen.filter = "brightness(140%)"
@@ -1136,19 +1190,19 @@ function drawEditorHUD() {
 
             addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
                 movePlayer(directions.down, 1)
-            }, true, 180)
+            }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown})
             mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
             addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
                 movePlayer(directions.up, 1)
-            }, true, 0)
+            }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp})
             mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
             addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
                 movePlayer(directions.right, 1)
-            }, true, 90)
+            }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight})
             mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
             addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
                 movePlayer(directions.left, 1)
-            }, true, 270)
+            }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft})
             mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
 
         }
@@ -1157,7 +1211,7 @@ function drawEditorHUD() {
             removeButton("#move_down")
             removeButton("#move_left")
             removeButton("#move_right")
-            canUseMovementButtons = false;
+            canUseMovementButtons = false
         }
         if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
             if(editorLayerIdx == 1)
@@ -1227,8 +1281,41 @@ function initConsole(){
     isTyping = true
 }
 
+
+function initIntroCutscenes() {
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -75, y : -140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -50, y : -100, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 210, y : 80, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 50, y : -140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : -80, y : 140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 200, y : 50, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 0, y : 100, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : -110, y : 60, w : 480, h : 360}) 
+    introCutsceneFrames = 0
+}
+
 function handleIntroCutscenes() {
-    drawImage(0,0,480,360,"GUI_cutscenes_opening sequence")
+    drawImage(0,0,480,360,"GUI_cutscenes_OS_testBG")
+    introCutsceneFrames++
+    //fog animation
+    if(introCutsceneFrames  < 301){
+        cutsceneAnimationData[0].x--
+        cutsceneAnimationData[1].y -= 0.5
+        cutsceneAnimationData[2].x++
+        cutsceneAnimationData[3].x++
+        cutsceneAnimationData[4].y+= 0.5
+        cutsceneAnimationData[5].x++
+        cutsceneAnimationData[6].y+= 0.5
+        cutsceneAnimationData[7].x--
+        screen.filter = "opacity("+(100-(introCutsceneFrames/3))+"%)"
+        for(let i = 0; i < cutsceneAnimationData.length; i++){
+            drawImage(cutsceneAnimationData[i].x, cutsceneAnimationData[i].y, cutsceneAnimationData[i].w, cutsceneAnimationData[i].h, cutsceneAnimationData[i].src) 
+        }
+        screen.filter = "none"
+        return
+    }
+
+    //cutscenes proper
     popupHandler()
 }
 function calculateTextHeight(text, pixelwidth){

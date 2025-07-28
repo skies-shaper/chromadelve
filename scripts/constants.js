@@ -2,6 +2,28 @@ let startTime = performance.now()
 let canUseMovementButtons = true
 let Global_State = 0
 let hideConsoleID
+let hotkeyTranslations = {
+    " " : "space"
+}
+
+let hotkeys = {
+    continue : "Enter",
+    moveUp : "w",
+    moveDown : "s",
+    moveLeft : "a",
+    moveRight  : "d",
+    pause : "Escape",
+    sel_1 : "1",
+    sel_2 : "2",
+    sel_3 : "3",
+    sel_4 : "4",
+    chat: "t",
+    toggleMap : "m"
+}
+
+
+
+let introCutsceneFrames
 
 let build = {
     version: {
@@ -44,12 +66,12 @@ let popupStorage = {
     example:  {
         text : "example text",
         speaker: "example speaker",
-        onContinue: nullPopup
+        onContinue: ""
     },
     exampleFlavor: {
         text : "Welcome to Chromadelve!",
         speaker: "",
-        onContinue: nullPopup
+        onContinue: ""
     },
     introduction_1 : {
             text : "What's this? Disembodied once more?",
@@ -82,7 +104,7 @@ let popupStorage = {
         onContinue : "introduction_7"
     },
     introduction_7 : {
-        text: "That is your nature, old friend. One day, your cycle will end. You will be free.",
+        text: "That is your nature. But one day, your cycle will end. You will be free.",
         speaker : "Omu",
         onContinue : "introduction_8"
     },
@@ -126,7 +148,9 @@ let globalProgressionStates = {
     roomEditor: 8,
     settings: 9,
     saveDeleter: 10, 
-    gameCreation: 11
+    gameCreation: 11, 
+    configKeybinds : 12, 
+    configKeybinds_2 : 13
 }
 let progressionReturn = -1
 let level_color = "orange"
@@ -279,6 +303,8 @@ let animations = {
     }
 
 let activeAnimations = []
+
+let cutsceneAnimationData = []
 
 function nF(){
     if(gameTicks%10 == 0)

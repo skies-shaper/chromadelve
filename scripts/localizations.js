@@ -27,6 +27,9 @@ function englishLocalization(){ //this is the base translation function. It puts
     
     //GUI stuff
     messages.GUI.mainMenu.begin = "Begin"
+
+    //popup localizations
+    
 }
 function germanLocalization() {
 

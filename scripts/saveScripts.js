@@ -1,6 +1,9 @@
 if(localStorage.getItem("saveList") === null){
     localStorage["saveList"] = JSON.stringify([])
 }
+if(localStorage.getItem("hotkeys") !== null){
+    hotkeys = JSON.parse(localStorage.getItem("hotkeys"))
+}
 
 function getSaveNamesList(){
     if(localStorage.getItem("saveList") === null){
