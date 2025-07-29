@@ -11,9 +11,11 @@ function splash(){
         screen.fillText(splashText, 480*screenData.scale - ((screen.measureText(splashText).width)),340*screenData.scale+(Math.sin(gameTicks/20)*8)*screenData.scale)
     }
 }
+
 function addMainMenuButton(text, y, id, callback){
     addGUIButton(text, 78, y, id, callback, true)
 }
+
 function addGUIButton(text, x, y, id, callback, highlight){
     // console.log(highlight)
     let w = 0
@@ -49,11 +51,21 @@ function addGUIButton(text, x, y, id, callback, highlight){
 
 
 }
-function gameSelectScreen(){
+
+function centerText(text, y){
+    drawText(text,(480-screen.measureText(text).width/screenData.scale)/2,y)
+}
+
+function menuScreenInit(title){
     screen.fillStyle = "white"
     drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
     setFont("30px Kode Mono")
-    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
+    centerText(title, 30)
+}
+
+function gameSelectScreen(){
+    menuScreenInit("Chromadelve")
+    
     addMainMenuButton("New game",52, "#menu-newgame",()=>{
         Global_State = globalProgressionStates.createNewGame
         if(screenData.isModified){
@@ -85,6 +97,7 @@ function gameSelectScreen(){
         initIntroCutscenes()
     })
 }
+
 function debugGameScreen(){
     gameSelectScreen()
     addMainMenuButton("Room Editor",133, "#room-editor",()=>{
@@ -105,14 +118,10 @@ function debugGameScreen(){
 }
 
 function gameCreationScreen(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
-    
+    menuScreenInit("Chromadelve")
+
     setFont("15px Kode Mono")
-    
-    screen.fillText("New Game",(screenData.width-screen.measureText("New Game").width)/2,45*screenData.scale)
+    centerText("New Game", 45)
 
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         document.getElementById("gameNameTextBox").style.visibility = "hidden"
@@ -145,14 +154,12 @@ function gameCreationScreen(){
         }
     })
 }
+
 function loadGameScreen(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    screen.fillText("Chromadelve",(screenData.width-screen.measureText("Chromadelve").width)/2,30*screenData.scale)
+    menuScreenInit("Chromadelve")
     setFont("15px Kode Mono")
 
-    drawText("Load Game",(480-screen.measureText("Load Game").width)/2,45)
+    centerText("Load Game",45)
     setFont("10px Kode Mono")
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         Global_State = globalProgressionStates.gameSelect
@@ -178,10 +185,7 @@ function loadGameScreen(){
 }
 
 function settingsScreen(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    drawText("Settings",(480-screen.measureText("Settings").width)/2,30)
+    menuScreenInit("Settings")
     setFont("15px Kode Mono")
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
         Global_State = progressionReturn
@@ -193,12 +197,10 @@ function settingsScreen(){
         Global_State = globalProgressionStates.configKeybinds
     })
 }
+
 let itemToDelete = -1
 function deleteSavesScreen(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    drawText("Delete Saves",(480-screen.measureText("Delete Saves").width)/2,30)
+    menuScreenInit("Delete Saves")
     setFont("15px Kode Mono")
 
     addMainMenuButton("Back",345, "#loadmenu-back",()=>{
@@ -231,10 +233,8 @@ function deleteSavesScreen(){
 
 let blinker_pos = -100
 function configKeybindsScreen(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    drawText("Configure Keybinds",(480-screen.measureText("Configure Keybinds").width/screenData.scale)/2,30)
+    menuScreenInit("Configure Keybinds")
+    
     setFont("15px Kode Mono")
     
     addHotkeyChangeButton(52 ,"Continue", "continue")
@@ -256,19 +256,58 @@ function configKeybindsScreen(){
         Global_State = globalProgressionStates.configKeybinds_2
     })
 }
+
 function configKeybindsScreen2(){
-    screen.fillStyle = "white"
-    drawImageRotated(0,0,480,360,0,"GUI_title_gamemenuscreen")
-    setFont("30px Kode Mono")
-    drawText("Configure Keybinds",(480-screen.measureText("Configure Keybinds").width/screenData.scale)/2,30)
-    setFont("15px Kode Mono")
+    menuScreenInit("Configure Keybinds")
     
+    setFont("15px Kode Mono")
     addHotkeyChangeButton(52, "Pause / escape","pause")
 
     addMainMenuButton("Back",345, "#keybindsscreen-back",()=>{
         Global_State = globalProgressionStates.configKeybinds
     })
 }
+function drawEditorPauseMenu() {
+    screen.fillStyle = "rgba(0,0,0,0.3)"
+    fillRect(0, 0, 480, 360)
+    addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
+        isPaused = false
+    })
+    screen.fillStyle = "white"
+    setFont("20px Kode Mono")
+    drawText(messages.popups.pauseMenu.editorPaused, 39, 27)
+
+    addGUIButton(messages.popups.pauseMenu.editorSave, 39, 50, "#editor-save", () => {
+        saveEditor()
+    })
+    addGUIButton(messages.popups.pauseMenu.editorQuit, 39, 73, "#editor-quit", () => {
+        Global_State = globalProgressionStates.menu
+    })
+
+    setFont("12px Kode Mono")
+}
+function drawPauseMenu() {
+    screen.fillStyle = "rgba(0,0,0,0.3)"
+    fillRect(0, 0, 480, 360)
+    addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
+        isPaused = false
+    })
+    screen.fillStyle = "white"
+    setFont("20px Kode Mono")
+    drawText(messages.popups.pauseMenu.gamePaused + " - " + game.sessionName, 39, 27)
+
+    addGUIButton(messages.popups.pauseMenu.gameQuit, 39, 50, "#pausemenu-quit", () => {
+        manualSave()
+        Global_State = globalProgressionStates.menu
+    })
+    addGUIButton(messages.popups.pauseMenu.gameOptionsButton, 39, 73, "#pausemenu-settings", () => {
+        progressionReturn = globalProgressionStates.gameplay
+        Global_State = globalProgressionStates.settings
+    })
+
+    setFont("12px Kode Mono")
+}
+
 
 function addHotkeyChangeButton(y, text, keyID){
     addMainMenuButton(text,y, "#configKey-"+keyID,()=>{

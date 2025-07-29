@@ -1,13 +1,16 @@
-gameInit()
+//Declarations
 let buttonEvents = []
 let buttonAborts = {}
 let hotkeyactions = {}
 let buttonignoresignals = {}
-
-
 let mouseDown
 let isPaused, isShiftPressed
 let userKeys = []
+let killID
+let showMap = false
+let creditsTextSpacing = 10
+
+//Event listeners
 document.getElementById("gamewindow").addEventListener("mousemove", (event) => {
     showMouseIndicator = true
     mouseX = event.offsetX
@@ -32,7 +35,6 @@ window.addEventListener("keydown", (event) => {
             editorCurrentlySelectedTile++
 
     }
-
     if (event.key == "Shift") {
         isShiftPressed = true
     }
@@ -69,9 +71,9 @@ window.addEventListener("keydown", (event) => {
 
 })
 window.addEventListener("keyup", (event) => {
-    // if (event.key == "Shift") {
-    //     isShiftPressed = false
-    // }
+    if (event.key == "Shift") {
+        isShiftPressed = false
+    }
     if (isPaused || isTyping) {
         return
     }
@@ -91,56 +93,9 @@ window.addEventListener("keyup", (event) => {
     
 
 })
-// tutorialInit()
-function tutorialInit(){
-    game.sessionName = "tutorial"
-    levelData.ID = "tutorial"
-    document.getElementById("gameNameTextBox").style.visibility = "hidden"
-    Global_State = globalProgressionStates.levelGen
-}
-
-console.log(performance.now() - startTime + "ms loadup time")
-finishedLoad = true
-let killID
 window.addEventListener("beginGameloop", ()=>{
     killID = setInterval(gameloop, (1000 / 60))
 })
-    
-let showMap = false
-
-function drawMap() {
-    screen.fillStyle = "tan";
-    drawImage(90, 48, 264, 264, "GUI_mapBG")
-    for (let i = 0; i < level.length; i++) { //y
-        for (let j = 0; j < level[i].length; j++) { //x
-
-            if (level[i][j] != 0) {
-                screen.filter = "brightness(140%)"
-
-                screen.fillStyle = tileSRC[tiles[level[i][j]]].mapColor
-                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
-                screen.filter = "none"
-
-            }
-            if (i == player.yPos && j == player.xPos) {
-                screen.fillStyle = ["red", "orange", "yellow", "blue", "green", "purple"][rand(0, 5)]
-                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
-            }
-            if (Debug.mapGrid) {
-                if (j % 11 == 0) {
-                    screen.fillStyle = "orange"
-                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
-                }
-                if (i % 11 == 0) {
-                    screen.fillStyle = "orange"
-                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
-                }
-            }
-        }
-    }
-    screen.filter = "none"
-
-}
 document.getElementById("gameNameTextBox").addEventListener("keyup", (e) => {
     if (e.key != "Enter") {
         return
@@ -196,6 +151,51 @@ document.getElementById("gameConsole").addEventListener("keyup", (e) => {
     }, 3000)
 
 })
+// initialization functions
+gameInit()
+// tutorialInit()
+function tutorialInit(){
+    game.sessionName = "tutorial"
+    levelData.ID = "tutorial"
+    document.getElementById("gameNameTextBox").style.visibility = "hidden"
+    Global_State = globalProgressionStates.levelGen
+}
+
+console.log(performance.now() - startTime + "ms loadup time")
+function initConsole(){
+    clearTimeout(hideConsoleID)
+    document.getElementById("gameConsole").style.visibility = 
+    document.getElementById("console-text").style.visibility = "visible"
+
+    document.getElementById("gameConsole").style.left = 
+    document.getElementById("console-text").style.left = (window.innerWidth - screenData.width)/2 + "px"
+
+    document.getElementById("gameConsole").style.fontSize = 
+    document.getElementById("console-text").style.fontSize = 10*screenData.scale + "px"
+
+    document.getElementById("gameConsole").style.top = 330*screenData.scale + "px"
+    document.getElementById("console-text").style.top = 0
+    document.getElementById("console-text").style.width = 
+    document.getElementById("gameConsole").style.width = 300*screenData.scale + "px"
+    document.getElementById("gameConsole").focus()
+    document.getElementById("gameConsole").value = ""
+    isTyping = true
+}
+
+
+function initIntroCutscenes() {
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -75, y : -140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -50, y : -100, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 210, y : 80, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 50, y : -140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : -80, y : 140, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 200, y : 50, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 0, y : 100, w : 480, h : 360})
+    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : -110, y : 60, w : 480, h : 360}) 
+    introCutsceneFrames = 0
+}
+
+//game logic
 
 function gameloop() {
     document.getElementById("gamewindow").dispatchEvent(new Event("update"))
@@ -311,45 +311,153 @@ function handleLevelLogic(){
     }
 }
 
-function drawEditorPauseMenu() {
-    screen.fillStyle = "rgba(0,0,0,0.3)"
-    fillRect(0, 0, 480, 360)
-    addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
-        isPaused = false
-    })
-    screen.fillStyle = "white"
-    setFont("20px Kode Mono")
-    drawText(messages.popups.pauseMenu.editorPaused, 39, 27)
+function handleEntityLogic() {
 
-    addGUIButton(messages.popups.pauseMenu.editorSave, 39, 50, "#editor-save", () => {
-        saveEditor()
-    })
-    addGUIButton(messages.popups.pauseMenu.editorQuit, 39, 73, "#editor-quit", () => {
-        Global_State = globalProgressionStates.menu
-    })
-
-    setFont("12px Kode Mono")
 }
-function drawPauseMenu() {
-    screen.fillStyle = "rgba(0,0,0,0.3)"
-    fillRect(0, 0, 480, 360)
-    addButton("#GUI_Buttons_Unpause", "GUI_unpause", 9, 9, 21, 21, () => {
-        isPaused = false
+function useItem(itemIdx) {
+    //various checks
+    let item = player.inventory.equipped[itemIdx]
+    let affectedEntity = {}
+    let affectedEntityIndex = -1
+    let i = 0
+    if(item.data.range.rangeType != range.self)
+    {
+        entities.forEach((entity) => {
+        if(entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
+            affectedEntity = entity
+            affectedEntityIndex = i
+        }
+        i++
     })
-    screen.fillStyle = "white"
-    setFont("20px Kode Mono")
-    drawText(messages.popups.pauseMenu.gamePaused + " - " + game.sessionName, 39, 27)
+    if (affectedEntityIndex == -1) {
+        console.log(":(")
 
-    addGUIButton(messages.popups.pauseMenu.gameQuit, 39, 50, "#pausemenu-quit", () => {
-        manualSave()
-        Global_State = globalProgressionStates.menu
-    })
-    addGUIButton(messages.popups.pauseMenu.gameOptionsButton, 39, 73, "#pausemenu-settings", () => {
-        progressionReturn = globalProgressionStates.gameplay
-        Global_State = globalProgressionStates.settings
-    })
+        mouse.mode = mouseModes.select
+        GUI.focusedItem = -1
+        round.progression = round.progressionStates.notUsingItem
+        item.data.cooldownTime -= item.data.cooldown
+        if(!mouseDown){
+            // canUseMovementButtons = true
+        }  
+        return
+    }}
+    console.log("hi")
+    switch (item.type) {
+        case itemTypes.weapon:
+            if (randomInclusive(1, 10) > affectedEntity.stats.dodge) {
+                entities[affectedEntityIndex].stats.health -= randomInclusive(item.data.damage.min, item.data.damage.max)
+                entities[affectedEntityIndex].display.currentAnimation = animations.consts.hurtAnimation
+            }
+            else {
+                console.log("miss!")
+            }
+            //deals damage
+            break;
+        case itemTypes.spell:
+            //does magic things
+            break;
+        case itemTypes.consumable: //Handles the running of potion effects
+            switch (item.data.effect) {
+                case effects.healthIncrease:
+                    player.stats.health = player.stats.health + item.data.power
+                    if (player.stats.health > player.stats.maxHealth) {
+                        player.stats.health = player.stats.maxHealth
+                    }
+            }
+            player.inventory.equipped[itemIdx].data.uses--
+            if (player.inventory.equipped[itemIdx].data.uses < 1) {
+                player.inventory.equipped[itemIdx] = items.null
+            }
+            break;
+    }
+    if(item.data.range.rangeType != range.self){
+        if (entities[affectedEntityIndex].stats.health < 1) {
+            addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
+            console.log(affectedEntity.display.hurtAnimation.maxFrames)
+            setTimeout(() => { entities.splice(affectedEntityIndex, 1) }, (1000 / 6) * (affectedEntity.display.hurtAnimation.maxFrames) + 1)
 
-    setFont("12px Kode Mono")
+        }
+    }
+    mouse.mode = mouseModes.select
+    GUI.focusedItem = -1
+    round.progression = round.progressionStates.notUsingItem
+    if(!mouseDown){
+        // canUseMovementButtons = true
+    }  
+    item.data.cooldownTime -= item.data.cooldown
+}
+function handleTurnLogic() {
+    if (round.progression == round.progressionStates.useItem) {
+        let item = player.inventory.equipped[GUI.focusedItem]
+        mouse.mode = mouseModes.target_invalid
+        let rangeDist = item.data.range.distance
+        // console.log(item.data.range)
+        switch (item.data.range.rangeType) {
+            case range.self:
+                if (mouseGridX == 5 && mouseGridY == 4) {
+                    mouse.mode = mouseModes.target
+
+                }
+
+                break;
+            case range.adjacent:
+                if (mouseGridX > (4 - rangeDist) && mouseGridX < (6 + rangeDist) && mouseGridY > (3 - rangeDist) && mouseGridY < (5 + rangeDist) && !(mouseGridX == 5 && mouseGridY == 4)) {
+                    mouse.mode = mouseModes.target
+                }
+                break;
+            case range.ray:
+                if (((mouseGridX == 5 && (mouseGridY > (3 - rangeDist) && mouseGridY < (5 + rangeDist))) || (mouseGridX > (4 - rangeDist) && mouseGridX < (6 + rangeDist) && mouseGridY == 4)) && !(mouseGridX == 5 && mouseGridY == 4)) {
+                    mouse.mode = mouseModes.target
+                }
+        }
+        if (tileSRC[tiles[level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5]]].collision) {
+            mouse.mode = mouseModes.target_invalid
+        }
+        if (mouse.mode == mouseModes.target && mouseDown) {
+            // console.log("attack")
+            useItem(GUI.focusedItem)
+        }
+    }
+    else{
+        mouse.mode = mouseModes.select
+
+    }
+}
+
+
+//rendering functions
+function drawMap() {
+    screen.fillStyle = "tan";
+    drawImage(90, 48, 264, 264, "GUI_mapBG")
+    for (let i = 0; i < level.length; i++) { //y
+        for (let j = 0; j < level[i].length; j++) { //x
+
+            if (level[i][j] != 0) {
+                screen.filter = "brightness(140%)"
+
+                screen.fillStyle = tileSRC[tiles[level[i][j]]].mapColor
+                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                screen.filter = "none"
+
+            }
+            if (i == player.yPos && j == player.xPos) {
+                screen.fillStyle = ["red", "orange", "yellow", "blue", "green", "purple"][rand(0, 5)]
+                fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+            }
+            if (Debug.mapGrid) {
+                if (j % 11 == 0) {
+                    screen.fillStyle = "orange"
+                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                }
+                if (i % 11 == 0) {
+                    screen.fillStyle = "orange"
+                    fillRect(99 + (3 * j), 63 + (i * 3), 3, 3);
+                }
+            }
+        }
+    }
+    screen.filter = "none"
+
 }
 
 function drawHUD() {
@@ -509,6 +617,86 @@ function drawHUD() {
     }
     
 }
+function drawEditorHUD() {
+    if(isPaused){
+        return
+    }
+    let mouseNoTouchZones = []
+    if (round.progression == round.progressionStates.notUsingItem && canUseMovementButtons) {
+        let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
+
+        addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
+            movePlayer(directions.down, 1)
+        }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown})
+        mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
+        addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
+            movePlayer(directions.up, 1)
+        }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp})
+        mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
+        addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
+            movePlayer(directions.right, 1)
+        }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight})
+        mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
+        addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
+            movePlayer(directions.left, 1)
+        }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft})
+        mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
+
+    }
+    else {
+        removeButton("#move_up")
+        removeButton("#move_down")
+        removeButton("#move_left")
+        removeButton("#move_right")
+        canUseMovementButtons = false
+    }
+    if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
+        if(editorLayerIdx == 1)
+            drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
+        if(editorLayerIdx == 2)
+            drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, metadataTiles[editorCurrentlySelectedTile])
+            // console.log(metadataTiles[editorCurrentlySelectedTile])
+        if (mouseDown && mouseY > screenData.scale*35) {
+            if(editorLayerIdx == 1){
+                console.log("changed!")
+                level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
+            }
+            if(editorLayerIdx == 2){
+                EditorRoomMetadata[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
+            }
+        }
+    }
+    screen.fillStyle = "black"
+    fillRect(0, 300, 480, 60)
+    screen.fillStyle = 'yellow'
+
+    fillRect(218, 308, 46, 46)
+    if(editorLayerIdx == 1){
+        for (let i = -7; i < 7; i++) {
+            if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
+                drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
+            }
+        }
+        screen.fillStyle = "white"
+        drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
+    }
+    if(editorLayerIdx == 2){
+        for (let i = -7; i < 7; i++) {
+            if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < metadataTiles.length) {
+                drawImage(220 + (i * 45), 310, 42, 42, metadataTiles[editorCurrentlySelectedTile + i])
+            }
+        }
+        screen.fillStyle = "white"
+        drawText("Currently Selected: " + metadataTiles[editorCurrentlySelectedTile], 5, 300)
+    }
+    addGUIButton("layer: "+editorLayers[editorLayerIdx],10,25,"changeEditorLayer",()=>{
+
+        editorLayerIdx++
+        editorLayerIdx%= editorLayers.length
+        editorCurrentlySelectedTile = 0
+    })
+    
+}
 
 function popupHandler() {
     if(popups.displayed.currentDialog != ""){
@@ -548,10 +736,6 @@ function popupHandler() {
     if(popups.displayed.currentFlavor != ""){
 
     }
-}
-
-function getFontSize(){
-    return screen.font.substring(0,screen.font.indexOf("p"))
 }
 
 function cooldownBar(i, btnOffset) {
@@ -605,120 +789,6 @@ function focusItem(itemIdx) {
 
 
     GUI.focusedItem = itemIdx
-}
-function useItem(itemIdx) {
-    //various checks
-    let item = player.inventory.equipped[itemIdx]
-    let affectedEntity = {}
-    let affectedEntityIndex = -1
-    let i = 0
-    if(item.data.range.rangeType != range.self)
-    {
-        entities.forEach((entity) => {
-        if(entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
-            affectedEntity = entity
-            affectedEntityIndex = i
-        }
-        i++
-    })
-    if (affectedEntityIndex == -1) {
-        console.log(":(")
-
-        mouse.mode = mouseModes.select
-        GUI.focusedItem = -1
-        round.progression = round.progressionStates.notUsingItem
-        item.data.cooldownTime -= item.data.cooldown
-        if(!mouseDown){
-            // canUseMovementButtons = true
-        }  
-        return
-    }}
-    console.log("hi")
-    switch (item.type) {
-        case itemTypes.weapon:
-            if (randomInclusive(1, 10) > affectedEntity.stats.dodge) {
-                entities[affectedEntityIndex].stats.health -= randomInclusive(item.data.damage.min, item.data.damage.max)
-                entities[affectedEntityIndex].display.currentAnimation = animations.consts.hurtAnimation
-            }
-            else {
-                console.log("miss!")
-            }
-            //deals damage
-            break;
-        case itemTypes.spell:
-            //does magic things
-            break;
-        case itemTypes.consumable: //Handles the running of potion effects
-            switch (item.data.effect) {
-                case effects.healthIncrease:
-                    player.stats.health = player.stats.health + item.data.power
-                    if (player.stats.health > player.stats.maxHealth) {
-                        player.stats.health = player.stats.maxHealth
-                    }
-            }
-            player.inventory.equipped[itemIdx].data.uses--
-            if (player.inventory.equipped[itemIdx].data.uses < 1) {
-                player.inventory.equipped[itemIdx] = items.null
-            }
-            break;
-    }
-    if(item.data.range.rangeType != range.self){
-        if (entities[affectedEntityIndex].stats.health < 1) {
-            addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
-            console.log(affectedEntity.display.hurtAnimation.maxFrames)
-            setTimeout(() => { entities.splice(affectedEntityIndex, 1) }, (1000 / 6) * (affectedEntity.display.hurtAnimation.maxFrames) + 1)
-
-        }
-    }
-    mouse.mode = mouseModes.select
-    GUI.focusedItem = -1
-    round.progression = round.progressionStates.notUsingItem
-    if(!mouseDown){
-        // canUseMovementButtons = true
-    }  
-    item.data.cooldownTime -= item.data.cooldown
-}
-function handleTurnLogic() {
-    if (round.progression == round.progressionStates.useItem) {
-        let item = player.inventory.equipped[GUI.focusedItem]
-        mouse.mode = mouseModes.target_invalid
-        let rangeDist = item.data.range.distance
-        // console.log(item.data.range)
-        switch (item.data.range.rangeType) {
-            case range.self:
-                if (mouseGridX == 5 && mouseGridY == 4) {
-                    mouse.mode = mouseModes.target
-
-                }
-
-                break;
-            case range.adjacent:
-                if (mouseGridX > (4 - rangeDist) && mouseGridX < (6 + rangeDist) && mouseGridY > (3 - rangeDist) && mouseGridY < (5 + rangeDist) && !(mouseGridX == 5 && mouseGridY == 4)) {
-                    mouse.mode = mouseModes.target
-                }
-                break;
-            case range.ray:
-                if (((mouseGridX == 5 && (mouseGridY > (3 - rangeDist) && mouseGridY < (5 + rangeDist))) || (mouseGridX > (4 - rangeDist) && mouseGridX < (6 + rangeDist) && mouseGridY == 4)) && !(mouseGridX == 5 && mouseGridY == 4)) {
-                    mouse.mode = mouseModes.target
-                }
-        }
-        if (tileSRC[tiles[level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5]]].collision) {
-            mouse.mode = mouseModes.target_invalid
-        }
-        if (mouse.mode == mouseModes.target && mouseDown) {
-            // console.log("attack")
-            useItem(GUI.focusedItem)
-        }
-    }
-    else{
-        mouse.mode = mouseModes.select
-
-    }
-}
-
-
-function handleEntityLogic() {
-
 }
 
 function removeButton(id) {
@@ -880,8 +950,6 @@ function inventoryPush(itemID) {
 function hotbarSwap(indexB, indexE) {
     let temp1 = player.inventory.equipped[indexE]
     let temp2 = player.inventory.backpack[indexB]
-    // console.log(temp1)
-    // console.log(temp2)
     player.inventory.backpack[indexB] = temp1
     player.inventory.equipped[indexE] = temp2
 
@@ -982,14 +1050,6 @@ function handleDebugScreen() {
     })
 }
 
-function randColor() {
-    let c = "#"
-    for (let i = 0; i < 6; i++) {
-        c += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'][rand(0, 15)]
-    }
-
-    return c
-}
 function handleCommand(cmd) {
     if (cmd == "regenerate-map") {
         generateLevel()
@@ -1062,6 +1122,124 @@ function spawnEntity(tName, x, y) {
     entities.push(temp)
 }
 
+function movePlayer(direction, amount) {
+    switch (direction) {
+        case directions.left:
+            player.xPos -= amount
+            break;
+        case directions.right:
+            player.xPos += amount
+            break;
+        case directions.up:
+            player.yPos -= amount
+            break;
+        case directions.down:
+            player.yPos += amount
+            break;
+    }
+
+    nextTurn()
+}
+
+function drawCredits() {
+    creditsTextSpacing = 10
+    screen.fillStyle = "white"
+    setFont("30px Kode Mono")
+    centerCreditsText("Chromadelve")
+    creditsTextSpacing += 20
+    setFont("20px Kode Mono")
+    centerCreditsText("Lead Developer")
+    setFont("15px Kode Mono")
+    centerCreditsText("Skies_Shaper")
+    //now we just need more people lol
+}
+function centerCreditsText(text) {
+    creditsTextSpacing += Number(screen.font.substring(0, screen.font.indexOf("p")))
+    screen.fillText(text, (screenData.width - screen.measureText(text).width) / 2, creditsTextSpacing - (creditScrollState) / 2)
+}
+
+function detectEntity(x, y) {
+    for (let i = 0; i < entities.length; i++) {
+        if (entities[i].xPos == x & entities[i].yPos == y) {
+            return true
+        }
+    }
+}
+
+function handleIntroCutscenes() {
+    drawImage(0,0,480,360,"GUI_cutscenes_OS_testBG")
+    introCutsceneFrames++
+    //fog animation
+    if(introCutsceneFrames  < 301){
+        cutsceneAnimationData[0].x--
+        cutsceneAnimationData[1].y -= 0.5
+        cutsceneAnimationData[2].x++
+        cutsceneAnimationData[3].x++
+        cutsceneAnimationData[4].y+= 0.5
+        cutsceneAnimationData[5].x++
+        cutsceneAnimationData[6].y+= 0.5
+        cutsceneAnimationData[7].x--
+        screen.filter = "opacity("+(100-(introCutsceneFrames/3))+"%)"
+        for(let i = 0; i < cutsceneAnimationData.length; i++){
+            drawImage(cutsceneAnimationData[i].x, cutsceneAnimationData[i].y, cutsceneAnimationData[i].w, cutsceneAnimationData[i].h, cutsceneAnimationData[i].src) 
+        }
+        screen.filter = "none"
+        return
+    }
+
+    //cutscenes proper
+    popupHandler()
+}
+
+//helper functions
+
+function getFontSize(){
+    return screen.font.substring(0,screen.font.indexOf("p"))
+}
+function calculateTextHeight(text, pixelwidth){
+    let OVERSEER = 1000
+    let textArray = []
+    let charWidth = screen.measureText("1").width  / screenData.scale
+    let maxCharWidth = Math.floor(pixelwidth / charWidth)
+    let EOLL = 0
+    for(let i = 0; i < text.length; i++){
+        if(i - EOLL >= maxCharWidth){
+            if(text.charAt(i) == " "){
+                textArray.push(text.substring(EOLL,i))
+                i++
+            }
+            else{
+                while(text.charAt(i) != " "){
+                    i--
+                    if(i < 0){
+                        i = text.length
+                        break;
+                    }
+                }
+                textArray.push(text.substring(EOLL, i))
+                i++
+            }
+            EOLL = i 
+        }
+    }
+    textArray.push(text.substring(EOLL))
+    return textArray
+}
+
+function randomInclusive(start, end){
+    return start + Math.floor(Math.random() * end);
+}
+
+function randColor() {
+    let c = "#"
+    for (let i = 0; i < 6; i++) {
+        c += ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'][rand(0, 15)]
+    }
+
+    return c
+}
+
+//helper rendering functions
 function drawText(str, x, y, maxWidth){
     if(typeof maxWidth == 'undefined'){
         screen.fillText(str, x*screenData.scale, y*screenData.scale)
@@ -1132,218 +1310,4 @@ function drawImageRotated(x, y, w, h, r, src) {
     
     screen.rotate(-r * (Math.PI / 180))
     screen.translate(-drawX*screenData.scale, -drawY*screenData.scale)
-}
-
-function movePlayer(direction, amount) {
-    switch (direction) {
-        case directions.left:
-            player.xPos -= amount
-            break;
-        case directions.right:
-            player.xPos += amount
-            break;
-        case directions.up:
-            player.yPos -= amount
-            break;
-        case directions.down:
-            player.yPos += amount
-            break;
-    }
-
-    nextTurn()
-}
-let textSpacing = 10
-
-function drawCredits() {
-    textSpacing = 10
-    screen.fillStyle = "white"
-    setFont("30px Kode Mono")
-    centerText("Chromadelve")
-    textSpacing += 20
-    setFont("20px Kode Mono")
-    centerText("Lead Developer")
-    setFont("15px Kode Mono")
-    centerText("Skies_Shaper")
-    //now we just need more people lol
-
-
-}
-function centerText(text) {
-    textSpacing += Number(screen.font.substring(0, screen.font.indexOf("p")))
-    screen.fillText(text, (screenData.width - screen.measureText(text).width) / 2, textSpacing - (creditScrollState) / 2)
-}
-
-function detectEntity(x, y) {
-    for (let i = 0; i < entities.length; i++) {
-        if (entities[i].xPos == x & entities[i].yPos == y) {
-            return true
-        }
-    }
-}
-
-function drawEditorHUD() {
-    if (!isPaused) {
-        
-        let mouseNoTouchZones = []
-        if (round.progression == round.progressionStates.notUsingItem && canUseMovementButtons) {
-            let src = "GUI_mvmntarrow" + ((gameTicks % 30 > 20) ? "" : "-up")
-
-            addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
-                movePlayer(directions.down, 1)
-            }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown})
-            mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
-            addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
-                movePlayer(directions.up, 1)
-            }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp})
-            mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
-            addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
-                movePlayer(directions.right, 1)
-            }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight})
-            mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
-            addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
-                movePlayer(directions.left, 1)
-            }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft})
-            mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
-
-        }
-        else {
-            removeButton("#move_up")
-            removeButton("#move_down")
-            removeButton("#move_left")
-            removeButton("#move_right")
-            canUseMovementButtons = false
-        }
-        if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
-            if(editorLayerIdx == 1)
-                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
-            if(editorLayerIdx == 2)
-                drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, metadataTiles[editorCurrentlySelectedTile])
-                // console.log(metadataTiles[editorCurrentlySelectedTile])
-            if (mouseDown && mouseY > screenData.scale*35) {
-                if(editorLayerIdx == 1){
-                    console.log("changed!")
-                    level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
-                }
-                if(editorLayerIdx == 2){
-                    EditorRoomMetadata[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
-                }
-            }
-        }
-        screen.fillStyle = "black"
-        fillRect(0, 300, 480, 60)
-        screen.fillStyle = 'yellow'
-
-        fillRect(218, 308, 46, 46)
-        if(editorLayerIdx == 1){
-            for (let i = -7; i < 7; i++) {
-                if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
-                    drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
-                }
-            }
-            screen.fillStyle = "white"
-            drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
-        }
-        if(editorLayerIdx == 2){
-            for (let i = -7; i < 7; i++) {
-                if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < metadataTiles.length) {
-                    drawImage(220 + (i * 45), 310, 42, 42, metadataTiles[editorCurrentlySelectedTile + i])
-                }
-            }
-            screen.fillStyle = "white"
-            drawText("Currently Selected: " + metadataTiles[editorCurrentlySelectedTile], 5, 300)
-        }
-        addGUIButton("layer: "+editorLayers[editorLayerIdx],10,25,"changeEditorLayer",()=>{
-
-            editorLayerIdx++
-            editorLayerIdx%= editorLayers.length
-            editorCurrentlySelectedTile = 0
-        })
-    }
-}
-
-function initConsole(){
-    clearTimeout(hideConsoleID)
-    document.getElementById("gameConsole").style.visibility = 
-    document.getElementById("console-text").style.visibility = "visible"
-
-    document.getElementById("gameConsole").style.left = 
-    document.getElementById("console-text").style.left = (window.innerWidth - screenData.width)/2 + "px"
-
-    document.getElementById("gameConsole").style.fontSize = 
-    document.getElementById("console-text").style.fontSize = 10*screenData.scale + "px"
-
-    document.getElementById("gameConsole").style.top = 330*screenData.scale + "px"
-    document.getElementById("console-text").style.top = 0
-    document.getElementById("console-text").style.width = 
-    document.getElementById("gameConsole").style.width = 300*screenData.scale + "px"
-    document.getElementById("gameConsole").focus()
-    document.getElementById("gameConsole").value = ""
-    isTyping = true
-}
-
-
-function initIntroCutscenes() {
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -75, y : -140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -50, y : -100, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 210, y : 80, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 50, y : -140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : -80, y : 140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 200, y : 50, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 0, y : 100, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : -110, y : 60, w : 480, h : 360}) 
-    introCutsceneFrames = 0
-}
-
-function handleIntroCutscenes() {
-    drawImage(0,0,480,360,"GUI_cutscenes_OS_testBG")
-    introCutsceneFrames++
-    //fog animation
-    if(introCutsceneFrames  < 301){
-        cutsceneAnimationData[0].x--
-        cutsceneAnimationData[1].y -= 0.5
-        cutsceneAnimationData[2].x++
-        cutsceneAnimationData[3].x++
-        cutsceneAnimationData[4].y+= 0.5
-        cutsceneAnimationData[5].x++
-        cutsceneAnimationData[6].y+= 0.5
-        cutsceneAnimationData[7].x--
-        screen.filter = "opacity("+(100-(introCutsceneFrames/3))+"%)"
-        for(let i = 0; i < cutsceneAnimationData.length; i++){
-            drawImage(cutsceneAnimationData[i].x, cutsceneAnimationData[i].y, cutsceneAnimationData[i].w, cutsceneAnimationData[i].h, cutsceneAnimationData[i].src) 
-        }
-        screen.filter = "none"
-        return
-    }
-
-    //cutscenes proper
-    popupHandler()
-}
-function calculateTextHeight(text, pixelwidth){
-    let OVERSEER = 1000
-    let textArray = []
-    let charWidth = screen.measureText("1").width  / screenData.scale
-    let maxCharWidth = Math.floor(pixelwidth / charWidth)
-    let EOLL = 0
-    for(let i = 0; i < text.length; i++){
-        if(i - EOLL >= maxCharWidth){
-            if(text.charAt(i) == " "){
-                textArray.push(text.substring(EOLL,i))
-                i++
-            }
-            else{
-                while(text.charAt(i) != " "){
-                    i--
-                    if(i < 0){
-                        i = text.length
-                        break;
-                    }
-                }
-                textArray.push(text.substring(EOLL, i))
-                i++
-            }
-            EOLL = i 
-        }
-    }
-    textArray.push(text.substring(EOLL))
-    return textArray
 }

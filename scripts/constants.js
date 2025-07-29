@@ -21,17 +21,15 @@ let hotkeys = {
     toggleMap : "m"
 }
 
-
-
 let introCutsceneFrames
 
 let build = {
     version: {
         major: 0,
         minor: 1,
-        inc: 3
+        inc: 4
     },
-    date: "7/26/2025"
+    date: "7/29/2025"
 }
 
 let screenData = {
@@ -56,11 +54,7 @@ popups = {
         currentFlavor: ""
     }
 }
-let nullPopup = {
-    text: "",
-    speaker: "",
-    type: popups.consts.none
-}
+
 let popupStorage = {
     "" : "",
     example:  {
@@ -136,6 +130,7 @@ let metadataTiles = [
     "tiles_editor_door-up"
 ]
 let EditorRoomMetadata = []
+
 let globalProgressionStates = {
     menu: 0,
     levelGen: 1,
@@ -153,8 +148,7 @@ let globalProgressionStates = {
     configKeybinds_2 : 13
 }
 let progressionReturn = -1
-let level_color = "orange"
-let numEntities = 0
+
 let messages = {
     console: {
         helpScreen: ""
@@ -198,6 +192,7 @@ const range = {
     adjacent: 3,
     null: 4
 };
+
 let directions = {
     up: 0,
     down: 1,
@@ -340,6 +335,7 @@ let elements = {
     air: 4,
     lightning: 5
 }
+
 let Debug = {
     mapGrid: false,
     showCoordinates: false,
@@ -347,6 +343,7 @@ let Debug = {
     unfetteredMovement: false,
     showMouseXY: false
 }
+
 const items = {
     null: { name: "Null Item", type: itemTypes.null, data: {} },
     shortSword: {
@@ -416,6 +413,7 @@ let player = {
         backpack: []
     }
 }
+
 const itemTemplates = {
     weapon: {
         damage: 0,
@@ -426,7 +424,8 @@ const itemTemplates = {
         power: 0
 
     }
-};
+}
+
 const entityTemplate = {
     UID: 0,
     name: "",
@@ -436,6 +435,7 @@ const entityTemplate = {
     attacks: [],
     drops: []
 }
+
 const animationTemplate = {
     tileX: -1,
     tileY: -1,
@@ -446,6 +446,7 @@ const animationTemplate = {
     frames: [
     ]
 }
+
 let entityData = {
     testGoblin:  {
         UID: 0,
@@ -470,7 +471,6 @@ let entityData = {
         }
     }
 }
-
 
 function getAnimationClone(src){
     if(typeof animations[src] == undefined){
@@ -538,8 +538,6 @@ let gameConstants = {
 
 let creditScrollState = 0
 
-function randomInclusive(start, end){
-    return start + Math.floor(Math.random() * end);
-}
 let checkBoxes = []
+
 dynamicContent_generateTileMappings()
