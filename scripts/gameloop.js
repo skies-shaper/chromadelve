@@ -1169,6 +1169,7 @@ function detectEntity(x, y) {
 function handleIntroCutscenes() {
     drawImage(0,0,480,360,"GUI_cutscenes_OS_testBG")
     introCutsceneFrames++
+    
     //fog animation
     if(introCutsceneFrames  < 301){
         cutsceneAnimationData[0].x--
