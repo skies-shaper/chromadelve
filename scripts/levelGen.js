@@ -24,12 +24,13 @@ let rooms = {
             ],
             height: 4,
             width: 6,
-            metadata: { "doors": { 
-                "up": [{ "x": 2, "y": 0 }, { "x": 3, "y": 0 }], 
-                "down": [{ "x": 3, "y": 3 }, { "x": 2, "y": 3 }], 
-                "left": [{ "x": 0, "y": 2 }], 
-                "right": [{ "x": 5, "y": 1 }] 
-            } 
+            metadata: {
+                "doors": {
+                    "up": [{ "x": 2, "y": 0 }, { "x": 3, "y": 0 }],
+                    "down": [{ "x": 3, "y": 3 }, { "x": 2, "y": 3 }],
+                    "left": [{ "x": 0, "y": 2 }],
+                    "right": [{ "x": 5, "y": 1 }]
+                }
             }
         },
         boss: {
@@ -182,25 +183,25 @@ function generateLevel(args) {
             if (level[i][j] == tileSRC["tiles_generic_floor"].ID) {
                 switch (c) {
                     case 1:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_floor-2"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_floor-2"].ID
                         break;
                     case 2:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_floor-3"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_floor-3"].ID
                         break;
                     default:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_floor-1"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_floor-1"].ID
                 }
             }
             if (level[i][j] == tileSRC["tiles_generic_wall"].ID) {
                 switch (c) {
                     case 1:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_wall-2"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_wall-2"].ID
                         break;
                     case 2:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_wall-3"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_wall-3"].ID
                         break;
                     default:
-                        level[i][j] = tileSRC["tiles_" + level_color + "_wall-1"].ID
+                        level[i][j] = tileSRC["tiles_" + levelData.color + "_wall-1"].ID
                 }
             }
         }
@@ -209,16 +210,16 @@ function generateLevel(args) {
     for (let i = 1; i < 77; i++) {
         for (let j = 0; j < 78; j++) {
             if (!tileSRC[tiles[level[i][j]]].collision && level[i][j] != 0) {
-                if ([0,27].indexOf(level[i - 1][j]) > -1) {
+                if ([0, 27].indexOf(level[i - 1][j]) > -1) {
                     level[i - 1][j] = 2
                 }
-                if ([0,27].indexOf(level[i][j - 1]) > -1) {
+                if ([0, 27].indexOf(level[i][j - 1]) > -1) {
                     level[i][j - 1] = 2
                 }
-                if ([0,27].indexOf(level[i + 1][j]) > -1) {
+                if ([0, 27].indexOf(level[i + 1][j]) > -1) {
                     level[i + 1][j] = 2
                 }
-                if ([0,27].indexOf(level[i][j + 1]) > -1) {
+                if ([0, 27].indexOf(level[i][j + 1]) > -1) {
                     level[i][j + 1] = 2
                 }
             }
@@ -385,7 +386,7 @@ function handlePaths() {
 
                 break;
             case directions.down:
-                pathStartY += sRoomData.metadata.doors.down[rand(0, sRoomData.metadata.doors.down.length - 1)].y 
+                pathStartY += sRoomData.metadata.doors.down[rand(0, sRoomData.metadata.doors.down.length - 1)].y
                 pathStartX += sRoomData.metadata.doors.down[rand(0, sRoomData.metadata.doors.down.length - 1)].x
                 pathEndX += eRoomData.metadata.doors.up[rand(0, eRoomData.metadata.doors.up.length - 1)].x
                 pathEndY += eRoomData.metadata.doors.up[rand(0, eRoomData.metadata.doors.up.length - 1)].y
@@ -396,7 +397,7 @@ function handlePaths() {
                 // level[pathStartY + 1][pathStartX] = 1
 
 
-                for (let j = 1; j < Math.max(2,Math.ceil((pathEndY - pathStartY) / 2)); j++) {
+                for (let j = 1; j < Math.max(2, Math.ceil((pathEndY - pathStartY) / 2)); j++) {
                     level[pathStartY + j][pathStartX] = 1
                     currentY = pathStartY + j
                 }
@@ -467,14 +468,14 @@ function handlePaths() {
                 pathStartX += sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].x
                 pathEndY += eRoomData.metadata.doors.right[rand(0, sRoomData.metadata.doors.right.length - 1)].y
                 console.log(sRoomData.metadata.doors.left[rand(0, sRoomData.metadata.doors.left.length - 1)].y)
-                
+
                 // showMap = true // If working with worldgen, uncomment this!
 
                 currentY = pathStartY
                 currentX = pathStartX
-                
 
-                for (let j = 1; j < Math.max(2,Math.ceil((pathStartX - pathEndX) / 2)); j++) {
+
+                for (let j = 1; j < Math.max(2, Math.ceil((pathStartX - pathEndX) / 2)); j++) {
                     level[pathStartY][pathStartX - j] = 1
                     currentX = pathStartX - j
                 }

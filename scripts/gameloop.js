@@ -9,6 +9,8 @@ let userKeys = []
 let killID
 let showMap = false
 let creditsTextSpacing = 10
+let randomSpiteColor = spitefulListOfBrownColors[randomInclusive(0, spitefulListOfBrownColors.length)]
+finishedLoad = true
 
 //Event listeners
 document.getElementById("gamewindow").addEventListener("mousemove", (event) => {
@@ -41,7 +43,7 @@ window.addEventListener("keydown", (event) => {
     //key events that can occur on the main menu below this
 
     //key events that can occur on the pause menu below this
-    if(event.key == "Escape"){
+    if (event.key == "Escape") {
         event.preventDefault()
     }
     if (event.key == hotkeys.pause) {
@@ -71,6 +73,11 @@ window.addEventListener("keydown", (event) => {
 
 })
 window.addEventListener("keyup", (event) => {
+    if (event.key == "Escape" && Global_State == globalProgressionStates.gameCreation) {
+        Global_State = globalProgressionStates.menu
+        introCutsceneFrames = 0
+        initIntroCutscenes()
+    }
     if (event.key == "Shift") {
         isShiftPressed = false
     }
@@ -84,16 +91,22 @@ window.addEventListener("keyup", (event) => {
     //     initConsole()
     // }
     // userKeys[event.key] = false;
-    if(hotkeyactions[event.key.toLowerCase()] !== undefined){
+    if (hotkeyactions[event.key.toLowerCase()] !== undefined) {
+        if (hotkeyactions[event.key.toLowerCase()].removeID == "") {
+            return
+        }
+        // console.log(hotkeyactions)
+
         hotkeyactions[event.key.toLowerCase()].func()
         // buttonEvents.splice(buttonEvents.indexOf(hotkeyactions[event.key.toLowerCase()].removeID), 1)
-        hotkeyactions[event.key.toLowerCase()].func = ()=>{}
+        hotkeyactions[event.key.toLowerCase()].func = doNothing
         hotkeyactions[event.key.toLowerCase()].removeID = ""
     }
-    
+
 
 })
-window.addEventListener("beginGameloop", ()=>{
+
+window.addEventListener("beginGameloop", () => {
     killID = setInterval(gameloop, (1000 / 60))
 })
 document.getElementById("gameNameTextBox").addEventListener("keyup", (e) => {
@@ -143,7 +156,7 @@ document.getElementById("gameConsole").addEventListener("keyup", (e) => {
     document.getElementById("gameConsole").style.visibility = "hidden"
     isTyping = false
     if (document.getElementById("gameConsole").value != "")
-    document.getElementById("console-text").textContent += document.getElementById("gameConsole").value + "\n\r"
+        document.getElementById("console-text").textContent += document.getElementById("gameConsole").value + "\n\r"
 
 
     hideConsoleID = setTimeout(function () {
@@ -154,7 +167,7 @@ document.getElementById("gameConsole").addEventListener("keyup", (e) => {
 // initialization functions
 gameInit()
 // tutorialInit()
-function tutorialInit(){
+function tutorialInit() {
     game.sessionName = "tutorial"
     levelData.ID = "tutorial"
     document.getElementById("gameNameTextBox").style.visibility = "hidden"
@@ -162,21 +175,21 @@ function tutorialInit(){
 }
 
 console.log(performance.now() - startTime + "ms loadup time")
-function initConsole(){
+function initConsole() {
     clearTimeout(hideConsoleID)
-    document.getElementById("gameConsole").style.visibility = 
-    document.getElementById("console-text").style.visibility = "visible"
+    document.getElementById("gameConsole").style.visibility =
+        document.getElementById("console-text").style.visibility = "visible"
 
-    document.getElementById("gameConsole").style.left = 
-    document.getElementById("console-text").style.left = (window.innerWidth - screenData.width)/2 + "px"
+    document.getElementById("gameConsole").style.left =
+        document.getElementById("console-text").style.left = (window.innerWidth - screenData.width) / 2 + "px"
 
-    document.getElementById("gameConsole").style.fontSize = 
-    document.getElementById("console-text").style.fontSize = 10*screenData.scale + "px"
+    document.getElementById("gameConsole").style.fontSize =
+        document.getElementById("console-text").style.fontSize = 10 * screenData.scale + "px"
 
-    document.getElementById("gameConsole").style.top = 330*screenData.scale + "px"
+    document.getElementById("gameConsole").style.top = 330 * screenData.scale + "px"
     document.getElementById("console-text").style.top = 0
-    document.getElementById("console-text").style.width = 
-    document.getElementById("gameConsole").style.width = 300*screenData.scale + "px"
+    document.getElementById("console-text").style.width =
+        document.getElementById("gameConsole").style.width = 300 * screenData.scale + "px"
     document.getElementById("gameConsole").focus()
     document.getElementById("gameConsole").value = ""
     isTyping = true
@@ -184,14 +197,14 @@ function initConsole(){
 
 
 function initIntroCutscenes() {
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -75, y : -140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud1", x : -50, y : -100, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 210, y : 80, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : 50, y : -140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud2", x : -80, y : 140, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 200, y : 50, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : 0, y : 100, w : 480, h : 360})
-    cutsceneAnimationData.push({src : "GUI_cutscenes_OS_cloud3", x : -110, y : 60, w : 480, h : 360}) 
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud1", x: -75, y: -140, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud1", x: -50, y: -100, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud2", x: 210, y: 80, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud2", x: 50, y: -140, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud2", x: -80, y: 140, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud3", x: 200, y: 50, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud3", x: 0, y: 100, w: 480, h: 360 })
+    cutsceneAnimationData.push({ src: "GUI_cutscenes_OS_cloud3", x: -110, y: 60, w: 480, h: 360 })
     introCutsceneFrames = 0
 }
 
@@ -216,14 +229,15 @@ function gameloop() {
             }
             removeButton("#mainmenustart")
         })
-
+        screen.fillStyle = randomSpiteColor
+        fillRect(135, 210, 3, 3)
         screen.fillStyle = "white"
         setFont("10px Kode Mono")
-        drawText("(c) 2025 Build "+build.version.major+"."+build.version.minor+"."+build.version.inc+", "+build.date, 2, 355)
+        drawText("(c) 2025 Build " + build.version.major + "." + build.version.minor + "." + build.version.inc + ", " + build.date, 2, 355)
         screen.fillStyle = "black"
 
         setFont("30px Kode Mono")
-        
+
         drawText(messages.GUI.mainMenu.begin, 70, 310)
 
 
@@ -246,7 +260,7 @@ function gameloop() {
             handleLevelLogic()
         }
         //scripts that update always
-        
+
         drawTiles()
         drawEntities()
         drawHUD()
@@ -287,24 +301,24 @@ function gameloop() {
             drawEditorPauseMenu()
         }
     }
-    if(Global_State == globalProgressionStates.settings){
+    if (Global_State == globalProgressionStates.settings) {
         settingsScreen()
     }
-    if(Global_State == globalProgressionStates.saveDeleter){
+    if (Global_State == globalProgressionStates.saveDeleter) {
         deleteSavesScreen()
     }
-    if(Global_State == globalProgressionStates.configKeybinds){
+    if (Global_State == globalProgressionStates.configKeybinds) {
         configKeybindsScreen()
     }
 
-    if(Global_State == globalProgressionStates.configKeybinds_2){
+    if (Global_State == globalProgressionStates.configKeybinds_2) {
         configKeybindsScreen2()
     }
 }
 
-function handleLevelLogic(){
-    if(levelData.ID == "tutorial"){
-        if(levelData.flags.indexOf("introductionComplete") < 0){
+function handleLevelLogic() {
+    if (levelData.ID == "tutorial") {
+        if (levelData.flags.indexOf("introductionComplete") < 0) {
             // popups.displayed.push(popupStorage.exampleFlavor) !REMOVE, replace w new system
             levelData.flags.push("introductionComplete")
         }
@@ -320,27 +334,27 @@ function useItem(itemIdx) {
     let affectedEntity = {}
     let affectedEntityIndex = -1
     let i = 0
-    if(item.data.range.rangeType != range.self)
-    {
+    if (item.data.range.rangeType != range.self) {
         entities.forEach((entity) => {
-        if(entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
-            affectedEntity = entity
-            affectedEntityIndex = i
-        }
-        i++
-    })
-    if (affectedEntityIndex == -1) {
-        console.log(":(")
+            if (entity.xPos == mouseGridX + player.xPos - 5 && entity.yPos == mouseGridY + player.yPos - 4) {
+                affectedEntity = entity
+                affectedEntityIndex = i
+            }
+            i++
+        })
+        if (affectedEntityIndex == -1) {
+            console.log(":(")
 
-        mouse.mode = mouseModes.select
-        GUI.focusedItem = -1
-        round.progression = round.progressionStates.notUsingItem
-        item.data.cooldownTime -= item.data.cooldown
-        if(!mouseDown){
-            // canUseMovementButtons = true
-        }  
-        return
-    }}
+            mouse.mode = mouseModes.select
+            GUI.focusedItem = -1
+            round.progression = round.progressionStates.notUsingItem
+            item.data.cooldownTime -= item.data.cooldown
+            if (!mouseDown) {
+                // canUseMovementButtons = true
+            }
+            return
+        }
+    }
     console.log("hi")
     switch (item.type) {
         case itemTypes.weapon:
@@ -370,7 +384,7 @@ function useItem(itemIdx) {
             }
             break;
     }
-    if(item.data.range.rangeType != range.self){
+    if (item.data.range.rangeType != range.self) {
         if (entities[affectedEntityIndex].stats.health < 1) {
             addTileAnimation(entities[affectedEntityIndex].display.hurtAnimation, entities[affectedEntityIndex].xPos, entities[affectedEntityIndex].yPos, 0)
             console.log(affectedEntity.display.hurtAnimation.maxFrames)
@@ -381,9 +395,9 @@ function useItem(itemIdx) {
     mouse.mode = mouseModes.select
     GUI.focusedItem = -1
     round.progression = round.progressionStates.notUsingItem
-    if(!mouseDown){
+    if (!mouseDown) {
         // canUseMovementButtons = true
-    }  
+    }
     item.data.cooldownTime -= item.data.cooldown
 }
 function handleTurnLogic() {
@@ -418,7 +432,7 @@ function handleTurnLogic() {
             useItem(GUI.focusedItem)
         }
     }
-    else{
+    else {
         mouse.mode = mouseModes.select
 
     }
@@ -471,25 +485,25 @@ function drawHUD() {
             if (!(tileSRC[tiles[level[player.yPos + 1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos + 1))) {
                 addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
                     movePlayer(directions.down, 1)
-                }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown, ignoreSignal : "attack"})
+                }, { highlight: true, rotation: 180, altKey: hotkeys.moveDown, ignoreSignal: "attack" })
                 mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
             }
             if (!(tileSRC[tiles[level[player.yPos - 1][player.xPos]]].collision || detectEntity(player.xPos, player.yPos - 1))) {
                 addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
                     movePlayer(directions.up, 1)
-                }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp, ignoreSignal : "attack"})
+                }, { highlight: true, rotation: 0, altKey: hotkeys.moveUp, ignoreSignal: "attack" })
                 mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
             }
             if (!(tileSRC[tiles[level[player.yPos][player.xPos + 1]]].collision || detectEntity(player.xPos + 1, player.yPos))) {
                 addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
                     movePlayer(directions.right, 1)
-                }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight, ignoreSignal : "attack"})
+                }, { highlight: true, rotation: 90, altKey: hotkeys.moveRight, ignoreSignal: "attack" })
                 mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
             }
             if (!(tileSRC[tiles[level[player.yPos][player.xPos - 1]]].collision || detectEntity(player.xPos - 1, player.yPos))) {
                 addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
                     movePlayer(directions.left, 1)
-                }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft, ignoreSignal : "attack"})
+                }, { highlight: true, rotation: 270, altKey: hotkeys.moveLeft, ignoreSignal: "attack" })
                 mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
             }
         }
@@ -502,15 +516,15 @@ function drawHUD() {
         }
         addButton("#GUI_Buttons_Pause", "GUI_pause", 9, 9, 21, 21, () => {
             isPaused = true
-        })   
+        })
     }
     if (!isPaused && showMouseIndicator && (level[mouseGridY + player.yPos - 4][player.xPos + mouseGridX - 5] != 0)) {
 
         if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
             if (mouse.mode == mouseModes.select) {
                 screen.strokeStyle = "yellow"
-                screen.lineWidth = 3*screenData.scale
-                screen.strokeRect((((mouseGridX) * 48) - 24)*screenData.scale, (((mouseGridY) * 48) - 36)*screenData.scale, 48*screenData.scale, 48*screenData.scale)
+                screen.lineWidth = 3 * screenData.scale
+                screen.strokeRect((((mouseGridX) * 48) - 24) * screenData.scale, (((mouseGridY) * 48) - 36) * screenData.scale, 48 * screenData.scale, 48 * screenData.scale)
             }
             if (mouse.mode == mouseModes.target) {
 
@@ -525,7 +539,7 @@ function drawHUD() {
     drawImage(357, 3, 120, 120, "GUI_stats-back")
     //health rectangle
     screen.fillStyle = "red"
-    if (player.stats.health / player.stats.maxHealth < 0.2 && entityAnimationStage%10 < 5) {
+    if (player.stats.health / player.stats.maxHealth < 0.2 && entityAnimationStage % 10 < 5) {
         screen.fillStyle = "darkred"
     }
     let healthHeighConversion = Math.round(((player.stats.health / player.stats.maxHealth) * 33) / 3) * 3
@@ -536,12 +550,12 @@ function drawHUD() {
     screen.fillStyle = "slategrey"
     drawText(((player.stats.dodge / gameConstants.maxDodge) * 100 + "%").padStart(3, "0").padStart(4, " "), 405, 71)
     screen.fillStyle = "black"
-    
-    
+
+
     for (let i = 0; i < 4; i++) {
         let btnOffset = 0
         cItem = player.inventory.equipped[i]
-        if (mouseInArea(387*screenData.scale, (87 + (i * 57))*screenData.scale, 477*screenData.scale, ((48 + 87 + (i * 57))*screenData.scale))) {
+        if (mouseInArea(387 * screenData.scale, (87 + (i * 57)) * screenData.scale, 477 * screenData.scale, ((48 + 87 + (i * 57)) * screenData.scale))) {
             btnOffset = -6
         }
         if (cItem.type == itemTypes.spell) {
@@ -552,7 +566,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_spellscroll", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
+                }, { highlight: false, altKey: hotkeys["sel_" + (i + 1)] })
                 cooldownBar(i, btnOffset)
 
             }
@@ -568,7 +582,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_spellscroll", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
+                }, { highlight: false, altKey: hotkeys["sel_" + (i + 1)] })
                 drawImageRotated(393 + btnOffset, 105 + (i * 57), 15, 15, 0, tSrc)
 
             }
@@ -585,7 +599,7 @@ function drawHUD() {
             else {
                 addButton("#Use_Item_" + i, "GUI_blank", 387 + btnOffset, 87 + (i * 57), 90, 54, () => {
                     focusItem(i)
-                }, {highlight : false, altKey : hotkeys["sel_"+(i+1)]})
+                }, { highlight: false, altKey: hotkeys["sel_" + (i + 1)] })
             }
             drawImage(423 + btnOffset, 87 + (i * 57), 54, 54, "GUI_item frame")
 
@@ -611,14 +625,14 @@ function drawHUD() {
     }
     //draw popups
     popupHandler()
-    
-    if(!isPaused && popups.displayed.currentDialog == 0 && popups.displayed.currentFlavor == ""){
-        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole, {altKey : hotkeys.chat})
+
+    if (!isPaused && popups.displayed.currentDialog == 0 && popups.displayed.currentFlavor == "") {
+        addButton("#GUI_Buttons_Chat", "GUI_chat", 9, 315, 39, 27, initConsole, { altKey: hotkeys.chat })
     }
-    
+
 }
 function drawEditorHUD() {
-    if(isPaused){
+    if (isPaused) {
         return
     }
     let mouseNoTouchZones = []
@@ -627,19 +641,19 @@ function drawEditorHUD() {
 
         addButton("#move_down", src, 216, 156 + 48, 48, 48, () => {
             movePlayer(directions.down, 1)
-        }, {highlight : true, rotation : 180, altKey : hotkeys.moveDown})
+        }, { highlight: true, rotation: 180, altKey: hotkeys.moveDown })
         mouseNoTouchZones.push(player.xPos + "," + (player.yPos + 1))
         addButton("#move_up", src, 216, 156 - 48, 48, 48, () => {
             movePlayer(directions.up, 1)
-        }, {highlight : true, rotation : 0, altKey : hotkeys.moveUp})
+        }, { highlight: true, rotation: 0, altKey: hotkeys.moveUp })
         mouseNoTouchZones.push(player.xPos + "," + (player.yPos - 1))
         addButton("#move_right", src, 216 + 48, 156, 48, 48, () => {
             movePlayer(directions.right, 1)
-        }, {highlight : true, rotation : 90, altKey : hotkeys.moveRight})
+        }, { highlight: true, rotation: 90, altKey: hotkeys.moveRight })
         mouseNoTouchZones.push((player.xPos + 1) + "," + player.yPos)
         addButton("#move_left", src, 216 - 48, 156, 48, 48, () => {
             movePlayer(directions.left, 1)
-        }, {highlight : true, rotation : 270, altKey : hotkeys.moveLeft})
+        }, { highlight: true, rotation: 270, altKey: hotkeys.moveLeft })
         mouseNoTouchZones.push((player.xPos - 1) + "," + player.yPos)
 
     }
@@ -651,17 +665,17 @@ function drawEditorHUD() {
         canUseMovementButtons = false
     }
     if (!mouseNoTouchZones.includes((mouseGridX + player.xPos - 5) + "," + (mouseGridY + player.yPos - 4))) {
-        if(editorLayerIdx == 1)
+        if (editorLayerIdx == 1)
             drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile]].src)
-        if(editorLayerIdx == 2)
+        if (editorLayerIdx == 2)
             drawImage(((mouseGridX) * 48) - 21, ((mouseGridY) * 48) - 33, 42, 42, metadataTiles[editorCurrentlySelectedTile])
-            // console.log(metadataTiles[editorCurrentlySelectedTile])
-        if (mouseDown && mouseY > screenData.scale*35) {
-            if(editorLayerIdx == 1){
+        // console.log(metadataTiles[editorCurrentlySelectedTile])
+        if (mouseDown && mouseY > screenData.scale * 35) {
+            if (editorLayerIdx == 1) {
                 console.log("changed!")
                 level[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
             }
-            if(editorLayerIdx == 2){
+            if (editorLayerIdx == 2) {
                 EditorRoomMetadata[mouseGridY + player.yPos - 4][mouseGridX + player.xPos - 5] = editorCurrentlySelectedTile
             }
         }
@@ -671,7 +685,7 @@ function drawEditorHUD() {
     screen.fillStyle = 'yellow'
 
     fillRect(218, 308, 46, 46)
-    if(editorLayerIdx == 1){
+    if (editorLayerIdx == 1) {
         for (let i = -7; i < 7; i++) {
             if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < tiles.length) {
                 drawImage(220 + (i * 45), 310, 42, 42, tileSRC[tiles[editorCurrentlySelectedTile + i]].src)
@@ -680,7 +694,7 @@ function drawEditorHUD() {
         screen.fillStyle = "white"
         drawText("Currently Selected: " + tileSRC[tiles[editorCurrentlySelectedTile]].src, 5, 300)
     }
-    if(editorLayerIdx == 2){
+    if (editorLayerIdx == 2) {
         for (let i = -7; i < 7; i++) {
             if (editorCurrentlySelectedTile + i > -1 && editorCurrentlySelectedTile + i < metadataTiles.length) {
                 drawImage(220 + (i * 45), 310, 42, 42, metadataTiles[editorCurrentlySelectedTile + i])
@@ -689,51 +703,51 @@ function drawEditorHUD() {
         screen.fillStyle = "white"
         drawText("Currently Selected: " + metadataTiles[editorCurrentlySelectedTile], 5, 300)
     }
-    addGUIButton("layer: "+editorLayers[editorLayerIdx],10,25,"changeEditorLayer",()=>{
+    addGUIButton("layer: " + editorLayers[editorLayerIdx], 10, 25, "changeEditorLayer", () => {
 
         editorLayerIdx++
-        editorLayerIdx%= editorLayers.length
+        editorLayerIdx %= editorLayers.length
         editorCurrentlySelectedTile = 0
     })
-    
+
 }
 
 function popupHandler() {
-    if(popups.displayed.currentDialog != ""){
+    if (popups.displayed.currentDialog != "") {
         screen.fillStyle = "#000000"
         screen.filter = "opacity(0.75)"
         setFont("15px Kode Mono")
         let h = calculateTextHeight(popups.displayed.currentDialog.text, 440)
-        fillRect(15,280 - (15 * (h.length - 1)),450,65+(15 * (h.length - 1)))
+        fillRect(15, 280 - (15 * (h.length - 1)), 450, 65 + (15 * (h.length - 1)))
         setFont("20px kode mono")
         screen.filter = "none"
         screen.fillStyle = "#ffffff"
-        if(popups.displayed.currentDialog.speaker == "$HERO"){
-            for(let i = 0; i < 20; i++){
-                for(let j = 0; j < 150; j++){
-                    if(Math.random() < .5 - (Math.abs(j-75)/150)){
-                        fillRect(20 + j, 302 - i - (15 * (h.length-1)), 1, 1)
+        if (popups.displayed.currentDialog.speaker == "$HERO") {
+            for (let i = 0; i < 20; i++) {
+                for (let j = 0; j < 150; j++) {
+                    if (Math.random() < .5 - (Math.abs(j - 75) / 150)) {
+                        fillRect(20 + j, 302 - i - (15 * (h.length - 1)), 1, 1)
                     }
                 }
             }
         }
-        else{
-            drawText(popups.displayed.currentDialog.speaker, 20, 300- (15 * (h.length-1)))
+        else {
+            drawText(popups.displayed.currentDialog.speaker, 20, 300 - (15 * (h.length - 1)))
         }
         setFont("15px Kode Mono")
-        for(let i = 0; i < h.length; i++){
-            drawText(h[i], 20, 320 -  (15 * (h.length - i-1)))
+        for (let i = 0; i < h.length; i++) {
+            drawText(h[i], 20, 320 - (15 * (h.length - i - 1)))
         }
 
-        let t = screen.measureText("["+hotkeys.continue+"] continue>").width / screenData.scale
-        addButton("#nextDialog", "#264272", 460 - t,322,5 + t,17, ()=>{
-                popups.displayed.currentDialog = popupStorage[popups.displayed.currentDialog.onContinue]
-        }, {altKey : hotkeys.continue})
+        let t = screen.measureText("[" + hotkeys.continue + "] continue>").width / screenData.scale
+        addButton("#nextDialog", "#264272", 460 - t, 322, 5 + t, 17, () => {
+            popups.displayed.currentDialog = popupStorage[popups.displayed.currentDialog.onContinue]
+        }, { altKey: hotkeys.continue })
         screen.fillStyle = "white"
-        drawText("["+hotkeys.continue+"] continue>",460 - t,335)
+        drawText("[" + hotkeys.continue + "] continue>", 460 - t, 335)
 
     }
-    if(popups.displayed.currentFlavor != ""){
+    if (popups.displayed.currentFlavor != "") {
 
     }
 }
@@ -791,13 +805,17 @@ function focusItem(itemIdx) {
     GUI.focusedItem = itemIdx
 }
 
+function doNothing() {
+
+}
+
 function removeButton(id) {
     if (buttonEvents.indexOf(id) > -1) {
         buttonignoresignals[id] = true
         buttonEvents.splice(id, 1)
-        for(let i = 0; i < hotkeyactions.length; i++){
-            if(hotkeyactions[i].removeID == id){
-                hotkeyactions[i].func = ()=>{}
+        for (let i = 0; i < hotkeyactions.length; i++) {
+            if (hotkeyactions[i].removeID == id) {
+                hotkeyactions[i].func = doNothing
             }
         }
     }
@@ -805,7 +823,7 @@ function removeButton(id) {
 
 function addButton(id, src, x, y, w, h, callback, options) {
     let highlight, rotation, hotkey, ignoreSignal
-    if(options !== undefined){
+    if (options !== undefined) {
         highlight = options.highlight
         rotation = options.rotation
         hotkey = options.altKey
@@ -816,33 +834,33 @@ function addButton(id, src, x, y, w, h, callback, options) {
 
         buttonEvents.push(id)
         document.getElementById("gamewindow").addEventListener("mouseup", () => {
-            if(buttonignoresignals[id]){
+            if (buttonignoresignals[id]) {
                 buttonignoresignals[id] = false
                 return
             }
-            if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale)){
+            if (mouseInArea(x * screenData.scale, y * screenData.scale, (x + w) * screenData.scale, (y + h) * screenData.scale)) {
                 callback()
             }
             buttonEvents.splice(buttonEvents.indexOf(id), 1)
-            if(hotkey !== undefined){
-                hotkeyactions[hotkey.toLowerCase()] = {func : ()=>{}, removeID : ""}
+            if (hotkey !== undefined) {
+                hotkeyactions[hotkey.toLowerCase()] = { func: () => { }, removeID: "" }
             }
-        }, { once: true})
-        
+        }, { once: true })
+
     }
-    if(hotkey !== undefined){
-        hotkeyactions[hotkey.toLowerCase()] = {func : callback, removeID : id}
+    if (hotkey !== undefined) {
+        hotkeyactions[hotkey.toLowerCase()] = { func: callback, removeID: id }
     }
-    if (mouseInArea(x*screenData.scale, y*screenData.scale, (x + w)*screenData.scale, (y + h)*screenData.scale)) {
+    if (mouseInArea(x * screenData.scale, y * screenData.scale, (x + w) * screenData.scale, (y + h) * screenData.scale)) {
         if (highlight != false)
             screen.filter = "brightness(140%)"
-            showMouseIndicator = false
+        showMouseIndicator = false
     }
-    if(src.charAt(0) == "#"){
+    if (src.charAt(0) == "#") {
         screen.fillStyle = src
-        fillRect(x,y,w,h)
+        fillRect(x, y, w, h)
     }
-    else{
+    else {
         drawImageRotated(x, y, w, h, rotation, src)
     }
     screen.filter = "none"
@@ -856,23 +874,23 @@ function drawTiles() {
                 continue;
             }
             if (i + player.yPos - 4 < level.length && i + player.yPos - 4 > 0 && player.xPos + j - 5 < level[0].length && player.xPos + j - 5 > 0)
-                if (((j * 48) - 24)*screenData.scale < mouseX && ((j + 1) * 48 - 24)*screenData.scale > mouseX && ((i * 48) - 36)*screenData.scale < mouseY && ((i + 1) * 48 - 36)*screenData.scale > mouseY && !(level[i + player.yPos - 4][player.xPos + j - 5] == 0 || typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")) {
+                if (((j * 48) - 24) * screenData.scale < mouseX && ((j + 1) * 48 - 24) * screenData.scale > mouseX && ((i * 48) - 36) * screenData.scale < mouseY && ((i + 1) * 48 - 36) * screenData.scale > mouseY && !(level[i + player.yPos - 4][player.xPos + j - 5] == 0 || typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")) {
                     mouseGridX = j
                     mouseGridY = i
                 }
-                else{
-                    if(Global_State == globalProgressionStates.roomEditor && ((j * 48) - 24)*screenData.scale < mouseX && ((j + 1) * 48 - 24)*screenData.scale > mouseX && ((i * 48) - 36)*screenData.scale < mouseY && ((i + 1) * 48 - 36)*screenData.scale > mouseY && !(typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")){
+                else {
+                    if (Global_State == globalProgressionStates.roomEditor && ((j * 48) - 24) * screenData.scale < mouseX && ((j + 1) * 48 - 24) * screenData.scale > mouseX && ((i * 48) - 36) * screenData.scale < mouseY && ((i + 1) * 48 - 36) * screenData.scale > mouseY && !(typeof level[i + player.yPos - 4][player.xPos + j - 5] == "undefined")) {
                         mouseGridX = j
                         mouseGridY = i
-                        }
+                    }
 
                 }
-                
+
             if ((i + player.yPos - 4) < levelData.width && (player.xPos + j - 5) < levelData.width && (player.xPos + j - 5) > -1 && (i + player.yPos - 4) > -1) {
                 try {
-                    
+
                     drawImage(((j) * 48) - 24, ((i) * 48) - 36, 48, 48, tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"], true)
-                    if(Global_State == globalProgressionStates.roomEditor && editorLayerIdx == 2){
+                    if (Global_State == globalProgressionStates.roomEditor && editorLayerIdx == 2) {
                         // screen.fillStyle = "grey"
                         // screen.filter = "opacity(50%)"
                         // fillRect(0,0,480,300)
@@ -882,7 +900,7 @@ function drawTiles() {
                 }
                 catch (e) {
                     console.log(level[i + player.yPos - 4][player.xPos + j - 5])
-                    console.log("error in tile renderer: "+e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
+                    console.log("error in tile renderer: " + e + ", " + tileSRC[tiles[level[i + player.yPos - 4][player.xPos + j - 5]]]["src"])
                 }
             }
         }
@@ -900,8 +918,8 @@ function drawEntities() {
     //player character
     if (Debug.unfetteredMovement) {
         screen.filter = "opacity(75%)"
-        
-        drawImage(216, 156, 48, 48,"Characters_Player_DebugGhost_1")
+
+        drawImage(216, 156, 48, 48, "Characters_Player_DebugGhost_1")
     }
     else {
         drawImageRotated(216, 156, 48, 48, 0, animations.player.nextFrame())
@@ -1123,6 +1141,8 @@ function spawnEntity(tName, x, y) {
 }
 
 function movePlayer(direction, amount) {
+    let oldXpos = player.xPos
+    let oldYpos = player.yPos
     switch (direction) {
         case directions.left:
             player.xPos -= amount
@@ -1137,7 +1157,10 @@ function movePlayer(direction, amount) {
             player.yPos += amount
             break;
     }
-
+    if (tileSRC[tiles[level[player.yPos][player.xPos]]].collision) {
+        player.xPos = oldXpos
+        player.yPos = oldYpos
+    }
     nextTurn()
 }
 
@@ -1167,52 +1190,61 @@ function detectEntity(x, y) {
 }
 
 function handleIntroCutscenes() {
-    drawImage(0,0,480,360,"GUI_cutscenes_OS_testBG")
+    // drawImage(0, 0, 480, 360, "GUI_cutscenes_OS_testBG")
+    drawImage(0, 0, 480, 360, "GUI_cutscenes_OS_testBG")
     introCutsceneFrames++
-    
     //fog animation
-    if(introCutsceneFrames  < 301){
+    if (introCutsceneFrames < 301) {
         cutsceneAnimationData[0].x--
         cutsceneAnimationData[1].y -= 0.5
         cutsceneAnimationData[2].x++
         cutsceneAnimationData[3].x++
-        cutsceneAnimationData[4].y+= 0.5
+        cutsceneAnimationData[4].y += 0.5
         cutsceneAnimationData[5].x++
-        cutsceneAnimationData[6].y+= 0.5
+        cutsceneAnimationData[6].y += 0.5
         cutsceneAnimationData[7].x--
-        screen.filter = "opacity("+(100-(introCutsceneFrames/3))+"%)"
-        for(let i = 0; i < cutsceneAnimationData.length; i++){
-            drawImage(cutsceneAnimationData[i].x, cutsceneAnimationData[i].y, cutsceneAnimationData[i].w, cutsceneAnimationData[i].h, cutsceneAnimationData[i].src) 
+        screen.filter = "opacity(" + (100 - (introCutsceneFrames / 3)) + "%)"
+        for (let i = 0; i < cutsceneAnimationData.length; i++) {
+            drawImage(cutsceneAnimationData[i].x, cutsceneAnimationData[i].y, cutsceneAnimationData[i].w, cutsceneAnimationData[i].h, cutsceneAnimationData[i].src)
         }
         screen.filter = "none"
         return
     }
+    //fog animation
+    // if (introCutsceneFrames < 27) {
+    //     if (gameTicks % 1 == 0) {
+    //         introCutsceneFrames++
+    //     }
+    //     drawImage(0, 0, 480, 360, "GUI_cutscenes_opening fog frames_frame_" + (introCutsceneFrames + "").padStart(4, "0"))
+    //     return
+    // }
 
     //cutscenes proper
     popupHandler()
+
 }
 
 //helper functions
 
-function getFontSize(){
-    return screen.font.substring(0,screen.font.indexOf("p"))
+function getFontSize() {
+    return screen.font.substring(0, screen.font.indexOf("p"))
 }
-function calculateTextHeight(text, pixelwidth){
+function calculateTextHeight(text, pixelwidth) {
     let OVERSEER = 1000
     let textArray = []
-    let charWidth = screen.measureText("1").width  / screenData.scale
+    let charWidth = screen.measureText("1").width / screenData.scale
     let maxCharWidth = Math.floor(pixelwidth / charWidth)
     let EOLL = 0
-    for(let i = 0; i < text.length; i++){
-        if(i - EOLL >= maxCharWidth){
-            if(text.charAt(i) == " "){
-                textArray.push(text.substring(EOLL,i))
+    for (let i = 0; i < text.length; i++) {
+        if (i - EOLL >= maxCharWidth) {
+            if (text.charAt(i) == " ") {
+                textArray.push(text.substring(EOLL, i))
                 i++
             }
-            else{
-                while(text.charAt(i) != " "){
+            else {
+                while (text.charAt(i) != " ") {
                     i--
-                    if(i < 0){
+                    if (i < 0) {
                         i = text.length
                         break;
                     }
@@ -1220,14 +1252,14 @@ function calculateTextHeight(text, pixelwidth){
                 textArray.push(text.substring(EOLL, i))
                 i++
             }
-            EOLL = i 
+            EOLL = i
         }
     }
     textArray.push(text.substring(EOLL))
     return textArray
 }
 
-function randomInclusive(start, end){
+function randomInclusive(start, end) {
     return start + Math.floor(Math.random() * end);
 }
 
@@ -1241,39 +1273,39 @@ function randColor() {
 }
 
 //helper rendering functions
-function drawText(str, x, y, maxWidth){
-    if(typeof maxWidth == 'undefined'){
-        screen.fillText(str, x*screenData.scale, y*screenData.scale)
+function drawText(str, x, y, maxWidth) {
+    if (typeof maxWidth == 'undefined') {
+        screen.fillText(str, x * screenData.scale, y * screenData.scale)
     }
-    screen.fillText(str, x*screenData.scale, y*screenData.scale, maxWidth*screenData.scale)
+    screen.fillText(str, x * screenData.scale, y * screenData.scale, maxWidth * screenData.scale)
 }
 
-function fillRect(x,y,w,h){
-    screen.fillRect(x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
+function fillRect(x, y, w, h) {
+    screen.fillRect(x * screenData.scale, y * screenData.scale, w * screenData.scale, h * screenData.scale)
 }
 
-function setFont(font){
-    screen.font = font.substring(0,font.indexOf("p"))*screenData.scale + "px Kode Mono"
+function setFont(font) {
+    screen.font = font.substring(0, font.indexOf("p")) * screenData.scale + "px Kode Mono"
 }
 
-function drawImage(x,y,w,h,src,round){
-    if(src == "undefined" || typeof src === "undefined"){
+function drawImage(x, y, w, h, src, round) {
+    if (src == "undefined" || typeof src === "undefined") {
         return
     }
-    if(typeof round !== "undefined"){
+    if (typeof round !== "undefined") {
         try {
-            screen.drawImage(document.getElementById(src),Math.floor(x*screenData.scale), Math.floor(y*screenData.scale), Math.ceil(w*screenData.scale), Math.ceil(h*screenData.scale))
+            screen.drawImage(document.getElementById(src), Math.floor(x * screenData.scale), Math.floor(y * screenData.scale), Math.ceil(w * screenData.scale), Math.ceil(h * screenData.scale))
         }
-        catch(e){
-            console.log("Image source not found: "+src)
+        catch (e) {
+            console.log("Image source not found: " + src)
         }
         return;
     }
     try {
-        screen.drawImage(document.getElementById(src),x*screenData.scale, y*screenData.scale, w*screenData.scale, h*screenData.scale)
+        screen.drawImage(document.getElementById(src), x * screenData.scale, y * screenData.scale, w * screenData.scale, h * screenData.scale)
     }
-    catch(e){
-        console.log("Image source not found: "+src+e.stack)
+    catch (e) {
+        console.log("Image source not found: " + src + e.stack)
     }
 }
 
@@ -1304,11 +1336,11 @@ function drawImageRotated(x, y, w, h, r, src) {
     }
     let drawX = x - offsetX
     let drawY = y - offsetY
-    screen.translate(drawX*screenData.scale, drawY*screenData.scale);
+    screen.translate(drawX * screenData.scale, drawY * screenData.scale);
     screen.rotate(r * (Math.PI / 180))
-    
-    drawImage(0,0,w,h,src)
-    
+
+    drawImage(0, 0, w, h, src)
+
     screen.rotate(-r * (Math.PI / 180))
-    screen.translate(-drawX*screenData.scale, -drawY*screenData.scale)
+    screen.translate(-drawX * screenData.scale, -drawY * screenData.scale)
 }
