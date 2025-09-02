@@ -41,8 +41,7 @@ let screenData = {
     isModified: false
 }
 
-let popups = {}
-popups = {
+let popups = {
     consts: {
         dialog: 0,
         flavor: 1,

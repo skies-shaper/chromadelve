@@ -1218,9 +1218,7 @@ function handleIntroCutscenes() {
     //     drawImage(0, 0, 480, 360, "GUI_cutscenes_opening fog frames_frame_" + (introCutsceneFrames + "").padStart(4, "0"))
     //     return
     // }
-
     //cutscenes proper
-    popupHandler()
 
 }
 
@@ -1230,7 +1228,6 @@ function getFontSize() {
     return screen.font.substring(0, screen.font.indexOf("p"))
 }
 function calculateTextHeight(text, pixelwidth) {
-    let OVERSEER = 1000
     let textArray = []
     let charWidth = screen.measureText("1").width / screenData.scale
     let maxCharWidth = Math.floor(pixelwidth / charWidth)
