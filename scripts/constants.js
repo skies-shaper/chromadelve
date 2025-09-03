@@ -27,9 +27,9 @@ let build = {
     version: {
         major: 0,
         minor: 1,
-        inc: 4
+        inc: 6
     },
-    date: "7/29/2025"
+    date: "10/02/2025"
 }
 
 let screenData = {
